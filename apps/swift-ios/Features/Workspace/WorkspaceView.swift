@@ -749,7 +749,7 @@ public struct WorkspaceView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("T3 Code. Manage environments")
+            .accessibilityLabel("Aoki. Manage environments")
             .accessibilityIdentifier("sidebar-environments-button")
         }
     }

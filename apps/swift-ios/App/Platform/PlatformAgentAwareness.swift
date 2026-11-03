@@ -78,7 +78,7 @@ enum PlatformAgentAwarenessProjection {
             subtitle = "Ready for a task"
         }
         return T3RelayAgentActivityAggregateState(
-            title: "T3 Code",
+            title: "Aoki",
             subtitle: subtitle,
             activeCount: activeCount,
             updatedAt: now.ISO8601Format(),

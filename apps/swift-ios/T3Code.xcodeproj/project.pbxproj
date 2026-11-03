@@ -3,16 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 71;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C10000000000000000000012 /* SubscriptionUsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40000000000000000000012 /* SubscriptionUsageSnapshot.swift */; };
-		C10000000000000000000013 /* SubscriptionUsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40000000000000000000012 /* SubscriptionUsageSnapshot.swift */; };
-		C10000000000000000000014 /* SubscriptionUsageWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40000000000000000000013 /* SubscriptionUsageWidget.swift */; };
 		B10000000000000000000001 /* ClerkKit in Frameworks */ = {isa = PBXBuildFile; productRef = B30000000000000000000001 /* ClerkKit */; };
 		B10000000000000000000002 /* ClerkKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = B30000000000000000000002 /* ClerkKitUI */; };
-		D10000000000000000000001 /* GhosttyKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40000000000000000000001 /* GhosttyKit.xcframework */; };
 		C10000000000000000000001 /* AgentActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40000000000000000000001 /* AgentActivityAttributes.swift */; };
 		C10000000000000000000002 /* SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40000000000000000000002 /* SharedContainer.swift */; };
 		C10000000000000000000003 /* TaskWidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40000000000000000000003 /* TaskWidgetSnapshot.swift */; };
@@ -30,7 +26,35 @@
 		C1000000000000000000000F /* T3CodeWidgets.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C4000000000000000000000F /* T3CodeWidgets.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C10000000000000000000010 /* T3CodeShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C40000000000000000000010 /* T3CodeShare.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C10000000000000000000011 /* ExtensionContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40000000000000000000011 /* ExtensionContractTests.swift */; };
+		C10000000000000000000012 /* SubscriptionUsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40000000000000000000012 /* SubscriptionUsageSnapshot.swift */; };
+		C10000000000000000000013 /* SubscriptionUsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40000000000000000000012 /* SubscriptionUsageSnapshot.swift */; };
+		C10000000000000000000014 /* SubscriptionUsageWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40000000000000000000013 /* SubscriptionUsageWidget.swift */; };
+		D10000000000000000000001 /* GhosttyKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40000000000000000000001 /* GhosttyKit.xcframework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AC0000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A90000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A50000000000000000000001;
+			remoteInfo = T3Code;
+		};
+		CC0000000000000000000002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A90000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C50000000000000000000003;
+			remoteInfo = T3CodeWidgets;
+		};
+		CC0000000000000000000003 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A90000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C50000000000000000000004;
+			remoteInfo = T3CodeShare;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		CE0000000000000000000001 /* Embed App Extensions */ = {
@@ -47,65 +71,57 @@
 		};
 /* End PBXCopyFilesBuildPhase section */
 
+/* Begin PBXFileReference section */
+		A40000000000000000000001 /* T3Code.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = T3Code.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A40000000000000000000002 /* T3CodeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = T3CodeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C40000000000000000000001 /* AgentActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentActivityAttributes.swift; sourceTree = "<group>"; };
+		C40000000000000000000002 /* SharedContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedContainer.swift; sourceTree = "<group>"; };
+		C40000000000000000000003 /* TaskWidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskWidgetSnapshot.swift; sourceTree = "<group>"; };
+		C40000000000000000000004 /* ShareInbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareInbox.swift; sourceTree = "<group>"; };
+		C40000000000000000000005 /* T3Code.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = T3Code.entitlements; sourceTree = "<group>"; };
+		C40000000000000000000006 /* T3CodeWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = T3CodeWidgets.swift; sourceTree = "<group>"; };
+		C40000000000000000000007 /* AgentActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentActivityWidget.swift; sourceTree = "<group>"; };
+		C40000000000000000000008 /* RecentTasksWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentTasksWidget.swift; sourceTree = "<group>"; };
+		C40000000000000000000009 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C4000000000000000000000A /* T3CodeWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = T3CodeWidgets.entitlements; sourceTree = "<group>"; };
+		C4000000000000000000000B /* SharePayloadLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePayloadLoader.swift; sourceTree = "<group>"; };
+		C4000000000000000000000C /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		C4000000000000000000000D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C4000000000000000000000E /* T3CodeShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = T3CodeShare.entitlements; sourceTree = "<group>"; };
+		C4000000000000000000000F /* T3CodeWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = T3CodeWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C40000000000000000000010 /* T3CodeShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = T3CodeShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C40000000000000000000011 /* ExtensionContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionContractTests.swift; sourceTree = "<group>"; };
+		C40000000000000000000012 /* SubscriptionUsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionUsageSnapshot.swift; sourceTree = "<group>"; };
+		C40000000000000000000013 /* SubscriptionUsageWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionUsageWidget.swift; sourceTree = "<group>"; };
+		D40000000000000000000001 /* GhosttyKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GhosttyKit.xcframework; path = "../mobile/modules/t3-terminal/Vendor/libghostty/GhosttyKit.xcframework"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		BE0000000000000000000002 /* Exceptions for "Features" folder in "T3Code" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				RemoteDevices/generate-stream.mjs,
-				Chat/generate-embedded.mjs,
-				Chat/embedded-content.browser.ts,
-				Browser/generate-stream.mjs,
-				Browser/browser-stream.browser.ts,
-				Browser/browser-stream.test.ts,
-			);
-			target = A50000000000000000000001 /* T3Code */;
-		};
-		BE0000000000000000000001 /* Exceptions for "Resources" folder in "T3Code" target */ = {
+		BE0000000000000000000001 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = A50000000000000000000001 /* T3Code */;
 		};
+		BE0000000000000000000002 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Browser/generate-stream.mjs",
+				"Chat/generate-embedded.mjs",
+				"RemoteDevices/generate-stream.mjs",
+			);
+			target = A50000000000000000000001 /* T3Code */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A10000000000000000000001 /* App */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = App;
-			sourceTree = "<group>";
-		};
-		A10000000000000000000002 /* Core */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Core;
-			sourceTree = "<group>";
-		};
-		A10000000000000000000003 /* Features */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				BE0000000000000000000002 /* Exceptions for "Features" folder in "T3Code" target */,
-			);
-			path = Features;
-			sourceTree = "<group>";
-		};
-		A10000000000000000000004 /* DesignSystem */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = DesignSystem;
-			sourceTree = "<group>";
-		};
-		A10000000000000000000005 /* Resources */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				BE0000000000000000000001 /* Exceptions for "Resources" folder in "T3Code" target */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		A10000000000000000000006 /* Tests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Tests;
-			sourceTree = "<group>";
-		};
+		A10000000000000000000001 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
+		A10000000000000000000002 /* Core */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Core; sourceTree = "<group>"; };
+		A10000000000000000000003 /* Features */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (BE0000000000000000000002 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Features; sourceTree = "<group>"; };
+		A10000000000000000000004 /* DesignSystem */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = DesignSystem; sourceTree = "<group>"; };
+		A10000000000000000000005 /* Resources */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (BE0000000000000000000001 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Resources; sourceTree = "<group>"; };
+		A10000000000000000000006 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,30 +158,6 @@
 		};
 /* End PBXFrameworksBuildPhase section */
 
-/* Begin PBXContainerItemProxy section */
-		AC0000000000000000000001 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A90000000000000000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A50000000000000000000001;
-			remoteInfo = T3Code;
-		};
-		CC0000000000000000000002 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A90000000000000000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C50000000000000000000003;
-			remoteInfo = T3CodeWidgets;
-		};
-		CC0000000000000000000003 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A90000000000000000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C50000000000000000000004;
-			remoteInfo = T3CodeShare;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXGroup section */
 		A30000000000000000000001 = {
 			isa = PBXGroup;
@@ -185,7 +177,7 @@
 		A30000000000000000000002 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A40000000000000000000001 /* T3 Code.app */,
+				A40000000000000000000001 /* T3Code.app */,
 				A40000000000000000000002 /* T3CodeTests.xctest */,
 				C4000000000000000000000F /* T3CodeWidgets.appex */,
 				C40000000000000000000010 /* T3CodeShare.appex */,
@@ -281,7 +273,7 @@
 				B30000000000000000000002 /* ClerkKitUI */,
 			);
 			productName = T3Code;
-			productReference = A40000000000000000000001 /* T3 Code.app */;
+			productReference = A40000000000000000000001 /* T3Code.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A50000000000000000000002 /* T3CodeTests */ = {
@@ -404,11 +396,10 @@
 			);
 			mainGroup = A30000000000000000000001;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
-			productRefGroup = A30000000000000000000002 /* Products */;
 			packageReferences = (
 				B20000000000000000000001 /* XCRemoteSwiftPackageReference "clerk-ios" */,
 			);
+			productRefGroup = A30000000000000000000002 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -456,10 +447,14 @@
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
-			files = ();
-			inputPaths = ();
+			files = (
+			);
+			inputPaths = (
+			);
 			name = "Bundle Device Stream";
-			outputPaths = ("$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/T3DeviceStream.js", );
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/T3DeviceStream.js",
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -eu\nexport PATH=\"$PATH:$HOME/.vite-plus/bin:${VOLTA_HOME:-$HOME/.volta}/bin:${MISE_DATA_DIR:-$HOME/.local/share/mise}/shims:${ASDF_DATA_DIR:-$HOME/.asdf}/shims:${FNM_DIR:-$HOME/Library/Application Support/fnm}/aliases/default/bin:$HOME/.local/share/fnm/aliases/default/bin:$HOME/.fnm/aliases/default/bin:${NVM_DIR:-$HOME/.nvm}/current/bin:/opt/homebrew/bin:/usr/local/bin\"\nDEVICE_STREAM_NODE=\"${NODE_BINARY:-node}\"\nif ! command -v \"$DEVICE_STREAM_NODE\" >/dev/null 2>&1 || ! \"$DEVICE_STREAM_NODE\" --version >/dev/null 2>&1; then\n  echo \"error: Bundle Device Stream requires Node.js. Install the version in package.json or set the NODE_BINARY build setting to its executable path (for example, from command -v node in your terminal).\" >&2\n  exit 1\nfi\n\"$DEVICE_STREAM_NODE\" \"$SRCROOT/Features/RemoteDevices/generate-stream.mjs\" \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\n\"$DEVICE_STREAM_NODE\" \"$SRCROOT/Features/Chat/generate-embedded.mjs\" \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\n\"$DEVICE_STREAM_NODE\" \"$SRCROOT/Features/Browser/generate-stream.mjs\" \"$TARGET_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\"\n";
@@ -590,8 +585,8 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
 			};
 			name = Debug;
 		};
@@ -651,24 +646,25 @@
 		AB0000000000000000000003 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				APS_ENVIRONMENT = development;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDev;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Extensions/Shared/T3Code.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/Shared/AokiPersonal.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 68;
+				DEVELOPMENT_TEAM = A72L5K4P73;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "T3 Swift Dev";
+				INFOPLIST_KEY_CFBundleDisplayName = "Aoki Dev";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Scan pairing QR codes and attach photos to T3 Code tasks.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Allow T3 Code to connect to T3 Code servers on your local network or tailnet.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Scan pairing QR codes and attach photos to Aoki tasks.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Allow Aoki to connect to Aoki servers on your local network or tailnet.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow Aoki to use your microphone for voice input.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
@@ -693,15 +689,15 @@
 					"-framework",
 					QuartzCore,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.t3tools.t3code.swiftui.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.rockhounds.aoki.native.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				T3CODE_APP_GROUP_IDENTIFIER = group.com.t3tools.t3code.swiftui.debug;
-				T3CODE_URL_SCHEME = t3code-swiftui-dev;
+				T3CODE_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native.dev;
+				T3CODE_URL_SCHEME = "aoki-native-dev";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -709,23 +705,23 @@
 		AB0000000000000000000004 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				APS_ENVIRONMENT = production;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Extensions/Shared/T3Code.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 68;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "T3 Code SwiftUI";
+				INFOPLIST_KEY_CFBundleDisplayName = "Aoki Dev";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Scan pairing QR codes and attach photos to T3 Code tasks.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Allow T3 Code to connect to T3 Code servers on your local network or tailnet.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Scan pairing QR codes and attach photos to Aoki tasks.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Allow Aoki to connect to Aoki servers on your local network or tailnet.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow Aoki to use your microphone for voice input.";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = NO;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
@@ -750,7 +746,7 @@
 					"-framework",
 					QuartzCore,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.t3tools.t3code.swiftui;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.rockhounds.aoki.native;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -758,8 +754,8 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				T3CODE_APP_GROUP_IDENTIFIER = group.com.t3tools.t3code.swiftui;
-				T3CODE_URL_SCHEME = t3code-swiftui;
+				T3CODE_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native;
+				T3CODE_URL_SCHEME = "aoki-native";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -772,7 +768,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.t3tools.t3code.swiftui.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.rockhounds.aoki.native.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -789,7 +785,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.t3tools.t3code.swiftui.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.rockhounds.aoki.native.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -803,9 +799,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = Extensions/Widgets/T3CodeWidgets.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/Widgets/AokiDev.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 68;
+				DEVELOPMENT_TEAM = A72L5K4P73;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Extensions/Widgets/Info.plist;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -816,7 +813,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.t3tools.t3code.swiftui.dev.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.rockhounds.aoki.native.dev.widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -824,8 +821,8 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				T3CODE_APP_GROUP_IDENTIFIER = group.com.t3tools.t3code.swiftui.debug;
-				T3CODE_WIDGET_DISPLAY_NAME = "T3 Swift Dev Widgets";
+				T3CODE_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native.dev;
+				T3CODE_WIDGET_DISPLAY_NAME = "Aoki Dev Widgets";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -847,7 +844,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.t3tools.t3code.swiftui.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.rockhounds.aoki.native.widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -856,8 +853,8 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				T3CODE_APP_GROUP_IDENTIFIER = group.com.t3tools.t3code.swiftui;
-				T3CODE_WIDGET_DISPLAY_NAME = "T3 Code Widgets";
+				T3CODE_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native;
+				T3CODE_WIDGET_DISPLAY_NAME = "Aoki Widgets";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -867,9 +864,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = Extensions/Share/T3CodeShare.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Extensions/Share/AokiDev.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 68;
+				DEVELOPMENT_TEAM = A72L5K4P73;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Extensions/Share/Info.plist;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -880,7 +878,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.t3tools.t3code.swiftui.dev.sharing;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.rockhounds.aoki.native.dev.sharing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -888,8 +886,8 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				T3CODE_APP_GROUP_IDENTIFIER = group.com.t3tools.t3code.swiftui.debug;
-				T3CODE_SHARE_DISPLAY_NAME = "T3 Swift Dev";
+				T3CODE_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native.dev;
+				T3CODE_SHARE_DISPLAY_NAME = "Aoki Dev";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -911,7 +909,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.t3tools.t3code.swiftui.sharing;
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.rockhounds.aoki.native.sharing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -920,8 +918,8 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				T3CODE_APP_GROUP_IDENTIFIER = group.com.t3tools.t3code.swiftui;
-				T3CODE_SHARE_DISPLAY_NAME = "T3 Code (SwiftUI)";
+				T3CODE_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native;
+				T3CODE_SHARE_DISPLAY_NAME = Aoki;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1000,43 +998,6 @@
 			productName = ClerkKitUI;
 		};
 /* End XCSwiftPackageProductDependency section */
-
-/* Begin PBXFileReference section */
-		C40000000000000000000012 /* SubscriptionUsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionUsageSnapshot.swift; sourceTree = "<group>"; };
-		C40000000000000000000013 /* SubscriptionUsageWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionUsageWidget.swift; sourceTree = "<group>"; };
-		A40000000000000000000001 /* T3 Code.app */ = {
-			isa = PBXFileReference;
-			explicitFileType = wrapper.application;
-			includeInIndex = 0;
-			path = "T3 Code.app";
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A40000000000000000000002 /* T3CodeTests.xctest */ = {
-			isa = PBXFileReference;
-			explicitFileType = wrapper.cfbundle;
-			includeInIndex = 0;
-			path = T3CodeTests.xctest;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C40000000000000000000001 /* AgentActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentActivityAttributes.swift; sourceTree = "<group>"; };
-		C40000000000000000000002 /* SharedContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedContainer.swift; sourceTree = "<group>"; };
-		C40000000000000000000003 /* TaskWidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskWidgetSnapshot.swift; sourceTree = "<group>"; };
-		C40000000000000000000004 /* ShareInbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareInbox.swift; sourceTree = "<group>"; };
-		C40000000000000000000005 /* T3Code.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = T3Code.entitlements; sourceTree = "<group>"; };
-		C40000000000000000000006 /* T3CodeWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = T3CodeWidgets.swift; sourceTree = "<group>"; };
-		C40000000000000000000007 /* AgentActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentActivityWidget.swift; sourceTree = "<group>"; };
-		C40000000000000000000008 /* RecentTasksWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentTasksWidget.swift; sourceTree = "<group>"; };
-		C40000000000000000000009 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C4000000000000000000000A /* T3CodeWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = T3CodeWidgets.entitlements; sourceTree = "<group>"; };
-		C4000000000000000000000B /* SharePayloadLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePayloadLoader.swift; sourceTree = "<group>"; };
-		C4000000000000000000000C /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
-		C4000000000000000000000D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C4000000000000000000000E /* T3CodeShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = T3CodeShare.entitlements; sourceTree = "<group>"; };
-		C4000000000000000000000F /* T3CodeWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = T3CodeWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		C40000000000000000000010 /* T3CodeShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = T3CodeShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		C40000000000000000000011 /* ExtensionContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionContractTests.swift; sourceTree = "<group>"; };
-		D40000000000000000000001 /* GhosttyKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GhosttyKit.xcframework; path = ../mobile/modules/t3-terminal/Vendor/libghostty/GhosttyKit.xcframework; sourceTree = "<group>"; };
-/* End PBXFileReference section */
 	};
 	rootObject = A90000000000000000000001 /* Project object */;
 }

@@ -445,7 +445,7 @@ struct HomeThreadMetadataTests {
         let thread = FeatureThread(
             id: "thread",
             projectID: "project",
-            title: "Test T3 Code Functionality"
+            title: "Test Aoki Functionality"
         )
         let snapshot = FeatureSnapshot(
             projects: [
@@ -609,7 +609,7 @@ struct HomeThreadMetadataTests {
             id: "scoped-project",
             wireID: "project-wire",
             environmentID: "studio",
-            name: "T3 Code",
+            name: "Aoki",
             path: "/work/t3code"
         )
         let thread = FeatureThread(

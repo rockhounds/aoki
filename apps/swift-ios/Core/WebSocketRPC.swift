@@ -169,7 +169,7 @@ public actor WebSocketRPCClient {
     }
 
     private static let logger = Logger(
-        subsystem: "com.t3tools.t3code",
+        subsystem: "io.github.rockhounds.aoki.native",
         category: "WebSocketRPC"
     )
 

@@ -69,7 +69,7 @@ public actor T3ConnectDPoPSigner {
     private var privateKey: P256.Signing.PrivateKey?
 
     public init(
-        service: String = "com.t3tools.t3code.swiftui.t3-connect-dpop",
+        service: String = "io.github.rockhounds.aoki.native.t3-connect-dpop",
         account: String = "device-proof-key"
     ) {
         self.service = service

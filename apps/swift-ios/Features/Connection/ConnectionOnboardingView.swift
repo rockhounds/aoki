@@ -142,14 +142,14 @@ public struct ConnectionOnboardingView: View {
                 Text("T3")
                     .font(.system(size: 34, weight: .black, design: .rounded))
                     .foregroundStyle(Color(red: 0.02, green: 0.74, blue: 0.5))
-                    .accessibilityLabel("T3 Code")
+                    .accessibilityLabel("Aoki")
 
                 Text("Connect an environment")
                     .font(.largeTitle.bold())
                     .foregroundStyle(T3Colors.textPrimary)
                     .padding(.top, 20)
 
-                Text("Choose how to connect to T3 Code.")
+                Text("Choose how to connect to Aoki.")
                     .font(.body)
                     .foregroundStyle(T3Colors.textSecondary)
                     .padding(.top, 8)
@@ -289,7 +289,7 @@ public struct ConnectionOnboardingView: View {
                     Text(entryHeading)
                         .font(.largeTitle.bold())
                         .foregroundStyle(T3Colors.textPrimary)
-                    Text("Find these details in T3 Code on your computer.")
+                    Text("Find these details in Aoki on your computer.")
                         .font(T3Typography.threadBody)
                         .foregroundStyle(T3Colors.textSecondary)
                 }

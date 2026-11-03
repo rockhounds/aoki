@@ -7,7 +7,7 @@ final class PlatformBackgroundRefreshCoordinator {
 
     static let shared = PlatformBackgroundRefreshCoordinator()
     static var identifier: String {
-        "\(Bundle.main.bundleIdentifier ?? "com.t3tools.t3code.swiftui").refresh"
+        "\(Bundle.main.bundleIdentifier ?? "io.github.rockhounds.aoki.native").refresh"
     }
 
     private var refreshAction: RefreshAction?

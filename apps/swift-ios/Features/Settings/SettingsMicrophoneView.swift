@@ -28,7 +28,7 @@ struct SettingsMicrophoneView: View {
                     Text("Microphone access")
                 } footer: {
                     Text(permission == .denied
-                         ? "Microphone access is off for T3 Code. Turn it on in Settings to use voice input."
+                         ? "Microphone access is off for Aoki. Turn it on in Settings to use voice input."
                          : "Voice input needs microphone access before it can record or list your microphones.")
                 }
             }

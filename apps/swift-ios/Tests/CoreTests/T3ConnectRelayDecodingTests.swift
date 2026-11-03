@@ -31,7 +31,7 @@ final class T3ConnectRelayDecodingTests: XCTestCase {
             let status = try JSONDecoder.t3.decode(T3ConnectRelayEnvironmentStatus.self, from: data)
             XCTAssertEqual(status.offlineReason, reason)
             XCTAssertEqual(status.offlineMessage, reason == "tunnel_released"
-                ? "Start or update T3 Code on this computer to reconnect its tunnel."
+                ? "Start or update Aoki on this computer to reconnect its tunnel."
                 : "Offline")
         }
     }

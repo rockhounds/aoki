@@ -7,7 +7,7 @@ struct FeatureV2MessageAttribution: View {
     enum Attribution: String {
         case automation = "Sent by automation"
         case agent = "Sent by another agent"
-        case t3code = "Sent by T3 Code"
+        case t3code = "Sent by Aoki"
     }
 
     static func attribution(_ source: OrchestrationV2TimelineMetadata) -> Attribution? {

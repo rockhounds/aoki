@@ -104,7 +104,7 @@ private struct FeatureLoadingView: View {
                 .font(.system(size: 30, weight: .semibold))
             ProgressView()
                 .controlSize(.small)
-            Text("Connecting to T3 Code")
+            Text("Connecting to Aoki")
                 .font(T3Typography.supporting)
                 .foregroundStyle(T3Colors.textSecondary)
         }

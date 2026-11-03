@@ -45,7 +45,7 @@ struct QRCodeScannerView: View {
 
                 if availability == .ready {
                     scannerFrame
-                    Text("Point your camera at the QR code shown by T3 Code.")
+                    Text("Point your camera at the QR code shown by Aoki.")
                         .font(T3Typography.threadBody)
                         .foregroundStyle(.white.opacity(0.78))
                         .multilineTextAlignment(.center)

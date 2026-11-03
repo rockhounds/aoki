@@ -31,8 +31,8 @@ struct T3RecentTasksWidget: Widget {
             T3TaskWidgetView(entry: entry)
                 .containerBackground(Color(uiColor: .systemBackground), for: .widget)
         }
-        .configurationDisplayName("T3 Code Tasks")
-        .description("See active and recent T3 Code tasks at a glance.")
+        .configurationDisplayName("Aoki Tasks")
+        .description("See active and recent Aoki tasks at a glance.")
         .supportedFamilies([.systemSmall, .systemMedium, .accessoryRectangular])
     }
 }
@@ -171,7 +171,7 @@ private struct T3TaskWidgetView: View {
             Text("Ready for a task")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(.primary)
-            Text("Tap to start in T3 Code")
+            Text("Tap to start in Aoki")
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(.secondary)
         }

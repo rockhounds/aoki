@@ -56,7 +56,7 @@ final class CoreContractTests: XCTestCase {
               "snapshotSequence": 7,
               "projects": [{
                 "id": "project-1",
-                "title": "T3 Code",
+                "title": "Aoki",
                 "workspaceRoot": "/work/t3",
                 "defaultModelSelection": {
                   "instanceId": "codex",

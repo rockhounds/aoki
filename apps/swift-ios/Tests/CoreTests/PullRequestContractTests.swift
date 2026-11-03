@@ -26,7 +26,7 @@ final class PullRequestContractTests: XCTestCase {
               }],
               "entries":[{
                 "provider":"github","host":"github.com","projectId":"project-1",
-                "projectTitle":"T3 Code","repository":"pingdotgg/t3code","number":5178,
+                "projectTitle":"Aoki","repository":"pingdotgg/t3code","number":5178,
                 "title":"Native SwiftUI app","url":"https://github.com/pingdotgg/t3code/pull/5178",
                 "author":{"login":"theo","name":"Theo","avatarUrl":null},
                 "headBranch":"native","baseBranch":"main","state":"open","isDraft":false,

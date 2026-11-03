@@ -305,7 +305,7 @@ public final class FeatureAttachmentUploadCoordinator {
                     }
                 } catch {
                     // The upload is already accepted. Send can use its in-memory reference.
-                    Logger(subsystem: "com.t3tools.t3code.swiftui", category: "AttachmentUpload")
+                    Logger(subsystem: "io.github.rockhounds.aoki.native", category: "AttachmentUpload")
                         .error("Could not save the uploaded attachment in the draft: \(error.localizedDescription, privacy: .public)")
                 }
             }

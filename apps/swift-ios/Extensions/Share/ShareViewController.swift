@@ -65,7 +65,7 @@ struct T3ShareExtensionView: View {
                     .foregroundStyle(.secondary)
                     .disabled(isSaving)
                 Spacer()
-                Text("T3 Code")
+                Text("Aoki")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(.primary)
                 Spacer()
@@ -120,7 +120,7 @@ struct T3ShareExtensionView: View {
         switch phase {
         case .ready: "Add to a new task"
         case .saving: "Saving shared content"
-        case .saved: "Ready in T3 Code"
+        case .saved: "Ready in Aoki"
         case .failed: "Could not add this"
         }
     }
@@ -133,8 +133,8 @@ struct T3ShareExtensionView: View {
             "Keeping a durable copy so nothing gets lost."
         case let .saved(imageCount):
             imageCount == 0
-                ? "Open T3 Code to choose a project and send it."
-                : "Saved \(imageCount) image\(imageCount == 1 ? "" : "s"). Open T3 Code to choose a project."
+                ? "Open Aoki to choose a project and send it."
+                : "Saved \(imageCount) image\(imageCount == 1 ? "" : "s"). Open Aoki to choose a project."
         case let .failed(message):
             message
         }
@@ -159,7 +159,7 @@ struct T3ShareExtensionView: View {
 
     private var primaryTitle: String {
         switch phase {
-        case .ready: "Add to T3 Code"
+        case .ready: "Add to Aoki"
         case .saving: "Saving…"
         case .saved: "Done"
         case .failed: "Try again"

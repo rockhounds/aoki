@@ -10,7 +10,7 @@ struct PlatformPromptLinkTests {
             prompt: .init(text: "Rate me + you", hiddenCharacters: 0),
             repository: .init(owner: "pingdotgg", name: "t3code"), provider: "codex", model: "Small"
         )
-        for base in ["https://app.t3.codes/new", "t3code://new", "t3code-dev://new", "t3code-swiftui-dev://new"] {
+        for base in ["https://app.t3.codes/new", "t3code://new", "t3code-dev://new", "aoki-native-dev://new"] {
             #expect(try PlatformDeepLinkParser.parse(
                 base + "?prompt=Rate+me+%2B+you&repo=https://github.com/pingdotgg/t3code.git&provider=Codex&model=Small"
             ) == .newPrompt(environmentID: nil, projectID: nil, link: expected))

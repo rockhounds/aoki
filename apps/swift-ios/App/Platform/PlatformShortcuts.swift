@@ -75,7 +75,7 @@ final class PlatformRecentThreadStore: @unchecked Sendable {
 }
 
 struct PlatformRecentThreadEntity: AppEntity {
-    static let typeDisplayRepresentation = TypeDisplayRepresentation(name: "T3 Code Thread")
+    static let typeDisplayRepresentation = TypeDisplayRepresentation(name: "Aoki Thread")
     static let defaultQuery = PlatformRecentThreadQuery()
 
     let id: String
@@ -114,7 +114,7 @@ struct PlatformRecentThreadQuery: EntityQuery {
 }
 
 struct NewT3TaskIntent: AppIntent {
-    static let title: LocalizedStringResource = "New T3 Code Task"
+    static let title: LocalizedStringResource = "New Aoki Task"
     static let description = IntentDescription("Open the native composer and start a task.")
     static let openAppWhenRun = true
 
@@ -125,8 +125,8 @@ struct NewT3TaskIntent: AppIntent {
 }
 
 struct OpenRecentT3ThreadIntent: AppIntent {
-    static let title: LocalizedStringResource = "Open Recent T3 Code Thread"
-    static let description = IntentDescription("Open a recent thread in T3 Code.")
+    static let title: LocalizedStringResource = "Open Recent Aoki Thread"
+    static let description = IntentDescription("Open a recent thread in Aoki.")
     static let openAppWhenRun = true
 
     @Parameter(title: "Thread")
