@@ -1,0 +1,30 @@
+SPDX-FileCopyrightText: 2026 Aoki contributors
+SPDX-License-Identifier: MIT
+
+Aoki attribution and licensing
+
+Aoki is derived from T3 Code: https://github.com/pingdotgg/t3code
+
+Upstream material
+-----------------
+T3 Code material remains under its original MIT license in LICENSE, including
+Copyright (c) 2026 T3 Tools Inc. Preserve upstream copyright and license notices.
+Third-party material retains its own licenses and notices wherever provided.
+
+Aoki contributions
+------------------
+Original Aoki files and Aoki-authored additions to upstream files are licensed
+under the MIT license in LICENSE.aoki, Copyright (c) 2026 Aoki contributors.
+This attribution covers only Aoki contributions, not pre-existing material.
+
+New files written for Aoki carry these headers in the file's comment syntax:
+
+    SPDX-FileCopyrightText: 2026 Aoki contributors
+    SPDX-License-Identifier: MIT
+
+For files that cannot contain comments, use an adjacent <filename>.license file.
+When modifying upstream files, retain existing notices and add Aoki copyright
+attribution for substantial original additions. Do not replace upstream
+attribution or third-party license terms. Version history records which changes
+came from upstream and which were made for Aoki; a directory name alone does
+not establish authorship.
