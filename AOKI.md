@@ -88,3 +88,18 @@ export PATH=~/.local/node-v26.12.1/bin:~/.local/bin:$PATH   # node, pnpm, jj
 pnpm install
 pnpm dev
 ```
+
+## iPhone builds
+
+Aoki's iOS bundle identifier is `io.github.rockhounds.aoki` (with `.dev` and `.preview`
+for those variants). Set `AOKI_APPLE_TEAM_ID` to your Apple signing team. For Expo
+cloud builds, also set `AOKI_EXPO_OWNER` and `AOKI_EXPO_PROJECT_ID` to your own
+account and project. Upstream's signing team and Expo project are not used.
+Over-the-air updates stay disabled until an Aoki Expo project is configured.
+
+For a self-contained build distributed directly to registered iPhones through
+Expo, use `eas build --platform ios --profile aoki-device` from `apps/mobile`.
+This profile uses ad hoc distribution and disables over-the-air updates.
+The Apple team must have a paid Developer Program membership and a provisioning
+profile that includes the target iPhone. For a free Personal Team, use the local
+Xcode build described in [the mobile development guide](apps/mobile/README.md).
