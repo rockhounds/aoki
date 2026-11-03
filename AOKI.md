@@ -4,8 +4,8 @@
 # Aoki
 
 Aoki is a reinterpretation / tracking fork of [T3 Code](https://github.com/pingdotgg/t3code).
-Everything outside the Aoki-specific files below comes from upstream; see [README.md](README.md)
-for upstream's own docs and [AGENTS.md](AGENTS.md) for repo conventions.
+Aoki keeps a small stack of changes on top of upstream. See [README.md](README.md)
+for the upstream documentation and [AGENTS.md](AGENTS.md) for repo conventions.
 
 ## License and attribution
 
