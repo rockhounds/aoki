@@ -94,14 +94,14 @@ enum PlatformPromptLinkParser {
         let linkedPrompt = try prompt(query["prompt"])
         if let value = query["pr"] {
             guard let pr = pullRequest(value) else {
-                throw PlatformDeepLinkError.invalidPrompt("This link names a pull request T3 Code cannot read.")
+                throw PlatformDeepLinkError.invalidPrompt("This link names a pull request Aoki cannot read.")
             }
             return .pullRequest(pr, prompt: linkedPrompt)
         }
         guard let linkedPrompt else { throw PlatformDeepLinkError.invalidPrompt("This link has no prompt.") }
         let parsedRepository = query["repo"].flatMap(repository)
         if query["repo"] != nil, parsedRepository == nil {
-            throw PlatformDeepLinkError.invalidPrompt("This link names a repository T3 Code cannot read.")
+            throw PlatformDeepLinkError.invalidPrompt("This link names a repository Aoki cannot read.")
         }
         func optional(_ key: String) -> String? {
             guard let value = query[key]?.trimmingCharacters(in: .whitespacesAndNewlines), !value.isEmpty else { return nil }
@@ -115,11 +115,11 @@ enum PlatformPromptLinkParser {
         guard let raw else { return nil }
         // JavaScript counts UTF-16 units, including both halves of supplementary characters.
         guard raw.utf16.count <= maximumPromptLength else {
-            throw PlatformDeepLinkError.invalidPrompt("This prompt is longer than 8,000 characters, so T3 Code did not open it.")
+            throw PlatformDeepLinkError.invalidPrompt("This prompt is longer than 8,000 characters, so Aoki did not open it.")
         }
         let value = sanitize(raw)
         if value.text.isEmpty, value.hiddenCharacters > 0 {
-            throw PlatformDeepLinkError.invalidPrompt("This prompt had only hidden characters, so it may be malicious. T3 Code did not open it.")
+            throw PlatformDeepLinkError.invalidPrompt("This prompt had only hidden characters, so it may be malicious. Aoki did not open it.")
         }
         return value.text.isEmpty ? nil : value
     }
@@ -194,9 +194,9 @@ enum PlatformPromptLinkParser {
 
 enum PlatformRoute: Codable, Hashable, Identifiable, Sendable {
     #if DEBUG
-    static let nativeScheme = "t3code-swiftui-dev"
+    static let nativeScheme = "aoki-native-dev"
     #else
-    static let nativeScheme = "t3code-swiftui"
+    static let nativeScheme = "aoki-native"
     #endif
 
     case connection(endpoint: String, token: String?)
@@ -301,11 +301,11 @@ enum PlatformDeepLinkError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .unsupportedURL:
-            "That T3 Code link is not supported."
+            "That Aoki link is not supported."
         case .missingIdentifier:
-            "That T3 Code link is missing its destination."
+            "That Aoki link is missing its destination."
         case .invalidIdentifier:
-            "That T3 Code link contains an invalid destination."
+            "That Aoki link contains an invalid destination."
         case let .invalidPrompt(message):
             message
         }
@@ -348,7 +348,7 @@ enum PlatformDeepLinkParser {
                 }
             }
         }
-        if ["t3", "t3code", "t3code-dev", "t3code-swiftui", "t3code-swiftui-dev"].contains(scheme) {
+        if ["t3", "t3code", "t3code-dev", "t3code-swiftui", "t3code-swiftui-dev", "aoki-native", "aoki-native-dev"].contains(scheme) {
             let segments = customSchemeSegments(components)
             if isConnectionRoute(segments: segments, query: query),
                !isPromptNavigation(segments, query: promptQuery) {

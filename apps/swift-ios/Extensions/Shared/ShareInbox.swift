@@ -82,7 +82,7 @@ enum T3IncomingShareStoreError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .appGroupUnavailable:
-            "T3 Code could not access its shared inbox."
+            "Aoki could not access its shared inbox."
         case .noSupportedContent:
             "This app did not provide text, a URL, or a supported file."
         }

@@ -70,7 +70,7 @@ private struct T3LiveActivityLockScreenView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
             HStack(spacing: 8) {
-                Text("T3 Code")
+                Text("Aoki")
                     .font(.system(size: 14, weight: .bold))
                     .foregroundStyle(.primary)
                 Spacer(minLength: 8)

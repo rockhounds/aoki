@@ -39,7 +39,7 @@ enum ConnectionDetailsParser {
         let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw ConnectionDetailsError.empty }
 
-        let extracted = trimmed.lowercased().hasPrefix("t3code:")
+        let extracted = ["t3code:", "aoki-native:", "aoki-native-dev:"].contains { trimmed.lowercased().hasPrefix($0) }
             ? trimmed
             : (firstURL(in: trimmed) ?? trimmed)
         let candidate = trimmingTrailingProsePunctuation(extracted)
@@ -118,7 +118,7 @@ enum ConnectionDetailsParser {
         let allItems = queryItems + fragmentItems
         let token = firstValue(named: tokenNames, in: allItems)
 
-        if ["t3", "t3code", "t3code-swiftui", "t3code-swiftui-dev"].contains(scheme) {
+        if ["t3", "t3code", "t3code-swiftui", "t3code-swiftui-dev", "aoki-native", "aoki-native-dev"].contains(scheme) {
             if let wrappedPairingURL = firstValue(named: wrappedPairingURLNames, in: allItems) {
                 var wrapped = try parse(wrappedPairingURL)
                 if wrapped.pairingCode == nil {
@@ -159,7 +159,7 @@ enum ConnectionDetailsParser {
 
     private static func firstURL(in input: String) -> String? {
         guard let expression = try? NSRegularExpression(
-            pattern: #"(?i)(?:(?:https?|wss?|t3)://|t3code(?:-swiftui(?:-dev)?)?:(?://)?)[^\s<>"']+"#
+            pattern: #"(?i)(?:(?:https?|wss?|t3)://|(?:t3code(?:-swiftui(?:-dev)?)?|aoki-native(?:-dev)?):(?://)?)[^\s<>"']+"#
         ) else {
             return nil
         }
@@ -244,7 +244,7 @@ enum ConnectionErrorCopy {
             return original
         }
         if message.isEmpty || message == "cancelled" || message == "canceled" {
-            return "The connection stopped before it finished. Make sure T3 Code is running, then try again."
+            return "The connection stopped before it finished. Make sure Aoki is running, then try again."
         }
         if message.contains("expired") || message.contains("invalid_credential")
             || message.contains("invalid credential") || message.contains("401") {
@@ -257,6 +257,6 @@ enum ConnectionErrorCopy {
             || message.contains("could not connect") || message.contains("not connected") {
             return "This iPhone could not reach the server. Check the address and network, then try again."
         }
-        return "T3 Code could not complete pairing. Check the server address and use a fresh pairing code."
+        return "Aoki could not complete pairing. Check the server address and use a fresh pairing code."
     }
 }

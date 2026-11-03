@@ -6,7 +6,7 @@ import Security
 import UIKit
 
 enum PlatformInstallationIdentity {
-    private static let service = "com.t3tools.t3code.swiftui.installation"
+    private static let service = "io.github.rockhounds.aoki.native.installation"
     private static let account = "device-id"
     private static let fallbackKey = "swift-ios.installation-id.v1"
 

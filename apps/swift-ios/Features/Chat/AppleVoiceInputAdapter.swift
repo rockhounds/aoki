@@ -39,7 +39,7 @@ private enum AppleVoiceInputError: Error {
 
 /// Voice failures show one short message in the composer. The real error goes
 /// here so a failure on a device can be read in Console.
-private let voiceInputLogger = Logger(subsystem: "com.t3tools.t3code", category: "VoiceInput")
+private let voiceInputLogger = Logger(subsystem: "io.github.rockhounds.aoki.native", category: "VoiceInput")
 
 private struct AppleVoiceAudioSessionConfiguration {
     let category: AVAudioSession.Category

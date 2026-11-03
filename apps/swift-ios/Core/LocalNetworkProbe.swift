@@ -24,7 +24,7 @@ public enum ConnectionProbeError: LocalizedError, Equatable, Sendable {
         case let .timeout(host):
             "\(host) did not respond in time."
         case let .likelyLocalNetworkDenied(host):
-            "Local Network access appears to be off for T3 Code. Allow it in Settings, then retry \(host)."
+            "Local Network access appears to be off for Aoki. Allow it in Settings, then retry \(host)."
         case let .serverRejected(status, message):
             "\(message) (HTTP \(status))"
         case let .transport(message):

@@ -28,9 +28,9 @@ require_cmd xcrun
   "T3_SWIFT_CONFIGURATION must be Debug or Release"
 
 if [[ "${CONFIGURATION}" == "Debug" ]]; then
-  BUNDLE_IDENTIFIER="com.t3tools.t3code.swiftui.dev"
+  BUNDLE_IDENTIFIER="io.github.rockhounds.aoki.native.dev"
 else
-  BUNDLE_IDENTIFIER="com.t3tools.t3code.swiftui"
+  BUNDLE_IDENTIFIER="io.github.rockhounds.aoki.native"
 fi
 WIDGET_BUNDLE_IDENTIFIER="${BUNDLE_IDENTIFIER}.widgets"
 SHARE_BUNDLE_IDENTIFIER="${BUNDLE_IDENTIFIER}.sharing"
