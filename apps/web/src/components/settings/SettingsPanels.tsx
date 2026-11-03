@@ -2586,9 +2586,7 @@ export function AboutSettingsPanel() {
           {...setting("privacy-policy")}
           description={
             telemetryOff === undefined
-              ? gt(
-                  "How we handle your data, including the pseudonymous product usage data T3 Code collects.",
-                )
+              ? gt("Upstream privacy policy for connected services and anonymous usage data.")
               : gt("How we handle your data. {telemetryOff}", { telemetryOff })
           }
           control={
@@ -2603,7 +2601,7 @@ export function AboutSettingsPanel() {
         />
         <SettingsRow
           {...setting("open-source-licenses")}
-          description={gt("Notices for dependencies, assets, and optional tools used by T3 Code.")}
+          description={gt("Notices for dependencies, assets, and optional tools used by Aoki.")}
           control={
             <Button
               render={<Link to="/settings/open-source-licenses" />}

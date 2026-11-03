@@ -172,7 +172,7 @@ function HostedPromptLinkLanding({
           </AlertTitle>
           <AlertDescription>
             {gt(
-              "{count, plural, one {T3 Code removed {count} hidden character. Read the prompt before you send it.} other {T3 Code removed {count} hidden characters. Read the prompt before you send it.}}",
+              "{count, plural, one {Aoki removed {count} hidden character. Read the prompt before you send it.} other {Aoki removed {count} hidden characters. Read the prompt before you send it.}}",
               { count: prompt.hiddenCharacters },
             )}
           </AlertDescription>

@@ -61,7 +61,7 @@ function showStarPrompt(environmentId: EnvironmentId) {
     });
   };
   const id = toastManager.add({
-    title: m(msg("Enjoying T3 Code?")),
+    title: m(msg("Support upstream T3 Code?")),
     description: m(msg("Give us a star on GitHub to let us know!")),
     timeout: 0,
     onClose: dismiss,

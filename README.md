@@ -1,3 +1,14 @@
+# Aoki
+
+Aoki is a tracking fork of [T3 Code](https://github.com/pingdotgg/t3code).
+See [AOKI.md](AOKI.md) for the fork workflow and local development setup, and
+[NOTICE](NOTICE) for upstream attribution and Aoki's MIT licensing.
+
+## Upstream T3 Code documentation
+
+The documentation below describes upstream T3 Code. Its downloads, hosted services,
+and app store links install or connect to upstream T3 Code.
+
 <p align="center">
   <a href="https://t3.codes">
     <img src="./assets/prod/t3-black-web-icon-192x192.png" width="80" height="80" alt="T3 Code logo" />

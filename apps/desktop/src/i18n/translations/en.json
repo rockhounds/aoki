@@ -1,5 +1,5 @@
 {
-  "743bb98558dcdddf": "T3 Code failed to start",
+  "743bb98558dcdddf": "Aoki failed to start",
   "45e444e807bececb": "This T3 home is unavailable",
   "97665653aa9129ad": "Checking for a newer version…",
   "dce25e68e60eb512": "Version {version} is available. It can contain a fix.",
@@ -15,7 +15,7 @@
   "4825d2a18a5fc093": "Copy details",
   "3874c9f538653a6d": "Quit",
   "0eec8b51246f5e2c": "The server wrote no output.",
-  "6cb1b68bddf39b35": "Version {version}. T3 Code tries again in the background. Logs: {logDir}",
+  "6cb1b68bddf39b35": "Version {version}. Aoki tries again in the background. Logs: {logDir}",
   "895f988b9de16f88": "WSL backend is still unavailable",
   "eeb7ea62dc4706c1": "T3 Code will use the Windows backend for this launch and retry WSL the next time the app starts.",
   "b5435aa5b470bafd": "WSL backend couldn't start",
