@@ -79,6 +79,15 @@
       "ios": {
         "image": "macos-tahoe-26.6-xcode-27.1"
       }
+    },
+    "aoki-device": {
+      "extends": "production",
+      "distribution": "internal",
+      "channel": "aoki-device",
+      "autoIncrement": false,
+      "env": {
+        "T3CODE_MOBILE_UPDATES_ENABLED": "0"
+      }
     }
   },
   "submit": {
@@ -86,9 +95,7 @@
       "extends": "production"
     },
     "production": {
-      "ios": {
-        "ascAppId": "6787819824"
-      },
+      "ios": {},
       "android": {
         "track": "internal"
       }
