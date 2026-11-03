@@ -284,7 +284,7 @@ final class PlatformNotificationService: NSObject, UNUserNotificationCenterDeleg
         case .success:
             "Task completed"
         case .warning:
-            "T3 Code needs you"
+            "Aoki needs you"
         case .error:
             "Task failed"
         }

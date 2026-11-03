@@ -391,10 +391,10 @@ final class NativeFeatureClient: FeatureClient, FeatureDeviceManaging,
             pairedClient = try await runtime.pair(
                 host: endpoint,
                 code: token,
-                clientLabel: "T3 Code Swift"
+                clientLabel: "Aoki"
             )
         } else {
-            pairedClient = try await runtime.pair(url: endpoint, clientLabel: "T3 Code Swift")
+            pairedClient = try await runtime.pair(url: endpoint, clientLabel: "Aoki")
         }
         revokedCacheEnvironmentIDs.remove(pairedClient.environment.id)
         await prepareReadCacheLeases([pairedClient.environment])
@@ -435,7 +435,7 @@ final class NativeFeatureClient: FeatureClient, FeatureDeviceManaging,
         }
         let authorization = try await t3ConnectController.managedAuthorizer.exchange(
             credential,
-            clientLabel: "T3 Code SwiftUI"
+            clientLabel: "Aoki"
         )
         guard authorization.environmentID == descriptor.environmentId,
               authorization.endpoint == credential.endpoint,
@@ -8449,7 +8449,7 @@ extension FeatureDeviceSession {
             label: relayDevice.label,
             deviceType: relayDevice.platform.lowercased().contains("ipad") ? .tablet : .mobile,
             operatingSystem: "iOS \(relayDevice.iosMajorVersion)",
-            browser: relayDevice.appVersion.map { "T3 Code \($0)" },
+            browser: relayDevice.appVersion.map { "Aoki \($0)" },
             issuedAt: updatedAt,
             expiresAt: .distantFuture,
             lastConnectedAt: updatedAt,

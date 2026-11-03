@@ -276,7 +276,7 @@ struct PullRequestPaginationTests {
             provider: .github,
             host: "github.com",
             projectId: "project",
-            projectTitle: "T3 Code",
+            projectTitle: "Aoki",
             repository: "pingdotgg/t3code",
             number: number,
             title: "Fix issue \(number)",

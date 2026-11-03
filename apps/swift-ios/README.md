@@ -1,8 +1,8 @@
-# T3 Code (SwiftUI)
+# Aoki
 
-A native SwiftUI client for T3 Code. The project targets iOS 17 and later on
+A native SwiftUI client for Aoki. The project targets iOS 17 and later on
 iPhone and iPad. It has its own bundle identifier and can be installed beside the
-React Native T3 Code app.
+React Native Aoki app.
 
 ## Requirements
 
@@ -61,7 +61,7 @@ the active selection are stored separately in Application Support.
 - DPoP-bound T3 Connect sessions with account-scoped relay credentials, APNs
   device registration on iOS 18+, and automatic credential recovery.
 
-The app requires Orchestrator V2. Update older T3 Code hosts before connecting.
+The app requires Orchestrator V2. Update older Aoki hosts before connecting.
 Saved connections, routes, and drafts remain available after updating the app.
 
 Hold Send during a running task to choose how to deliver a follow-up.
@@ -95,16 +95,19 @@ beside TestFlight:
 
 | Configuration | Display name    | Bundle identifier                | URL scheme           |
 | ------------- | --------------- | -------------------------------- | -------------------- |
-| Debug         | T3 Swift Dev    | `com.t3tools.t3code.swiftui.dev` | `t3code-swiftui-dev` |
-| Release       | T3 Code SwiftUI | `com.t3tools.t3code.swiftui`     | `t3code-swiftui`     |
+| Debug         | Aoki Dev    | `io.github.rockhounds.aoki.native.dev` | `aoki-native-dev` |
+| Release       | Aoki | `io.github.rockhounds.aoki.native`     | `aoki-native`     |
 
 Each identity also has matching widget and share-extension bundle identifiers
 and a separate App Group. Debug data and credentials therefore do not alter the
 TestFlight installation.
 
-The registered Debug App Group is `group.com.t3tools.t3code.swiftui.debug`.
-Its suffix differs from the `.dev` bundle identifier. Keep the host, widget,
-share extension, and shared-container code on that same group.
+The Debug App Group is `group.io.github.rockhounds.aoki.native.dev`.
+Debug uses `Extensions/Shared/AokiPersonal.entitlements`, retaining App Groups
+and omitting APNs, Sign in with Apple, and associated domains for Personal Teams.
+Release retains the full entitlements. Xcode must provision the same App Group
+for the host, widget, and share extension; an empty App Groups grant will not sign.
+Direct pairing works without Clerk cloud configuration.
 
 ## Verify
 

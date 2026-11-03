@@ -578,7 +578,7 @@ private func retryShellSnapshot() -> OrchestrationShellSnapshot {
         projects: [
             OrchestrationProject(
                 id: "project-1",
-                title: "T3 Code",
+                title: "Aoki",
                 workspaceRoot: "/work/t3",
                 repositoryIdentity: nil,
                 defaultModelSelection: model,

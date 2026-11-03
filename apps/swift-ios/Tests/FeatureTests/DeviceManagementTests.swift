@@ -62,7 +62,7 @@ struct DeviceManagementTests {
         #expect(session.displayName == "Theo’s iPhone")
         #expect(session.deviceType == .mobile)
         #expect(session.operatingSystem == "iOS 27")
-        #expect(session.browser == "T3 Code 1.0 (24)")
+        #expect(session.browser == "Aoki 1.0 (24)")
         #expect(session.isCurrent)
         #expect(session.lastConnectedAt == session.issuedAt)
     }

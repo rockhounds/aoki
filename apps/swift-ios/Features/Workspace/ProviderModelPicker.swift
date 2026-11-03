@@ -1697,7 +1697,7 @@ private struct ModelConfigurationView: View {
 
     private var undescribedOptionsMessage: String {
         let optionIDs = undescribedSelections.map(\.id).joined(separator: ", ")
-        return "This environment does not describe these saved options: \(optionIDs). T3 Code will keep them."
+        return "This environment does not describe these saved options: \(optionIDs). Aoki will keep them."
     }
 
     private func optionValueLabel(

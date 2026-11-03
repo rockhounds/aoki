@@ -242,7 +242,7 @@ public struct T3ConnectView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("No linked environments")
                         .font(T3Typography.homeTitle)
-                    Text("Link an environment in T3 Code on your computer.")
+                    Text("Link an environment in Aoki on your computer.")
                         .font(T3Typography.supporting)
                         .foregroundStyle(T3Colors.textSecondary)
 

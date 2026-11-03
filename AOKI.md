@@ -103,3 +103,12 @@ This profile uses ad hoc distribution and disables over-the-air updates.
 The Apple team must have a paid Developer Program membership and a provisioning
 profile that includes the target iPhone. For a free Personal Team, use the local
 Xcode build described in [the mobile development guide](apps/mobile/README.md).
+
+## SwiftUI app
+
+`apps/swift-ios` is the native SwiftUI client. Upstream has not merged it into its
+main branch, so Aoki imported it from the upstream branch
+`t3code/rebuild-mobile-app-swift` at build 68 (`f021c92cc9`) and keeps its own
+changes on top. The React Native app in `apps/mobile` is independent of the native
+Xcode project. See [the native build guide](apps/swift-ios/README.md) for local
+iPhone builds.
