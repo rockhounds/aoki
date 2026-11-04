@@ -59,7 +59,7 @@ struct T3SubscriptionUsageWidget: Widget {
                 .containerBackground(.black, for: .widget)
         }
         .configurationDisplayName("Subscription usage")
-        .description("Pooled Codex and Claude limits. Open T3 to refresh.")
+        .description("Pooled Codex and Claude limits. Open Aoki to refresh.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge, .accessoryRectangular])
     }
 }
@@ -90,7 +90,7 @@ private struct T3SubscriptionUsageView: View {
                 Spacer(minLength: 0)
                 Text(entry.snapshot.checkedAt.map {
                     "As of \($0.formatted(date: .abbreviated, time: .shortened))"
-                } ?? "Tap to connect in T3")
+                } ?? "Tap to connect in Aoki")
                     .font(.system(size: 10))
                     .foregroundStyle(.white.opacity(0.65))
                     .lineLimit(1)
@@ -119,7 +119,7 @@ private struct T3SubscriptionUsageView: View {
                     .lineLimit(1)
                 if accessory {
                     Spacer(minLength: 4)
-                    Text(shown.first.map { "\($0.remaining)% left" } ?? (missingPeriod ? "N/A" : "Open T3"))
+                    Text(shown.first.map { "\($0.remaining)% left" } ?? (missingPeriod ? "N/A" : "Open Aoki"))
                         .font(.system(size: 12, weight: .semibold))
                         .lineLimit(1)
                 }
@@ -171,7 +171,7 @@ private struct T3SubscriptionUsageView: View {
             }
             let total = period == .both ? provider.totalWindows : provider.windows.filter { $0.kind == period.rawValue }.count
             if !compact, provider.isFresh(at: now), total > shown.count {
-                Text("\(total - shown.count) more in T3")
+                Text("\(total - shown.count) more in Aoki")
                     .font(.system(size: 10))
                     .foregroundStyle(.white.opacity(0.65))
                     .lineLimit(1)

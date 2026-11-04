@@ -38,7 +38,7 @@ public enum ManagedAttachmentFileError: LocalizedError, Equatable, Sendable {
         case .empty:
             "The selected attachment is empty."
         case let .tooLarge(actualBytes, maximumBytes):
-            "The attachment is \(actualBytes) bytes. T3 accepts up to \(maximumBytes) bytes."
+            "The attachment is \(actualBytes) bytes. Aoki accepts up to \(maximumBytes) bytes."
         case .alreadyExists:
             "An owned attachment already exists for this ID."
         }

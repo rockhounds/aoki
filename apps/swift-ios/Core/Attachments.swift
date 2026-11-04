@@ -10,7 +10,7 @@ public enum ImageAttachmentError: LocalizedError, Equatable, Sendable {
         switch self {
         case .empty: "The selected image is empty."
         case let .tooLarge(actualBytes, maximumBytes):
-            "The image is \(actualBytes) bytes. T3 accepts up to \(maximumBytes) bytes."
+            "The image is \(actualBytes) bytes. Aoki accepts up to \(maximumBytes) bytes."
         case .invalidName: "The image needs a valid file name."
         case .invalidMIMEType: "The selected file is not a supported image."
         }
@@ -31,7 +31,7 @@ public enum FileAttachmentError: LocalizedError, Equatable, Sendable {
         switch self {
         case .empty: "The selected file is empty."
         case let .tooLarge(actualBytes, maximumBytes):
-            "The file is \(actualBytes) bytes. T3 accepts up to \(maximumBytes) bytes."
+            "The file is \(actualBytes) bytes. Aoki accepts up to \(maximumBytes) bytes."
         case .invalidName: "The file needs a valid name."
         case .invalidMIMEType: "The file needs a valid MIME type."
         case .invalidFileURL: "The attachment file is no longer available."

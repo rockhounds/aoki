@@ -206,7 +206,7 @@ public struct T3ConnectView: View {
                     .font(.title2)
                     .foregroundStyle(T3Colors.textSecondary)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(account.email ?? "T3 account")
+                    Text(account.email ?? "T3 Connect account")
                         .font(T3Typography.homeTitle)
                     Text("Signed in")
                         .font(T3Typography.supporting)
@@ -486,7 +486,8 @@ private struct T3ConnectAuthenticationView: View {
 
     private var brand: some View {
         HStack(spacing: 10) {
-            Text("T3")
+            Text("A")
+                .accessibilityLabel("Aoki")
                 .font(.system(size: 14, weight: .heavy, design: .rounded))
                 .foregroundStyle(T3Colors.primaryActionForeground)
                 .frame(width: 32, height: 32)

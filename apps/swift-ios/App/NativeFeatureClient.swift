@@ -9086,8 +9086,8 @@ private enum NativeFeatureClientError: LocalizedError {
         switch self {
         case .invalidPullRequestLink:
             "Use a supported pull request URL. Older servers need a project for its repository."
-        case .notConnected: "Connect to a T3 environment first."
-        case .environmentNotFound: "That T3 environment is no longer available."
+        case .notConnected: "Connect to an environment first."
+        case .environmentNotFound: "That environment is no longer available."
         case .projectNotFound: "The selected project is no longer available."
         case .threadNotFound: "The selected thread is no longer available."
         case .threadSnapshotOutdated: "The computer has not finished updating this thread. Try again."

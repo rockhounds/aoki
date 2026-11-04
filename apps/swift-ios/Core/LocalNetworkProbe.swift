@@ -18,7 +18,7 @@ public enum ConnectionProbeError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? {
         switch self {
         case .invalidURL:
-            "Enter a valid T3 server address."
+            "Enter a valid server address."
         case let .unavailableHost(host):
             "Could not reach \(host). Check that the server is running and both devices are online."
         case let .timeout(host):

@@ -150,7 +150,7 @@ private struct T3TaskWidgetView: View {
 
     private var header: some View {
         HStack(spacing: 6) {
-            Text("T3")
+            Text("Aoki")
                 .font(.system(size: 14, weight: .black, design: .rounded))
                 .foregroundStyle(.primary)
             Text("Code")
