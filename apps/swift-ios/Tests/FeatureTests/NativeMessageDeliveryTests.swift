@@ -462,9 +462,9 @@ private actor DeliveryWebSocketConnection: WebSocketConnection {
             if failDispatch { throw URLError(.networkConnectionLost) }
             value = .object(["sequence": .number(101)])
         case RPCMethod.serverGetConfig.rawValue:
-            value = config
-        case "server.getSettings":
-            value = .object([:])
+            guard case var .object(fields) = config else { throw URLError(.badServerResponse) }
+            fields["settings"] = fields["settings"] ?? .object([:])
+            value = .object(fields)
         case RPCMethod.subscribeServerConfig.rawValue:
             try enqueue(.object([
                 "_tag": .string("Chunk"), "requestId": id,

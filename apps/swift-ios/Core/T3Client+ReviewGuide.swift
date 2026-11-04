@@ -112,7 +112,7 @@ extension T3Client {
     }
 
     public func reviewGuidesEnabled() async throws -> Bool {
-        let settings = try await rpc.request("server.getSettings", as: ReviewGuideSettings.self)
+        let settings = try await fetchServerSettings(as: ReviewGuideSettings.self)
         return settings.reviewGuidesEnabled == true
     }
 
