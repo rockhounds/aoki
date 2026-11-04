@@ -34,4 +34,10 @@ Providers enforce permissions differently, and some read-only actions proceed ev
 - **Antigravity**: May still send native approval prompts in **Full access**.
 - **ACP Registry agents**: T3 Code answers their approval requests according to the selected mode; see [ACP Registry permissions](./providers-acp.md#permissions-and-terminals).
 
+On SwiftUI mobile, open **Thread actions**, then **Permissions**, to choose
+**Automatic** or **Full access** for that thread. New threads start in **Full access**.
+Existing threads keep their saved mode. If a thread uses **Supervised** or
+**Auto-accept edits**, SwiftUI mobile shows that saved mode as the current value.
+Choose **Automatic** or **Full access** to replace it.
+
 See the [provider guides](./install.md#providers) for provider-specific setup and limits.
