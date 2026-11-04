@@ -1037,6 +1037,14 @@ public actor T3Client {
         await rpc.subscribe("scheduledTasks.subscribe", as: ScheduledTaskListResult.self)
     }
 
+    /// Current servers have no list request; the first subscription event is the full list.
+    public func scheduledTaskSnapshot() async throws -> ScheduledTaskListResult {
+        let events = await rpc.subscribe("scheduledTasks.subscribe", reconnect: false,
+                                         as: ScheduledTaskListResult.self)
+        for try await result in events { return result }
+        throw RPCError.disconnected
+    }
+
     public func upsertScheduledTask(_ input: ScheduledTaskUpsertInput) async throws -> ScheduledTask {
         let result = try await rpc.request("scheduledTasks.upsert", payload: try JSONValue.encode(input),
                                            as: ScheduledTaskMutationResult.self)
