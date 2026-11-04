@@ -57,4 +57,10 @@ approvals for actions that support them.
 Kiro offers only **Supervised** and **Full access**. In **Supervised** Kiro also asks you to
 review a turn's file changes. See [Kiro permissions](./providers-kiro.md#permission-modes).
 
+On SwiftUI mobile, open **Thread actions**, then **Permissions**, to choose
+**Automatic** or **Full access** for that thread. New threads start in **Full access**.
+Existing threads keep their saved mode. If a thread uses **Supervised** or
+**Auto-accept edits**, SwiftUI mobile shows that saved mode as the current value.
+Choose **Automatic** or **Full access** to replace it.
+
 See the [provider guides](./install.md#providers) for setup and provider-specific limits.

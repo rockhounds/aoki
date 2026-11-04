@@ -186,7 +186,9 @@ export default defineConfig({
       // Vendored and generated C.
       "apps/mobile/modules/t3-highlights/Vendor/**",
       "apps/mobile/modules/t3-highlights/cpp/generated/**",
-      "apps/mobile/modules/t3-highlights/nitrogen/generated/**",
+"apps/mobile/modules/t3-highlights/nitrogen/generated/**",
+      // Wire fixtures have generator-owned formatting and frozen V1 checksums.
+      "apps/swift-ios/Tests/Fixtures/Wire/**",
       "*.icon/**",
     ],
     sortPackageJson: {},
