@@ -363,6 +363,8 @@ public enum OrchestrationV2Presentation {
                 result.activities.append(activity("user-input.answer-submitted", "Question answer submitted", fields: fields,
                     idSuffix: "answer", occurredAt: item.completedAt ?? request?.resolvedAt ?? item.updatedAt))
             }
+        case let .linkRequest(request):
+            result.activities = [activity("link.request", request.label ?? "Connect a machine")]
         case let .secretRequest(request):
             result.activities = [activity("secret.request", request.label)]
         case let .approval(requestID, requestKind, prompt):
