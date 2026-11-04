@@ -885,6 +885,7 @@ public enum OrchestrationV2TurnItemContent: Equatable, Sendable {
     case todoList(planID: String, steps: [OrchestrationV2PlanStep], explanation: String?)
     case userInput(requestID: String, questions: [OrchestrationV2InputQuestion], responseMode: String?)
     case approval(requestID: String, requestKind: String, prompt: String?)
+    case linkRequest(OrchestrationV2LinkRequest)
     case secretRequest(OrchestrationV2SecretRequest)
     case fileChange(fileName: String)
     case command(input: String, output: String?, exitCode: Int?)
@@ -928,7 +929,7 @@ public struct OrchestrationV2TurnItem: OrchestrationV2Record, Identifiable {
     }
     private static let knownTypes: Set<String> = [
         "user_message", "assistant_message", "reasoning", "proposed_plan", "todo_list",
-        "user_input_request", "approval_request", "secret_request", "file_change",
+        "user_input_request", "approval_request", "secret_request", "link_request", "file_change",
         "command_execution", "file_search", "web_search", "checkpoint", "run_interrupt_request",
         "run_interrupt_result", "system_notice", "error", "compaction", "handoff", "fork",
         "thread_created", "subagent", "dynamic_tool", "notification",
@@ -988,6 +989,7 @@ public struct OrchestrationV2TurnItem: OrchestrationV2Record, Identifiable {
             content = try .userInput(requestID: required("requestId"), questions: required("questions"), responseMode: optional("responseMode"))
         case "approval_request":
             content = try .approval(requestID: required("requestId"), requestKind: required("requestKind"), prompt: optional("prompt"))
+        case "link_request": content = .linkRequest(try OrchestrationV2LinkRequest(from: decoder))
         case "secret_request": content = .secretRequest(try OrchestrationV2SecretRequest(from: decoder))
         case "file_change": content = try .fileChange(fileName: required("fileName"))
         case "command_execution": content = try .command(input: required("input"), output: optional("output"), exitCode: optional("exitCode"))

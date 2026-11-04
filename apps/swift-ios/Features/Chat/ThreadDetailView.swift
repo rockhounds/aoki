@@ -1370,6 +1370,7 @@ public struct ThreadDetailView: View {
                     skills: threadProviderSkills,
                     v2Inspection: v2InspectionContext,
                     secretContext: secretRequestContext,
+                    linkContext: linkRequestContext,
                     embeddedContext: embeddedContentContext,
                     workflows: detail.workflows ?? .unavailable,
                     isWorkflowBusy: isUpdatingWorkflow,
@@ -1714,6 +1715,13 @@ public struct ThreadDetailView: View {
             from: nil,
             for: nil
         )
+    }
+
+    private var linkRequestContext: FeatureLinkRequestContext? {
+        (model.client as? any FeatureLinkRequestAnswering).map {
+            FeatureLinkRequestContext(threadID: thread.id, client: $0, saved: model.snapshotExceptThreads.environments,
+                canAnswer: model.client.permissions(forThreadID: thread.id)?.grants("access:write"))
+        }
     }
 
     private var secretRequestContext: FeatureSecretRequestContext? {
@@ -2949,6 +2957,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
     let skills: [FeatureProviderSkill]
     let v2Inspection: FeatureV2ItemInspectionContext?
     let secretContext: FeatureSecretRequestContext?
+    let linkContext: FeatureLinkRequestContext?
     let embeddedContext: FeatureEmbeddedContentContext?
     let workflows: FeatureThreadWorkflows
     let isWorkflowBusy: Bool
@@ -3002,7 +3011,9 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
             || context.coordinator.currentV2Inspection?.providers != v2Inspection?.providers
             || context.coordinator.currentEmbeddedContext?.canEnterFullscreen != embeddedContext?.canEnterFullscreen
             || context.coordinator.currentSecretContext?.canAnswer != secretContext?.canAnswer
+            || context.coordinator.currentLinkContext?.canAnswer != linkContext?.canAnswer
         context.coordinator.currentV2Inspection = v2Inspection
+        context.coordinator.currentLinkContext = linkContext
         context.coordinator.currentSecretContext = secretContext
         context.coordinator.currentEmbeddedContext = embeddedContext
         context.coordinator.onFork = onFork
@@ -3094,6 +3105,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
         var canEditPendingMessage: ((String) -> Bool)?
         var onEditPendingMessage: ((String) -> Void)?
         var currentV2Inspection: FeatureV2ItemInspectionContext?
+        var currentLinkContext: FeatureLinkRequestContext?
         var currentSecretContext: FeatureSecretRequestContext?
         var currentEmbeddedContext: FeatureEmbeddedContentContext?
         var onFork: ((FeatureThreadWorkflowSource) -> Void)?
@@ -3322,6 +3334,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
                             skills: self?.currentSkills ?? [],
                             v2Inspection: self?.currentV2Inspection,
                             secretContext: self?.currentSecretContext,
+                            linkContext: self?.currentLinkContext,
                             embeddedContext: self?.currentEmbeddedContext,
                             environmentID: self?.currentEnvironmentID,
                             agents: self?.currentWorkflows.agents ?? [],
@@ -4723,6 +4736,7 @@ struct FeatureMessageView: View {
     var skills: [FeatureProviderSkill] = []
     var v2Inspection: FeatureV2ItemInspectionContext? = nil
     var secretContext: FeatureSecretRequestContext? = nil
+    var linkContext: FeatureLinkRequestContext? = nil
     var embeddedContext: FeatureEmbeddedContentContext? = nil
     var environmentID: String? = nil
     var agents: [FeatureThreadAgent] = []
@@ -4844,6 +4858,9 @@ struct FeatureMessageView: View {
             if let items = message.v2WorkItems, items.count == 1, let item = items.first,
                item.source.itemType == "secret_request" {
                 FeatureSecretRequestCard(item: item, context: secretContext).id(item.id)
+            } else if let items = message.v2WorkItems, items.count == 1, let item = items.first,
+                      item.source.itemType == "link_request" {
+                FeatureLinkRequestCard(item: item, context: linkContext).id(item.id)
             } else if let items = message.v2WorkItems, items.count == 1, let item = items.first,
                       item.hasEmbeddedContent, let embeddedContext {
                 FeatureEmbeddedContentView(item: item, context: embeddedContext).id(item.id)

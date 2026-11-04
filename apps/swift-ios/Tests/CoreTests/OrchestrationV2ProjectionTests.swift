@@ -3,6 +3,36 @@ import XCTest
 @testable import T3Code
 
 final class OrchestrationV2ProjectionTests: XCTestCase {
+    func testLinkRequestSurvivesSnapshotAndStatusUpdate() throws {
+        let request = V2Fixture.patch(V2Fixture.assistant("link", ordinal: 1), [
+            "type": .string("link_request"), "reason": .string("Work on the server"),
+            "requestedAccess": .string("full-access"), "linkStatus": .string("pending"),
+        ])
+        var state = try OrchestrationV2ThreadState(snapshot: V2Fixture.snapshot(items: [request]))
+        XCTAssertEqual(state.projection.turnItems.map(\.id), ["link"])
+        XCTAssertEqual(state.projection.visibleTurnItems.map(\.sourceItemId), ["link"])
+        let linked = V2Fixture.patch(request, ["linkStatus": .string("linked")])
+        XCTAssertFalse(state.apply([V2Fixture.event("turn-item.updated", payload: linked, sequence: 11)]).refreshRequired)
+        XCTAssertEqual(state.projection.turnItems.first?.raw["linkStatus"]?.stringValue, "linked")
+    }
+
+    func testLinkRequestStatusesAndProjectedOriginsRemainVisible() throws {
+        for status in ["pending", "linked", "declined", "cancelled", "failed"] {
+            for visibility in ["local", "inherited", "synthetic"] {
+                let request = V2Fixture.item("link", type: "link_request", ordinal: 1, fields: [
+                    "reason": .string("Work there"), "linkStatus": .string(status),
+                    "requestedAccess": .string("full-access"),
+                ])
+                let snapshot = V2Fixture.snapshot(fields: ["visibleTurnItems": .array([V2Fixture.row(request, visibility: visibility)])])
+                let activity = try XCTUnwrap(OrchestrationV2ThreadState(snapshot: snapshot).normalizedSnapshot().thread.activities.first)
+                XCTAssertEqual(activity.kind, "link.request")
+                XCTAssertEqual(activity.v2Timeline?.visibility, visibility)
+                XCTAssertEqual(activity.v2Timeline?.sourceThreadID, "thread")
+                XCTAssertEqual(activity.v2Timeline?.itemID, "link")
+            }
+        }
+    }
+
     func testUnknownItemsAreSkippedInSnapshotsAndHistoryWithoutLosingCursors() throws {
         let known = V2Fixture.assistant("answer", ordinal: 2)
         // No known base fields are needed on an unknown variant.
