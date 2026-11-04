@@ -37,7 +37,7 @@ extension NativeFeatureClient: FeatureScheduledTaskManaging {
                             throw error
                         }
                         // Hosts with only the list endpoint still support management and manual refresh.
-                        let tasks = try await self.listScheduledTasks(environmentID: environmentID)
+                        let tasks = try await client.listScheduledTasks().tasks
                         try Task.checkCancellation()
                         continuation.yield(.init(tasks: tasks, receivesLiveUpdates: false))
                     }
