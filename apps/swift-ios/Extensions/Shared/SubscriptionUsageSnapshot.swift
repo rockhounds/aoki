@@ -24,7 +24,7 @@ struct T3SubscriptionUsageSnapshot: Codable, Equatable, Sendable {
         func isFresh(at now: Date) -> Bool { expiresAt.map { $0 > now } ?? false }
 
         func detail(at now: Date) -> String {
-            if !windows.isEmpty && !isFresh(at: now) { return "Open T3 to refresh" }
+            if !windows.isEmpty && !isFresh(at: now) { return "Open Aoki to refresh" }
             if hasPartialData { return "Some limits unavailable" }
             if windows.isEmpty { return "No limits available" }
             return accountCount > 1 ? "\(accountCount) accounts · pooled" : "Subscription remaining"

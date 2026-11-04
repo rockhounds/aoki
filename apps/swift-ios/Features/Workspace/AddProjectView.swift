@@ -120,7 +120,7 @@ public struct AddProjectView: View {
                     ContentUnavailableView(
                         "Environment unavailable",
                         systemImage: "server.rack",
-                        description: Text("Reconnect a T3 environment before adding a project.")
+                        description: Text("Reconnect an environment before adding a project.")
                     )
                 }
             }

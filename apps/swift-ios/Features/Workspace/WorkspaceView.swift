@@ -733,12 +733,9 @@ public struct WorkspaceView: View {
         } else {
             Button { showingEnvironments = true } label: {
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text("T3")
+                    Text("Aoki")
                         .fontWeight(.bold)
                         .foregroundStyle(T3Colors.textPrimary)
-                    Text("Code")
-                        .fontWeight(.medium)
-                        .foregroundStyle(T3Colors.textSecondary)
                     Image(systemName: "chevron.down")
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundStyle(T3Colors.textTertiary)

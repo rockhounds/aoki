@@ -29,7 +29,7 @@ struct T3ConnectEnvironmentPresentation: Identifiable, Equatable {
     }
 
     var name: String {
-        linkedEnvironment?.environment.label ?? savedEnvironment?.name ?? "T3 environment"
+        linkedEnvironment?.environment.label ?? savedEnvironment?.name ?? "Environment"
     }
 
     var isEnabled: Bool {
