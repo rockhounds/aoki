@@ -71,6 +71,9 @@ enum FeatureV2ItemDetail {
     static func body(_ raw: JSONValue) -> String? {
         switch raw["type"]?.stringValue {
         case "command_execution", "dynamic_tool", "file_search", "web_search": return nil
+        case "link_request":
+            return [raw["label"]?.stringValue, raw["reason"]?.stringValue, raw["linkStatus"]?.stringValue]
+                .compactMap(nonempty).joined(separator: "\n")
         case "secret_request":
             return [raw["label"]?.stringValue, raw["reason"]?.stringValue, raw["secretStatus"]?.stringValue]
                 .compactMap(nonempty).joined(separator: "\n")

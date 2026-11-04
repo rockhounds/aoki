@@ -45,7 +45,7 @@ public struct FeatureV2WorkItem: Identifiable, Codable, Equatable, Hashable, Sen
     }
 
     var isStandaloneContent: Bool {
-        source.itemType == "secret_request" || hasEmbeddedContent
+        ["secret_request", "link_request"].contains(source.itemType) || hasEmbeddedContent
     }
 
     var groupingKey: GroupingKey? {
