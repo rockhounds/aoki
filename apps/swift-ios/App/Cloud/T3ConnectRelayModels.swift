@@ -48,7 +48,7 @@ public struct T3ConnectRelayEnvironmentStatus: Codable, Equatable, Sendable {
 
     public var offlineMessage: String {
         if offlineReason == "tunnel_released" {
-            return "Start or update T3 Code on this computer to reconnect its tunnel."
+            return "Start or update Aoki on this computer to reconnect its tunnel."
         }
         return error ?? "Offline"
     }

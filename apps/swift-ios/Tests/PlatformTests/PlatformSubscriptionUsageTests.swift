@@ -102,7 +102,7 @@ struct PlatformSubscriptionUsageTests {
         #expect(snapshot.timelineDates(from: now) == [now, now.addingTimeInterval(5 * 60)])
         #expect(provider.visibleWindows(period: "both", limit: 2, at: now).count == 1)
         #expect(provider.visibleWindows(period: "both", limit: 2, at: now.addingTimeInterval(5 * 60)).isEmpty)
-        #expect(provider.detail(at: now.addingTimeInterval(5 * 60)) == "Open T3 to refresh")
+        #expect(provider.detail(at: now.addingTimeInterval(5 * 60)) == "Open Aoki to refresh")
         #expect(provider.windows.first?.remaining == 20)
         #expect(snapshot.timelineDates(from: now.addingTimeInterval(20 * 60)) == [now.addingTimeInterval(20 * 60)])
     }
@@ -128,7 +128,7 @@ struct PlatformSubscriptionUsageTests {
             try UsageLimitTestFixtures.provider(limits: UsageLimitTestFixtures.limits(checkedAt: "invalid")),
         ])])
         #expect(invalid.providers.first?.expiresAt == nil)
-        #expect(invalid.providers.first?.detail(at: UsageLimitTestFixtures.now) == "Open T3 to refresh")
+        #expect(invalid.providers.first?.detail(at: UsageLimitTestFixtures.now) == "Open Aoki to refresh")
     }
 
     @Test
