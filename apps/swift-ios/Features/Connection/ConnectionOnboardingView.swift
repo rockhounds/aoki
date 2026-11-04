@@ -139,7 +139,7 @@ public struct ConnectionOnboardingView: View {
             VStack(alignment: .leading, spacing: 0) {
                 Spacer(minLength: 36)
 
-                Text("T3")
+                Text("Aoki")
                     .font(.system(size: 34, weight: .black, design: .rounded))
                     .foregroundStyle(Color(red: 0.02, green: 0.74, blue: 0.5))
                     .accessibilityLabel("Aoki")
@@ -545,7 +545,7 @@ public struct ConnectionOnboardingView: View {
         guard let value = UIPasteboard.general.string, !value.isEmpty else {
             entryHeading = "Connect manually"
             stage = .details
-            errorMessage = "Copy a T3 pairing link first, or enter the details below."
+            errorMessage = "Copy an Aoki pairing link first, or enter the details below."
             focusedField = .endpoint
             return
         }

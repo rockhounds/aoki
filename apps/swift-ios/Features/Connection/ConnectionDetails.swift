@@ -13,11 +13,11 @@ enum ConnectionDetailsError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .empty:
-            "Paste a T3 pairing link or enter your server address."
+            "Paste an Aoki pairing link or enter your server address."
         case .invalidAddress:
             "That connection link does not include a valid server address."
         case .unsupportedScheme:
-            "Use an HTTP or HTTPS T3 server address."
+            "Use an HTTP or HTTPS server address."
         }
     }
 }

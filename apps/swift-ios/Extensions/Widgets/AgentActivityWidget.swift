@@ -13,7 +13,7 @@ struct T3TaskLiveActivity: Widget {
             let presentation = T3ActivityPresentation(state: context.state, isStale: context.isStale)
             return DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    Text("T3")
+                    Text("Aoki")
                         .font(.system(size: 14, weight: .black, design: .rounded))
                         .foregroundStyle(presentation.tint)
                         .padding(.leading, 4)
@@ -44,7 +44,7 @@ struct T3TaskLiveActivity: Widget {
                     .padding(.bottom, 2)
                 }
             } compactLeading: {
-                Text("T3")
+                Text("Aoki")
                     .font(.system(size: 11, weight: .black, design: .rounded))
                     .foregroundStyle(presentation.tint)
             } compactTrailing: {
