@@ -241,7 +241,16 @@ public actor T3Client {
 
     /// Read before replacing an override entry, including changes from other clients.
     public func serverSettings() async throws -> ServerSettingsSnapshot {
-        try await rpc.request("server.getSettings", as: ServerSettingsSnapshot.self)
+        try await fetchServerSettings(as: ServerSettingsSnapshot.self)
+    }
+
+    private struct ServerConfigSettings<Settings: Decodable & Sendable>: Decodable, Sendable {
+        let settings: Settings
+    }
+
+    // The standalone settings request was removed from servers; the config response carries the same settings.
+    func fetchServerSettings<Settings: Decodable & Sendable>(as type: Settings.Type) async throws -> Settings {
+        try await rpc.request(RPCMethod.serverGetConfig.rawValue, as: ServerConfigSettings<Settings>.self).settings
     }
 
     public func updateSettings(_ change: ServerSettingsChange) async throws
@@ -300,7 +309,7 @@ public actor T3Client {
     }
 
     public func setProviderEnabled(instanceID: String, driver: String, enabled: Bool) async throws {
-        let settings = try await rpc.request("server.getSettings", as: JSONValue.self)
+        let settings = try await fetchServerSettings(as: JSONValue.self)
         let patch = ProviderSettingsPatch.enabled(settings: settings, instanceID: instanceID, driver: driver, enabled: enabled)
         let _: JSONValue = try await rpc.request("server.updateSettings", payload: .object(["patch": patch]), as: JSONValue.self)
     }
