@@ -4,6 +4,14 @@ extension NativeFeatureClient: FeatureScheduledTaskManaging {
     func listScheduledTasks(environmentID: String) async throws -> [ScheduledTask] {
         let client = try await environmentServiceClient(environmentID: environmentID)
         do {
+            return try await client.scheduledTaskSnapshot().tasks
+        } catch {
+            guard FeatureScheduledTaskError.isUnsupportedRPC(error, method: "scheduledTasks.subscribe") else {
+                throw error
+            }
+        }
+        // Hosts that predate the subscription only answer the list request.
+        do {
             return try await client.listScheduledTasks().tasks
         } catch {
             if FeatureScheduledTaskError.isUnsupportedRPC(error, method: "scheduledTasks.list") {
