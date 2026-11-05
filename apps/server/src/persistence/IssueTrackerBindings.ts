@@ -44,7 +44,7 @@ export class IssueTrackerBindingsRepository extends Context.Service<
       tracker: IssueTrackerKind,
     ) => Effect.Effect<void, IssueTrackerBindingsRepositoryError>;
   }
->()("t3/persistence/IssueTrackerBindings/IssueTrackerBindingsRepository") {}
+>()("aoki/persistence/IssueTrackerBindings/IssueTrackerBindingsRepository") {}
 
 const encodeAdditionalScopes = Schema.encodeEffect(BindingRow.fields.additionalScopes);
 

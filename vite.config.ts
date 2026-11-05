@@ -6,7 +6,7 @@ import { cachedTestTasks } from "./scripts/lib/cached-tests.ts";
 
 const TEST_EXCLUDE = [
   "**/.repos/**",
-  "**/.t3/**",
+  "**/.aoki/**",
   "**/node_modules/**",
   "**/dist/**",
   "**/dist-electron/**",
@@ -199,7 +199,7 @@ export default defineConfig({
       // Vendored and generated C.
       "apps/mobile/modules/t3-highlights/Vendor/**",
       "apps/mobile/modules/t3-highlights/cpp/generated/**",
-"apps/mobile/modules/t3-highlights/nitrogen/generated/**",
+      "apps/mobile/modules/t3-highlights/nitrogen/generated/**",
       // Wire fixtures have generator-owned formatting and frozen V1 checksums.
       "apps/swift-ios/Tests/Fixtures/Wire/**",
       "*.icon/**",
@@ -393,7 +393,7 @@ export default defineConfig({
         rules: { "t3code/no-global-process-runtime": "off" },
       },
       {
-        // The `t3` npm launcher is published as plain, dependency-free Node.
+        // The `aoki` npm launcher is published as plain, dependency-free Node.
         files: ["scripts/npm-launcher/**"],
         rules: {
           "t3code/no-global-process-runtime": "off",

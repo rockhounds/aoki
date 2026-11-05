@@ -6,7 +6,7 @@ struct FeatureV2ServerNoticeAttributionTests {
     @Test @MainActor func restartContinuationIsAttributedToT3Code() throws {
         let source = try metadata(creationSource: "server")
 
-        #expect(FeatureV2MessageAttribution.attribution(source) == .t3code)
+        #expect(FeatureV2MessageAttribution.attribution(source) == .aoki)
         #expect(FeatureV2MessageAttribution.hasContent(source))
     }
 

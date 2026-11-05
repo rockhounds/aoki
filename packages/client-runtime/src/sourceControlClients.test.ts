@@ -96,9 +96,9 @@ describe("sourceControlClients.parseChangeRequestUrl", () => {
   });
 
   it("reads a GitLab merge request on any host, nested groups and all", () => {
-    expect(parse("https://gitlab.com/t3tools/platform/t3code/-/merge_requests/42")).toEqual({
+    expect(parse("https://gitlab.com/t3tools/platform/aoki/-/merge_requests/42")).toEqual({
       host: "gitlab.com",
-      repository: "t3tools/platform/t3code",
+      repository: "t3tools/platform/aoki",
       number: 42,
     });
     expect(parse("https://code.acme.test/team/project/-/merge_requests/9")).toEqual({

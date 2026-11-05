@@ -12,14 +12,14 @@ Sharing & access**, sign in, and enable **T3 Connect** for that environment.
 For a command-line host, run:
 
 ```bash
-t3 up
+aoki up
 ```
 
 It asks how your other devices reach the machine: T3 Connect, the local network,
 or both. Choose T3 Connect and follow the sign-in instructions. It then runs
 T3 Code as a [background service](./background-service.md).
-`t3 connect` is the same as `t3 up --connect`. Run `t3 up` again to change your
-choice, and `t3 status` to see it.
+`aoki connect` is the same as `aoki up --connect`. Run `aoki up` again to change your
+choice, and `aoki status` to see it.
 
 Instead of the background service, you can keep the desktop app running with
 its local environment enabled. Closing the desktop app's last window stops its
@@ -65,15 +65,15 @@ cannot show the code, so update them before you turn approval on.
 
 ### Scripts and agents
 
-`t3 up` asks nothing when you name a choice: `--connect`, `--lan`, or their
+`aoki up` asks nothing when you name a choice: `--connect`, `--lan`, or their
 `--no-` forms. Choices you do not name keep their settings, and `--yes` takes
 the defaults. Without a terminal:
 
 - T3 Connect sign-in prints a URL and a code. Approve it on any device.
 - A needed restart runs without asking, and stops running agent turns.
-- With nothing set up and no choice named, `t3 up` stops and names the flags.
+- With nothing set up and no choice named, `aoki up` stops and names the flags.
 
-`t3 status --json` prints the settings. `t3 up --help` lists every flag with
+`aoki status --json` prints the settings. `aoki up --help` lists every flag with
 examples.
 
 ### More machines with T3 Chat
@@ -96,20 +96,20 @@ On a desktop host, open **Settings → Sharing & access**, enable **Network acce
 then create a pairing link using an address the other device can reach. Changing
 network access restarts the desktop app. You can turn it off in the same place.
 
-For a command-line host, choose the local network in `t3 up`, or run:
+For a command-line host, choose the local network in `aoki up`, or run:
 
 ```bash
-t3 up --lan
+aoki up --lan
 ```
 
-For a server in a terminal, run `t3 serve --lan`. Either way, T3 Code then
+For a server in a terminal, run `aoki serve --lan`. Either way, T3 Code then
 accepts connections from your local network and tailnet, so a pairing code is
 all that keeps other devices on them out.
 
 If a server is already running, generate a fresh link without restarting it:
 
 ```bash
-t3 pair
+aoki pair
 ```
 
 Scan the QR code on your phone or paste the pairing URL into **Add environment**
@@ -117,7 +117,7 @@ in the receiving app. Connection settings are under **Settings → Environments*
 on web and desktop and **Settings → Environments** on mobile. A loopback address
 such as `127.0.0.1` reaches only the device opening the link.
 
-On a computer with the desktop app, you can open the printed `t3code://pair`
+On a computer with the desktop app, you can open the printed `aoki://pair`
 app link instead. The desktop app asks you to confirm the server address, then
 adds it.
 
@@ -152,7 +152,7 @@ pairing once through T3 Connect is enough to use the LAN at home. When the
 machine's LAN address changes, for example after it joins another Wi-Fi network,
 the learned route follows it. The machine must allow network access for its LAN
 address to be learned: **Network access** in the desktop app, or the
-[local network](./background-service.md#local-network-access) choice in `t3 up`.
+[local network](./background-service.md#local-network-access) choice in `aoki up`.
 You can reorder a learned route, but not remove it; it
 goes away with the route it was learned through, or when the machine stops
 reporting that address.
@@ -211,13 +211,13 @@ add the HTTPS route.
 To start a command-line server with Tailscale HTTPS:
 
 ```bash
-t3 serve --tailscale-serve
+aoki serve --tailscale-serve
 ```
 
 For an already-running server:
 
 ```bash
-t3 pair --tailscale
+aoki pair --tailscale
 ```
 
 The pairing link uses an address such as `https://machine.tailnet.ts.net/`.
@@ -229,7 +229,7 @@ tailscale serve --https=443 --set-path=/ off
 ```
 
 If that port is already in use, choose another with
-`--tailscale-serve-port`. See `t3 pair --help` for other pairing options.
+`--tailscale-serve-port`. See `aoki pair --help` for other pairing options.
 
 ### Hosted web app
 
@@ -250,7 +250,7 @@ credentials, and agent work stay on the remote machine.
 
 The remote host must be Linux or an Apple Silicon Mac with `curl` or `wget`,
 `tar`, `sha256sum` or `shasum`, and [provider setup](./install.md#providers).
-The first launch downloads T3 Code's server to `~/.t3/runtime` on the host, so
+The first launch downloads T3 Code's server to `~/.aoki/runtime` on the host, so
 it takes longer than later ones.
 Provider CLIs must be on the `PATH` of a non-interactive login shell there;
 check with:
@@ -277,8 +277,8 @@ running is left alone.
 
 Each desktop app keeps one session on the host for its SSH connection and reuses
 it when it reconnects. Revoke sessions you no longer use in **Settings →
-Sharing & access** on the host, or on a headless host with `t3 auth session list` and
-`t3 auth session revoke <id>`. A desktop that can still sign in over SSH pairs
+Sharing & access** on the host, or on a headless host with `aoki auth session list` and
+`aoki auth session revoke <id>`. A desktop that can still sign in over SSH pairs
 again on its next connect.
 
 For Antigravity's Google callback on a remote host, see
@@ -365,7 +365,7 @@ listed port opens as `http://localhost:<port>` and might not be a web page. For
 an HTTPS server or a specific path, set the **Preview URL** on the project
 script that starts it; T3 Code checks that address and opens it as written.
 
-To stop listing ports, set `T3CODE_PORT_DISCOVERY=0` in the environment that
+To stop listing ports, set `AOKI_PORT_DISCOVERY=0` in the environment that
 starts the T3 Code server, such as
 [`service.env`](./background-service.md#configure-the-service-environment) for
 the background service, and restart it. Script preview URLs still appear.
@@ -379,12 +379,12 @@ the server says so at startup, and browser tabs and HTML previews show the
 command to run on the host:
 
 ```sh
-sudo t3 browser setup
+sudo aoki browser setup
 ```
 
 The server shows the exact line for how you started it, and keeps your `PATH`
-when you started it with `npx` and Node is installed only for your user. Where `t3` is not on your `PATH`, such as with only the
-desktop app installed, it names the full path of the app's own `t3` instead. It allows Chrome's sandbox with an AppArmor profile and installs
+when you started it with `npx` and Node is installed only for your user. Where `aoki` is not on your `PATH`, such as with only the
+desktop app installed, it names the full path of the app's own `aoki` instead. It allows Chrome's sandbox with an AppArmor profile and installs
 any missing libraries and system fonts with apt; pages that load without text
 can mean the host has no fonts. It is safe to run again, and each run reloads
 the AppArmor profile: run it again if the browser reports a blocked sandbox on a
@@ -393,17 +393,17 @@ without being loaded. Without `sudo`, it only reports what it would change.
 
 The browser runs in Chrome's sandbox by default. Chrome cannot start that sandbox
 as root. If your T3 server runs as root, run it as a nonroot user to keep
-sandboxing enabled. `t3 browser setup` does not fix this root restriction.
+sandboxing enabled. `aoki browser setup` does not fix this root restriction.
 
 If you need to run as root, or cannot enable the sandbox on your host, set
-`T3CODE_SERVER_BROWSER_SANDBOX=0` in the **T3 server's environment** and restart
+`AOKI_SERVER_BROWSER_SANDBOX=0` in the **T3 server's environment** and restart
 the server. This disables Chrome's sandbox. For a manual launch:
 
 ```sh
-T3CODE_SERVER_BROWSER_SANDBOX=0 t3 serve
+AOKI_SERVER_BROWSER_SANDBOX=0 aoki serve
 ```
 
-For a systemd service, add `Environment=T3CODE_SERVER_BROWSER_SANDBOX=0` under
+For a systemd service, add `Environment=AOKI_SERVER_BROWSER_SANDBOX=0` under
 `[Service]` in its configuration, run `sudo systemctl daemon-reload`, then restart
 your T3 service. Setting the variable in an agent's terminal does not change the
 environment of an already running T3 server.
@@ -437,7 +437,7 @@ app has an address for that machine and is connected to it with a session that
 manages access there, it makes the pairing code itself; otherwise paste one
 from that machine's **Settings → Sharing & access**. An address you type always
 needs a pasted code. From a terminal, use
-`t3 environment link <address> --pairing-code <code> --access <mode>`.
+`aoki environment link <address> --pairing-code <code> --access <mode>`.
 
 To link many machines at once, choose **Link several…** (it appears once this
 app has two other machines saved). Tick the machines, pick one access level for
@@ -562,7 +562,7 @@ any other thread on web and desktop, and a shorter read-only list on mobile.
 On the host, **Settings → Sharing & access** lets authorized administrators create
 pairing links and revoke client sessions. Revoking an unused link prevents new
 pairings; revoke a device's session to remove its existing access. Command-line
-management is available through `t3 auth --help`.
+management is available through `aoki auth --help`.
 
 When the app connects to more than one environment, choose one at the top of the
 page. A desktop app with **Local environment** off can manage a background
@@ -574,11 +574,11 @@ expires.
 To choose a token's permissions, pass `--scope` once for each scope you want:
 
 ```sh
-t3 pair --scope orchestration:read --scope relay:read
+aoki pair --scope orchestration:read --scope relay:read
 ```
 
 The selected scopes replace the default permissions. The same option works with
-`t3 auth pairing create` and `t3 auth session issue`; each command's
+`aoki auth pairing create` and `aoki auth session issue`; each command's
 `--help` lists the available scopes. Without `--scope`, pairing tokens and issued
 bearer sessions get the standard client permissions, including managing access.
 Setting up or replacing a T3 Connect link requires the separate `relay:configure` permission.
@@ -637,7 +637,7 @@ and the startup pairing link include all three; a pairing link created in
 **Settings → Sharing & access** needs `relay:configure` selected. You can also
 run `t3 connect link` on the host and then restart T3 Code there. A
 command-line host that released its tunnel when it last stopped may link itself
-again on its next start; run `t3 connect unlink` on that host to keep it off.
+again on its next start; run `aoki connect unlink` on that host to keep it off.
 Removing an environment from a device's connection settings only forgets it on
 that device and doesn't change your T3 Connect account. A device keeps a saved
 environment after it's deregistered until you remove it from that device.
@@ -653,8 +653,8 @@ T3 Code once it has been offline for seven days. That environment shows a messag
 asking you to update. Start T3 Code on that computer and update it to the latest
 version; it reconnects at the same address without pairing again.
 
-On a command-line host, `t3 connect unlink` disables exposure while retaining
-your login; `t3 connect logout` also clears that login. Background-service
+On a command-line host, `aoki connect unlink` disables exposure while retaining
+your login; `aoki connect logout` also clears that login. Background-service
 [removal](./background-service.md#manage-the-service) is separate.
 
 Treat pairing URLs and authorization codes as passwords. Do not include them in

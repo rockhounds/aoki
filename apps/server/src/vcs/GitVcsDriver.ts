@@ -153,7 +153,7 @@ export interface CreateWorktreeProgress {
   }) => Effect.Effect<void, never>;
   readonly onSubmodulesStarted?: () => Effect.Effect<void, never>;
   readonly onSubmodulesDisabled?: (input: {
-    source: "settings" | "t3.json";
+    source: "settings" | "aoki.json";
   }) => Effect.Effect<void, never>;
   readonly onSubmoduleLine?: (line: string) => Effect.Effect<void, never>;
   readonly onSubmodulesFinished?: (input: {
@@ -164,7 +164,7 @@ export interface CreateWorktreeProgress {
 
 export interface CreateWorktreeOptions {
   readonly progress?: CreateWorktreeProgress;
-  /** Null or omitted defers to the checkout's t3.json. */
+  /** Null or omitted defers to the checkout's aoki.json. */
   readonly submodules?: WorktreeSubmodules | null;
   readonly worktreesDirectory?: string;
   /** Clone the checkout from the macOS worktree checkout cache. */
@@ -508,7 +508,7 @@ export class GitVcsDriver extends Context.Service<
     readonly invalidateRefs: (cwd: string) => Effect.Effect<void>;
     readonly listLocalBranchNames: (cwd: string) => Effect.Effect<string[], GitCommandError>;
   }
->()("t3/vcs/GitVcsDriver") {}
+>()("aoki/vcs/GitVcsDriver") {}
 
 const WORKSPACE_FILES_MAX_OUTPUT_BYTES = 16 * 1024 * 1024;
 const FLAGGED_INDEX_ENTRIES_MAX_BYTES = 1024 * 1024;
@@ -1145,9 +1145,9 @@ export const makeVcsDriverShape = Effect.fn("makeGitVcsDriverShape")(function* (
 
   const checkpointIdentity: NodeJS.ProcessEnv = {
     GIT_AUTHOR_NAME: "T3 Code",
-    GIT_AUTHOR_EMAIL: "t3code@users.noreply.github.com",
+    GIT_AUTHOR_EMAIL: "aoki@users.noreply.github.com",
     GIT_COMMITTER_NAME: "T3 Code",
-    GIT_COMMITTER_EMAIL: "t3code@users.noreply.github.com",
+    GIT_COMMITTER_EMAIL: "aoki@users.noreply.github.com",
   };
 
   // Index files known to hold no assume-unchanged or skip-worktree entry, by their stat. Setting
@@ -1268,9 +1268,9 @@ export const makeVcsDriverShape = Effect.fn("makeGitVcsDriverShape")(function* (
           ? quotedObjects
           : `"${quotedObjects}"`,
         GIT_AUTHOR_NAME: "T3 Code",
-        GIT_AUTHOR_EMAIL: "t3code@users.noreply.github.com",
+        GIT_AUTHOR_EMAIL: "aoki@users.noreply.github.com",
         GIT_COMMITTER_NAME: "T3 Code",
-        GIT_COMMITTER_EMAIL: "t3code@users.noreply.github.com",
+        GIT_COMMITTER_EMAIL: "aoki@users.noreply.github.com",
       };
 
       const cleanupTempIndex = Effect.forEach(

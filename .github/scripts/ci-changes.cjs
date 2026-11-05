@@ -21,32 +21,32 @@ const RUNS_EVERYTHING = [
 // Includes cross-package reads absent from package.json dependencies.
 const EXTRA_OWNERS = [
   // Vite configs and tsconfigs of these apps import scripts/lib directly.
-  [/^scripts\/lib\//, ["@t3tools/desktop", "@t3tools/mobile", "@t3tools/web", "t3"]],
+  [/^scripts\/lib\//, ["@t3tools/desktop", "@t3tools/mobile", "@t3tools/web", "aoki"]],
   // scripts/build-desktop-artifact.ts reads the GNOME extension manifest.
   [/^apps\/desktop\/gnome-extension\//, ["@t3tools/scripts"]],
   [/^native\/browser-secret\//, ["@t3tools/desktop"]],
   [/^native\/kde-snap-shot\//, ["@t3tools/desktop"]],
   [/^native\/libghostty-vt\//, ["@t3tools/web"]],
   // apps/server/src/cloud/ConnectReachability.test.ts checks the guide's headings.
-  [/^docs\/user\/t3-connect-troubleshooting\.md$/, ["t3"]],
+  [/^docs\/user\/t3-connect-troubleshooting\.md$/, ["aoki"]],
 ];
 const RUST = /^native\/(resource-monitor|kde-snap-shot|hyprland-snap-shot)\//;
 
 // These tests read other packages without declaring dependencies.
 const TEST_ONLY_DEPS = {
   // Evals import the server's source to test its real model-facing text.
-  "@t3tools/evals": ["t3"],
+  "@t3tools/evals": ["aoki"],
   "@t3tools/provider-pi": ["@t3tools/client-runtime"],
   "@t3tools/scripts": [
     "@t3tools/desktop",
     "@t3tools/mobile",
     "@t3tools/web",
-    "t3",
+    "aoki",
     "@t3tools/provider-cursor",
   ],
 };
 // The server bundles the web build without importing it.
-const BUILD_ONLY_DEPS = { t3: ["@t3tools/web"] };
+const BUILD_ONLY_DEPS = { aoki: ["@t3tools/web"] };
 
 const MOBILE_NATIVE =
   /^apps\/mobile\/.*\.(swift|kt|kts)$|^apps\/mobile\/(\.swiftlint\.yml|detekt\.yml|\.editorconfig|Brewfile)$|^scripts\/mobile-native-static-check\.ts$|^package\.json$|^\.github\/workflows\/ci\.yml$|^\.github\/scripts\/ci-changes\.cjs$|^\.github\/actions\/ci-changes\//;
@@ -182,7 +182,7 @@ function decide(files, packages, full) {
       // Empty means every package the Test job covers.
       test_packages: everything ? "" : tested.map((pkg) => pkg.name).join(" "),
       test_web: has("@t3tools/web"),
-      test_server: has("t3"),
+      test_server: has("aoki"),
       rust: everything || rust,
       release_smoke: scriptsChanged,
       mobile_native: files === null || files.some((file) => MOBILE_NATIVE.test(file)),

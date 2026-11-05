@@ -63,7 +63,7 @@ export interface SshChildEnvironmentOptions {
   readonly authSecret?: string | null;
 }
 
-const SSH_ASKPASS_DIR_NAME = "t3code-ssh-askpass";
+const SSH_ASKPASS_DIR_NAME = "aoki-ssh-askpass";
 
 function joinSshAskpassPath(
   directory: string,
@@ -190,7 +190,7 @@ const ensureDefaultSshAskpassHelpers = Effect.fn("ssh/auth.ensureDefaultSshAskpa
       }
     }
     runtimeDirectory ??= yield* fs.realPath(
-      yield* fs.makeTempDirectory({ prefix: "t3code-ssh-runtime-" }),
+      yield* fs.makeTempDirectory({ prefix: "aoki-ssh-runtime-" }),
     );
     const launcherPath = yield* ensureSshAskpassHelpers({
       directory: path.join(runtimeDirectory, SSH_ASKPASS_DIR_NAME),
@@ -231,7 +231,7 @@ export const buildSshChildEnvironment = Effect.fn("ssh/auth.buildSshChildEnviron
     SSH_ASKPASS: sshAskpass,
     SSH_ASKPASS_REQUIRE: "force",
     ...(input.authSecret === undefined ? {} : { T3_SSH_AUTH_SECRET: input.authSecret ?? "" }),
-    ...(platform === "win32" || baseEnv.DISPLAY || hostDisplay ? {} : { DISPLAY: "t3code" }),
+    ...(platform === "win32" || baseEnv.DISPLAY || hostDisplay ? {} : { DISPLAY: "aoki" }),
   };
 });
 

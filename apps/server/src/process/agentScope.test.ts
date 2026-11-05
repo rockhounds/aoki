@@ -75,7 +75,7 @@ const withFakeSystemd = <A, E>(
   } = {},
 ) =>
   Effect.gen(function* () {
-    const bin = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "t3-agent-scope-"));
+    const bin = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "aoki-agent-scope-"));
     for (const name of ["systemd-run", "systemctl", "agent"]) {
       NodeFS.writeFileSync(NodePath.join(bin, name), "", { mode: 0o755 });
     }
@@ -146,7 +146,7 @@ const withFakeSystemd = <A, E>(
   }).pipe(
     Effect.scoped,
     Effect.provide(
-      ServerConfig.layerTest(process.cwd(), { prefix: "t3-agent-scope-" }).pipe(
+      ServerConfig.layerTest(process.cwd(), { prefix: "aoki-agent-scope-" }).pipe(
         Layer.provideMerge(NodeServices.layer),
       ),
     ),
@@ -315,7 +315,7 @@ describe("AgentScope service", () => {
             "--user",
             "set-property",
             "--runtime",
-            "app-t3code-agents.slice",
+            "app-aoki-agents.slice",
             expect.stringMatching(/^MemoryHigh=\d+$/),
             expect.stringMatching(/^MemoryMax=\d+$/),
           ],
@@ -323,7 +323,7 @@ describe("AgentScope service", () => {
             "--user",
             "set-property",
             "--runtime",
-            "app-t3code.slice",
+            "app-aoki.slice",
             "CPUWeight=10",
             "IOWeight=10",
             "TasksMax=25%",
@@ -342,7 +342,7 @@ describe("AgentScope service", () => {
         const memoryLimits = () =>
           calls
             .filter(
-              ([, verb, , slice]) => verb === "set-property" && slice === "app-t3code-agents.slice",
+              ([, verb, , slice]) => verb === "set-property" && slice === "app-aoki-agents.slice",
             )
             .map((args) => args.slice(4));
         yield* launch;
@@ -388,7 +388,7 @@ describe("AgentScope service", () => {
             name: "terminal",
             survivesRestart: true,
           });
-          expect(sliceOf(terminal)).toBe("app-t3code-agents.slice");
+          expect(sliceOf(terminal)).toBe("app-aoki-agents.slice");
           expect(stopsOf(calls)).toHaveLength(1);
         }),
       { leftovers: true },

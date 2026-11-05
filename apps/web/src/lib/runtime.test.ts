@@ -46,8 +46,8 @@ describe("web runtime relay telemetry policy", () => {
     },
   ])("applies $surface before the first relay span", async ({ desktopBridge, exports }) => {
     vi.resetModules();
-    vi.stubEnv("T3CODE_TELEMETRY_ENABLED", "false");
-    vi.stubEnv("T3CODE_OTEL_SDK_DISABLED", "true");
+    vi.stubEnv("AOKI_TELEMETRY_ENABLED", "false");
+    vi.stubEnv("AOKI_OTEL_SDK_DISABLED", "true");
     vi.stubEnv("OTEL_SDK_DISABLED", "true");
     vi.stubEnv("VITE_RELAY_OTLP_TRACES_URL", "https://telemetry.example.test/v1/traces");
     vi.stubEnv("VITE_RELAY_OTLP_TRACES_DATASET", "relay-test");

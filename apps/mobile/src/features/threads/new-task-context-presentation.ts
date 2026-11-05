@@ -148,7 +148,7 @@ export function filterNewTaskBranches<T extends { readonly name: string }>(
 /**
  * A worktree with no chosen base starts from the default branch, and a local
  * selection the user just switched to follows the current checkout until refs
- * load. Both are derived, never written back, so a late ref list or t3.json
+ * load. Both are derived, never written back, so a late ref list or aoki.json
  * default still wins.
  */
 export function fillNewTaskWorkspaceBranch(input: {

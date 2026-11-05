@@ -348,7 +348,7 @@ enum PlatformDeepLinkParser {
                 }
             }
         }
-        if ["t3", "t3code", "t3code-dev", "t3code-swiftui", "t3code-swiftui-dev", "aoki-native", "aoki-native-dev"].contains(scheme) {
+        if ["aoki", "aoki-dev", "aoki-swiftui", "aoki-swiftui-dev", "aoki-native", "aoki-native-dev"].contains(scheme) {
             let segments = customSchemeSegments(components)
             if isConnectionRoute(segments: segments, query: query),
                !isPromptNavigation(segments, query: promptQuery) {

@@ -491,8 +491,8 @@ export function SettingsRow({
     ? { state: "mixed", summary: gt("Mixed across selected environments") }
     : source === "project"
       ? { state: "overridden", summary: gt("Overridden for this project") }
-      : source === "t3.json"
-        ? { state: "inherited", summary: gt("Inherited from the repository's t3.json") }
+      : source === "aoki.json"
+        ? { state: "inherited", summary: gt("Inherited from the repository's aoki.json") }
         : source === "environment" && scopedKeys.length > 0
           ? {
               state: "inherited",

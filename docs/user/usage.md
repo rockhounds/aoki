@@ -50,7 +50,7 @@ depend on each project's working directory and cannot be reliably discovered by 
 sharing a history directory count once.
 
 The server saves its first hostname in `<T3 home>/usage-host-id`, so a recreated container keeps
-its usage identity when T3 home is persisted. Set `T3CODE_HOST_ID` to choose the identity
+its usage identity when T3 home is persisted. Set `AOKI_HOST_ID` to choose the identity
 explicitly.
 
 When your app and server support different providers, usage totals may cover only the providers
@@ -94,7 +94,7 @@ the dialog.
 ## Show only some models
 
 To count only some models, or to leave some out, add `usageModelFilter` to the server's
-`settings.json` in its `userdata` directory, such as `~/.t3/userdata/settings.json`:
+`settings.json` in its `userdata` directory, such as `~/.aoki/userdata/settings.json`:
 
 ```json
 {

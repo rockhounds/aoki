@@ -20,9 +20,9 @@ import * as ElectronApp from "../electron/ElectronApp.ts";
 import * as ElectronDialog from "../electron/ElectronDialog.ts";
 import { m } from "../i18n/messages.ts";
 
-const PREVIEW_PARTITION_PREFIX = "persist:t3code-preview-";
+const PREVIEW_PARTITION_PREFIX = "persist:aoki-preview-";
 /** Ephemeral partitions omit persist: but retain a product prefix so the webview gate recognizes them. */
-const PREVIEW_EPHEMERAL_PARTITION_PREFIX = "t3code-preview-ephemeral-";
+const PREVIEW_EPHEMERAL_PARTITION_PREFIX = "aoki-preview-ephemeral-";
 const PROFILE_PARTITION_MARKER = "profile-";
 
 export type BrowserSessionPartitionNamespace = "profile";

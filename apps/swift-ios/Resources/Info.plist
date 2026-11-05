@@ -15,7 +15,7 @@
 			<string>Aoki Routes</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>$(T3CODE_URL_SCHEME)</string>
+				<string>$(AOKI_URL_SCHEME)</string>
 				<string>t3-thread</string>
 			</array>
 		</dict>
@@ -26,11 +26,11 @@
 		<true/>
 	</dict>
 	<key>T3ConnectClerkJWTTemplate</key>
-	<string>$(T3CODE_CLERK_JWT_TEMPLATE)</string>
+	<string>$(AOKI_CLERK_JWT_TEMPLATE)</string>
 	<key>T3ConnectClerkPublishableKey</key>
-	<string>$(T3CODE_CLERK_PUBLISHABLE_KEY)</string>
+	<string>$(AOKI_CLERK_PUBLISHABLE_KEY)</string>
 	<key>T3ConnectRelayHTTPURL</key>
-	<string>$(T3CODE_RELAY_URL)</string>
+	<string>$(AOKI_RELAY_URL)</string>
 	<key>T3GitCommit</key>
 	<string>$(T3_GIT_COMMIT)</string>
 	<key>UIApplicationSceneManifest</key>

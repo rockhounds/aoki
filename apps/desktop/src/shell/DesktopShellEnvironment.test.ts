@@ -38,11 +38,7 @@ const decodeCache = Schema.decodeUnknownEffect(cacheCodec);
 
 function envOutput(values: Readonly<Record<string, string>>): string {
   return Object.entries(values)
-    .flatMap(([name, value]) => [
-      `__T3CODE_ENV_${name}_START__`,
-      value,
-      `__T3CODE_ENV_${name}_END__`,
-    ])
+    .flatMap(([name, value]) => [`__AOKI_ENV_${name}_START__`, value, `__AOKI_ENV_${name}_END__`])
     .join("\n");
 }
 
@@ -354,7 +350,7 @@ describe("DesktopShellEnvironment", () => {
         const source = [
           "const values = { PATH: '/fresh/bin:' + process.env.PATH, __MISE_DIFF: 'fresh-mise', JAVA_HOME: process.env.JAVA_HOME, SSL_CERT_FILE: process.env.SSL_CERT_FILE };",
           "for (const [name, value] of Object.entries(values)) {",
-          "  if (value !== undefined) process.stdout.write('__T3CODE_ENV_' + name + '_START__\\n' + value + '\\n__T3CODE_ENV_' + name + '_END__\\n');",
+          "  if (value !== undefined) process.stdout.write('__AOKI_ENV_' + name + '_START__\\n' + value + '\\n__AOKI_ENV_' + name + '_END__\\n');",
           "}",
         ].join("\n");
         let calls = 0;
@@ -464,7 +460,7 @@ describe("DesktopShellEnvironment", () => {
             NODE_EXTRA_CA_CERTS: "/cached/ca.pem",
             SSL_CERT_FILE: "/cached/cert.pem",
             SSL_CERT_DIR: "/cached/certs",
-            T3CODE_TELEMETRY_ENABLED: "false",
+            AOKI_TELEMETRY_ENABLED: "false",
             SSH_AUTH_SOCK: "/stale.sock",
             NODE_OPTIONS: "--bad",
           },
@@ -505,7 +501,7 @@ describe("DesktopShellEnvironment", () => {
         assert.equal(env.NODE_EXTRA_CA_CERTS, "/launcher/ca.pem");
         assert.equal(env.SSL_CERT_FILE, "");
         assert.equal(env.SSL_CERT_DIR, "/cached/certs");
-        assert.equal(env.T3CODE_TELEMETRY_ENABLED, "false");
+        assert.equal(env.AOKI_TELEMETRY_ENABLED, "false");
         assert.equal(env.SSH_AUTH_SOCK, "/current.sock");
         assert.isUndefined(env.NODE_OPTIONS);
         assert.equal(yield* fs.readFileString(cachePath), contents);

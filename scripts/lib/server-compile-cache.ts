@@ -134,7 +134,7 @@ export function enablePreparedServerCache(entry: string, cacheRoot: string): boo
     const active = NodeModule.getCompileCacheDir();
     if (result.status !== NodeModule.constants.compileCacheStatus.ENABLED || !active) return false;
     const seeded = seedPreparedCache(prepared, active, runtimeIdentity());
-    if (seeded) Reflect.set(globalThis, Symbol.for("t3code.preparedServerCache"), true);
+    if (seeded) Reflect.set(globalThis, Symbol.for("aoki.preparedServerCache"), true);
     return true;
   } catch {
     return false;

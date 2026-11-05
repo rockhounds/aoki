@@ -19,7 +19,7 @@ import { writeTextToClipboard } from "./useCopyToClipboard";
 import { useNewThreadHandler } from "./useHandleNewThread";
 import { useScratchProject } from "./useScratchProject";
 
-export const TRIAGE_CLI_COMMAND = "npx t3 triage";
+export const TRIAGE_CLI_COMMAND = "npx aoki triage";
 
 const copyTriageCliCommand = () =>
   writeTextToClipboard(TRIAGE_CLI_COMMAND, {
@@ -34,7 +34,7 @@ const copyTriageCliCommand = () =>
   );
 
 /**
- * In-app `t3 triage`: the server writes the session files and starts cloning
+ * In-app `aoki triage`: the server writes the session files and starts cloning
  * the matching source, then a No project draft opens with the playbook linked.
  * The draft hero explains the rest; the user picks a provider and describes
  * the problem.

@@ -10,7 +10,7 @@ import * as HostProcess from "./HostProcess.ts";
  * One comma-separated list, such as `tanstack_source,github_app_client_id=Iv23…`. A bare name
  * turns a flag on. Read once when the server starts; changing it takes a restart.
  */
-const VARIABLE = "T3CODE_FEATURE_FLAGS";
+const VARIABLE = "AOKI_FEATURE_FLAGS";
 
 const config = Config.all({
   secretProviders: Config.Boolean("secret_providers").pipe(Config.withDefault(false)),

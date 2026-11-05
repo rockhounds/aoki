@@ -1,7 +1,7 @@
 # SwiftUI TestFlight releases
 
 This workflow releases `apps/swift-ios`, not the React Native app in `apps/mobile`.
-The release bundle identifier is `com.t3tools.t3code.swiftui`. Development builds
+The release bundle identifier is `io.github.rockhounds.aoki.swiftui`. Development builds
 use a separate identity and do not replace TestFlight.
 
 ## One-time API access
@@ -16,7 +16,7 @@ The release helper verifies the SwiftUI bundle identifier and the app that owns
 each tester group before it changes anything.
 
 Download the private key once. Keep its contents in a private, uncommitted
-`~/.config/t3code/.env.testflight` file. This location survives worktree cleanup.
+`~/.config/aoki/.env.testflight` file. This location survives worktree cleanup.
 Give the directory mode `700` and the env file mode `600`. Do not put the private
 key or generated tokens in Git, build output, or pull request comments.
 

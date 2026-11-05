@@ -142,7 +142,7 @@ function UpdateEverythingDialogContent({
         <AlertDialogDescription>
           {version !== null ? (
             <>
-              Aoki <span className="font-mono text-xs">{version}</span>
+              <T>Aoki</T> <span className="font-mono text-xs">{version}</span>
             </>
           ) : null}
           {version !== null && providerCount > 0 ? " · " : null}
@@ -176,7 +176,9 @@ function UpdateEverythingDialogContent({
               <span role="columnheader">
                 <T>Machine</T>
               </span>
-              <span role="columnheader">Aoki</span>
+              <span role="columnheader">
+                <T>Aoki</T>
+              </span>
               <span role="columnheader">
                 <T>Providers</T>
               </span>

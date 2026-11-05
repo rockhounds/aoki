@@ -7,13 +7,13 @@ struct FeatureV2MessageAttribution: View {
     enum Attribution: String {
         case automation = "Sent by automation"
         case agent = "Sent by another agent"
-        case t3code = "Sent by Aoki"
+        case aoki = "Sent by Aoki"
     }
 
     static func attribution(_ source: OrchestrationV2TimelineMetadata) -> Attribution? {
         if source.scheduledTaskID != nil { return .automation }
         guard source.createdBy == "agent" else { return nil }
-        return source.creationSource == "server" ? .t3code : .agent
+        return source.creationSource == "server" ? .aoki : .agent
     }
 
     static func hasContent(_ source: OrchestrationV2TimelineMetadata) -> Bool {

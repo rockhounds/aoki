@@ -49,7 +49,7 @@ struct PlatformAgentAwarenessTests {
             id: "project",
             wireID: "project-wire",
             environmentID: "environment",
-            name: "t3code",
+            name: "aoki",
             path: "/repo"
         )
         let snapshot = FeatureSnapshot(
@@ -108,7 +108,7 @@ struct PlatformAgentAwarenessTests {
         let project = FeatureProject(
             id: "project",
             environmentID: "environment",
-            name: "t3code",
+            name: "aoki",
             path: "/repo"
         )
         let threads = (0..<8).map { index in
@@ -144,7 +144,7 @@ struct PlatformAgentAwarenessTests {
         let project = FeatureProject(
             id: "project",
             environmentID: "environment",
-            name: "t3code",
+            name: "aoki",
             path: "/repo"
         )
         let snapshot = FeatureSnapshot(
@@ -210,7 +210,7 @@ struct PlatformAgentAwarenessTests {
         let project = FeatureProject(
             id: "project",
             environmentID: "environment",
-            name: "t3code",
+            name: "aoki",
             path: "/repo"
         )
         let working = FeatureSnapshot(

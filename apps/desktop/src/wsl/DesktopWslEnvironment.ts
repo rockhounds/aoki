@@ -106,7 +106,7 @@ export class DesktopWslEnvironment extends Context.Service<
     readonly getUserHome: (distro: string | null) => Effect.Effect<Option.Option<string>>;
     // Use the distro IP to avoid unreliable wslhost localhost forwarding.
     readonly getDistroIp: (distro: string | null) => Effect.Effect<Option.Option<string>>;
-    // A null t3Home means the distro's login shell has no absolute T3CODE_HOME, so ~/.t3 applies.
+    // A null t3Home means the distro's login shell has no absolute AOKI_HOME, so ~/.aoki applies.
     readonly prepareRuntime: (
       distro: string | null,
       archive: WslRuntimeArchive,
@@ -265,15 +265,15 @@ const runWslShell = (
 
 const shellQuote = (value: string): string => `'${value.replaceAll("'", "'\\''")}'`;
 
-const WSL_RUNTIME_READY_MARKER = ".t3code-wsl-runtime-ready";
-const WSL_RUNTIME_SELECTED_MARKER = ".t3code-wsl-runtime-selected";
+const WSL_RUNTIME_READY_MARKER = ".aoki-wsl-runtime-ready";
+const WSL_RUNTIME_SELECTED_MARKER = ".aoki-wsl-runtime-selected";
 const WSL_RUNTIME_SELECTION_GRACE_MINUTES = 5;
 
 const sanitizeWslRuntimeId = (value: string): string => value.replace(/[^A-Za-z0-9._-]/g, "_");
 
 const runtimeParentAssignment = (t3Home: string | null): string =>
   t3Home === null
-    ? 'runtime_parent="$HOME/.t3/wsl-runtime"'
+    ? 'runtime_parent="$HOME/.aoki/wsl-runtime"'
     : `runtime_parent=${shellQuote(`${t3Home}/wsl-runtime`)}`;
 
 // A null archive path asks for a staging directory to copy the archive into, unless the cache is ready.
@@ -290,11 +290,11 @@ export const buildWslRuntimeInstallScript = (
     `runtime_root="$runtime_parent/${safeRuntimeId}"`,
     `ready_marker="$runtime_root/${WSL_RUNTIME_READY_MARKER}"`,
     "runtime_entry_runs() {",
-    '  [ -x "$1/t3" ] && "$1/t3" --version >/dev/null',
+    '  [ -x "$1/aoki" ] && "$1/aoki" --version >/dev/null',
     "}",
     // Hash the entry to detect a swapped or partially written executable, even if it still runs.
     "runtime_server_entry_digest() {",
-    `  sha256sum "$1/t3" 2>/dev/null | cut -d ' ' -f 1`,
+    `  sha256sum "$1/aoki" 2>/dev/null | cut -d ' ' -f 1`,
     "}",
     "runtime_is_ready() {",
     '  [ -f "$ready_marker" ] &&',
@@ -357,7 +357,7 @@ export const buildWslRuntimeInstallScript = (
     "trap cleanup_runtime_install EXIT",
     `tar -xzf ${shellQuote(linuxArchivePath)} -C "$runtime_tmp" --strip-components=1`,
     'if ! runtime_entry_runs "$runtime_tmp"; then',
-    "  printf 'WSL runtime archive does not contain a working t3 executable\\n' >&2",
+    "  printf 'WSL runtime archive does not contain a working aoki executable\\n' >&2",
     "  exit 1",
     "fi",
     'installed_entry_digest=$(runtime_server_entry_digest "$runtime_tmp")',
@@ -452,8 +452,8 @@ const formatNodePtyProbeFailureReason = (exitCode: number): string | null =>
 
 // Capture login-shell PATH because the server launches provider CLIs by name.
 const RESOLVED_PATH_LINE = `printf 'resolvedPath:%s\\n' "$PATH"`;
-// wsl.exe --exec skips the profile, so the server only sees a profile-exported T3CODE_HOME if passed on.
-const T3_HOME_LINE = `printf 't3Home:%s\\n' "\${T3CODE_HOME:-}"`;
+// wsl.exe --exec skips the profile, so the server only sees a profile-exported AOKI_HOME if passed on.
+const T3_HOME_LINE = `printf 't3Home:%s\\n' "\${AOKI_HOME:-}"`;
 
 const NODE_PTY_PROBE_SCRIPT = (
   linuxServerDir: string,
@@ -487,7 +487,7 @@ require("node-pty");
 NODE`;
 
 // Resolve version-managed Node for providers without making runtime readiness depend on it.
-// The install script already ran the staged t3, so running it again here only adds a second startup.
+// The install script already ran the staged aoki, so running it again here only adds a second startup.
 export const buildWslRuntimeProbeScript = () =>
   `bash -lc ${shellQuote(`${buildWslNodeEnvPreamble()}${RESOLVED_PATH_LINE}\n${T3_HOME_LINE}`)} 2>/dev/null || ${RESOLVED_PATH_LINE}`;
 

@@ -15,7 +15,7 @@ struct FeatureTypedMediaPreviewRoute: Equatable {
     let kind: FeatureFilePreviewKind
 
     static func parse(_ url: URL) -> Self? {
-        guard url.scheme?.lowercased() == "t3code",
+        guard url.scheme?.lowercased() == "aoki",
               url.host?.lowercased() == "media-preview",
               url.path == "/open",
               let components = URLComponents(url: url, resolvingAgainstBaseURL: false),

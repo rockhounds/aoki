@@ -206,7 +206,7 @@ export class GitManager extends Context.Service<
       Scope.Scope
     >;
   }
->()("t3/git/GitManager") {}
+>()("aoki/git/GitManager") {}
 
 const COMMIT_TIMEOUT_MS = 10 * 60_000;
 const MAX_PROGRESS_TEXT_LENGTH = 500;
@@ -2401,7 +2401,10 @@ export const make = Effect.gen(function* () {
     upstreamRef: string | null,
     headContext: Pick<BranchHeadContext, "isCrossRepository" | "remoteName">,
   ) {
-    const configuredRef = yield* gitCore.readConfigValue(cwd, `branch.${branch}.t3-merge-base-ref`);
+    const configuredRef = yield* gitCore.readConfigValue(
+      cwd,
+      `branch.${branch}.aoki-merge-base-ref`,
+    );
     if (configuredRef?.startsWith("refs/heads/") || configuredRef?.startsWith("refs/remotes/")) {
       const configuredBranch = yield* gitCore.resolveBranchName(cwd, configuredRef);
       if (configuredBranch) return { baseBranch: configuredBranch, baseRef: configuredRef };
@@ -2764,7 +2767,7 @@ export const make = Effect.gen(function* () {
     });
     const bodyFile = path.join(
       tempDir,
-      `t3code-pr-body-${process.pid}-${yield* randomUUIDv4(cwd)}.md`,
+      `aoki-pr-body-${process.pid}-${yield* randomUUIDv4(cwd)}.md`,
     );
     yield* fileSystem.writeFileString(bodyFile, generated.body).pipe(
       Effect.mapError(

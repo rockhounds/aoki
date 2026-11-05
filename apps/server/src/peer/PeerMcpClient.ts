@@ -52,7 +52,7 @@ export class PeerMcpClient extends Context.Service<
       readonly success: S;
     }) => Effect.Effect<S["Type"], OrchestratorMcpFailure>;
   }
->()("t3/peer/PeerMcpClient") {}
+>()("aoki/peer/PeerMcpClient") {}
 
 const ToolCallResponse = Schema.Struct({
   result: Schema.optional(
@@ -160,7 +160,7 @@ const make = Effect.gen(function* () {
           params: {
             protocolVersion: PROTOCOL_VERSION,
             capabilities: {},
-            clientInfo: { name: "t3code-peer", version: "1" },
+            clientInfo: { name: "aoki-peer", version: "1" },
           },
         },
         limitHeader,

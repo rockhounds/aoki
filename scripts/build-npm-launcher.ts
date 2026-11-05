@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// GitHub archives avoid npm scanning delays; output <output-dir>/t3/ and publishable t3.tgz.
+// GitHub archives avoid npm scanning delays; output <output-dir>/t3/ and publishable aoki.tgz.
 import * as NodeRuntime from "@effect/platform-node/NodeRuntime";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import * as Effect from "effect/Effect";
@@ -17,7 +17,7 @@ import serverPackageJson from "../apps/server/package.json" with { type: "json" 
 
 import { windowsSystemTar } from "./lib/windows-tar.ts";
 
-export const NPM_LAUNCHER_PACKAGE_NAME = "t3";
+export const NPM_LAUNCHER_PACKAGE_NAME = "aoki";
 
 const encodePackageJson = Schema.encodeEffect(fromJsonStringPretty(Schema.Unknown));
 
@@ -30,7 +30,7 @@ export class NpmLauncherCommandFailedError extends Schema.TaggedError<NpmLaunche
   }
 }
 
-/** engines requires import.meta.dirname and fetch. `t3code` is read back by npmReleaseDatabaseMigration. */
+/** engines requires import.meta.dirname and fetch. `aoki` is read back by npmReleaseDatabaseMigration. */
 export function npmLauncherPackageManifest(version: string, databaseMigration: number) {
   return {
     name: NPM_LAUNCHER_PACKAGE_NAME,
@@ -39,10 +39,10 @@ export function npmLauncherPackageManifest(version: string, databaseMigration: n
       "T3 Code CLI. Downloads the self-contained executable for this platform from the GitHub Release.",
     license: serverPackageJson.license,
     repository: serverPackageJson.repository,
-    bin: { t3: "./bin/t3.mjs" },
+    bin: { aoki: "./bin/aoki.mjs" },
     files: ["bin", "dist"],
     engines: { node: ">=20.11" },
-    t3code: { databaseMigration },
+    aoki: { databaseMigration },
   };
 }
 
@@ -83,8 +83,8 @@ export const buildNpmLauncher = Effect.fn("buildNpmLauncher")(function* (input: 
       npmLauncherPackageManifest(input.version, yield* latestServerMigrationId()),
     )}\n`,
   );
-  yield* fs.copyFile(path.join(sourceDir, "t3.mjs"), path.join(stageDir, "bin/t3.mjs"));
-  yield* fs.chmod(path.join(stageDir, "bin/t3.mjs"), 0o755);
+  yield* fs.copyFile(path.join(sourceDir, "aoki.mjs"), path.join(stageDir, "bin/aoki.mjs"));
+  yield* fs.chmod(path.join(stageDir, "bin/aoki.mjs"), 0o755);
   yield* fs.copyFile(path.join(sourceDir, "bin.mjs"), path.join(stageDir, "dist/bin.mjs"));
   const readme = yield* path.fromFileUrl(new URL("../apps/server/README.md", import.meta.url));
   if (yield* fs.exists(readme)) {
@@ -121,7 +121,7 @@ const command = Command.make(
     outputDir: Flag.String("output-dir").pipe(Flag.withDefault("npm-packages")),
   },
   buildNpmLauncher,
-).pipe(Command.withDescription("Build the t3 npm launcher package."));
+).pipe(Command.withDescription("Build the aoki npm launcher package."));
 
 if (import.meta.main) {
   Command.run(command, { version: "0.0.0" }).pipe(

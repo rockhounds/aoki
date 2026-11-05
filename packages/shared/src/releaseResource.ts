@@ -16,7 +16,7 @@ export const releaseResourceAttributes = (
     return typeof value === "string" && value !== "" ? value : undefined;
   };
   return {
-    "t3code.release.channel": operatorValue("t3code.release.channel") ?? channel,
+    "aoki.release.channel": operatorValue("aoki.release.channel") ?? channel,
     "deployment.environment.name":
       operatorValue("deployment.environment.name") ??
       (channel === "dev" ? "development" : channel === "preview" ? "staging" : "production"),

@@ -151,7 +151,7 @@ export class WorkspaceSearchIndex extends Context.Service<
     >;
     readonly refresh: () => Effect.Effect<void, WorkspaceSearchIndexRefreshFailed>;
   }
->()("t3/workspace/WorkspaceSearchIndex") {}
+>()("aoki/workspace/WorkspaceSearchIndex") {}
 
 // Only the host separator becomes `/`: on POSIX `\` is a file name character.
 function toPosixPath(input: string, hostIsWindows: boolean): string {

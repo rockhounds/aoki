@@ -298,7 +298,7 @@ export type FontFamilyPreference = typeof FontFamilyPreference.Type;
 
 /** Clients apply each environment theme set once; later local choices persist until the next set. Empty clears it. */
 export const DefaultThemePreference = Schema.String.check(Schema.isMaxLength(64));
-// Excluded from RPC patches so t3 theme set can validate syntax and resolvability.
+// Excluded from RPC patches so aoki theme set can validate syntax and resolvability.
 export type DefaultThemePreference = typeof DefaultThemePreference.Type;
 
 /** A mode clients apply once per set, like the default theme. Empty sets none. */
@@ -1278,14 +1278,14 @@ const NULLABLE_PROJECT_SETTINGS_OVERRIDES: ReadonlySet<ProjectScopedServerSettin
   "sidebarAutoSettleAfterDays",
 ]);
 
-/** Reclaimable bytes from which the offline `t3 doctor` repair is worth suggesting. */
+/** Reclaimable bytes from which the offline `aoki doctor` repair is worth suggesting. */
 export const DATABASE_COMPACTION_RECOMMENDED_BYTES = 1024 ** 3;
 
 export const DatabaseStorageStatus = Schema.Struct({
   databaseBytes: Schema.Number,
   /** Free pages inside the file that an offline VACUUM (or incremental auto_vacuum) returns to disk. */
   reclaimableBytes: Schema.Number,
-  /** False on databases created before incremental auto_vacuum; `t3 doctor` converts them. */
+  /** False on databases created before incremental auto_vacuum; `aoki doctor` converts them. */
   incrementalVacuumEnabled: Schema.Boolean,
   /** Run on the host while offline. */
   compactCommand: Schema.String,
@@ -1529,12 +1529,12 @@ export const ServerSettings = Schema.Struct({
   environmentIcon: ForwardCompatibleNullable(EnvironmentMachineKind).pipe(
     Schema.withDecodingDefault(Effect.succeed(null)),
   ),
-  /** Null inherits t3.json, then local; omit it on the wire for older clients requiring a literal. */
+  /** Null inherits aoki.json, then local; omit it on the wire for older clients requiring a literal. */
   defaultThreadEnvMode: OmittedWhenNull(ThreadEnvMode),
   newWorktreesStartFromOrigin: Schema.Boolean.pipe(
     Schema.withDecodingDefault(Effect.succeed(true)),
   ),
-  /** Null inherits t3.json, then recursive; unknown values decode to null for older clients. */
+  /** Null inherits aoki.json, then recursive; unknown values decode to null for older clients. */
   worktreeSubmodules: ForwardCompatibleNullable(WorktreeSubmodules).pipe(
     Schema.withDecodingDefault(Effect.succeed(null)),
   ),

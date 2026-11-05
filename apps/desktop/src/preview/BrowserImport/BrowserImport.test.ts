@@ -40,7 +40,7 @@ const layerRejectedBeforeSession = Layer.succeed(
 
 const withImporter = Effect.fnUntraced(function* () {
   const fileSystem = yield* FileSystem.FileSystem;
-  const home = yield* fileSystem.makeTempDirectoryScoped({ prefix: "t3code-import-" });
+  const home = yield* fileSystem.makeTempDirectoryScoped({ prefix: "aoki-import-" });
   const layerEnvironment = Layer.succeed(HostProcess.Environment, { HOME: home });
   const context = yield* sourcePathContext.pipe(
     Effect.provideService(HostProcess.Environment, { HOME: home }),
@@ -82,7 +82,7 @@ describe("BrowserImport.importCookies", () => {
             sourceProfileDirectory: "../../../../secrets",
             targetProfileId: "default",
           },
-          scope: "persist:t3code-preview-test",
+          scope: "persist:aoki-preview-test",
           persistent: true,
         })
         .pipe(Effect.flip);
@@ -107,7 +107,7 @@ describe("BrowserImport.importCookies", () => {
               sourceProfileDirectory: "Default",
               targetProfileId: "default",
             },
-            scope: "persist:t3code-preview-test",
+            scope: "persist:aoki-preview-test",
             persistent: true,
           })
           .pipe(Effect.flip);
@@ -122,7 +122,7 @@ describe("BrowserImport.checkBrowserImportPolicy", () => {
   it.effect("allows imports unless a readable policy turns them off, and fails closed", () =>
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
-      const dir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "t3code-import-policy-" });
+      const dir = yield* fileSystem.makeTempDirectoryScoped({ prefix: "aoki-import-policy-" });
       const outcome = (contents: string | undefined) =>
         Effect.gen(function* () {
           const policyPath = `${dir}/policy.json`;

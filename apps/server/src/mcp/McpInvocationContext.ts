@@ -181,7 +181,7 @@ export const threadLinkFor = (
 export class McpInvocationContext extends Context.Service<
   McpInvocationContext,
   McpInvocationScope
->()("t3/mcp/McpInvocationContext") {}
+>()("aoki/mcp/McpInvocationContext") {}
 
 /**
  * `McpSchema.EnabledWhen` for tools a delegated child must not see or call.

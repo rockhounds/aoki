@@ -287,8 +287,8 @@ function FullDiskAccessStep({
         </DialogTitle>
         <DialogDescription>
           <T>
-            To import cookies from <Var>{source.name}</Var>, Aoki needs Full Disk Access. Turn it
-            on in System Settings, then come back to finish the import. You can revoke it again once
+            To import cookies from <Var>{source.name}</Var>, Aoki needs Full Disk Access. Turn it on
+            in System Settings, then come back to finish the import. You can revoke it again once
             the import is done.
           </T>
         </DialogDescription>

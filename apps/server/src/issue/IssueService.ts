@@ -185,7 +185,7 @@ export class IssueService extends Context.Service<
       IssueError
     >;
   }
->()("t3/issue/IssueService") {}
+>()("aoki/issue/IssueService") {}
 
 const make = Effect.gen(function* () {
   const registry = yield* IssueTrackerRegistry.IssueTrackerRegistry;

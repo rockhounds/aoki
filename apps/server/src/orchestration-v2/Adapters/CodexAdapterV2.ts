@@ -1539,7 +1539,7 @@ export interface CodexAppServerClientFactoryShape {
 export class CodexAppServerClientFactory extends Context.Service<
   CodexAppServerClientFactory,
   CodexAppServerClientFactoryShape
->()("t3/orchestration-v2/Adapters/CodexAdapterV2/CodexAppServerClientFactory") {}
+>()("aoki/orchestration-v2/Adapters/CodexAdapterV2/CodexAppServerClientFactory") {}
 
 /** MCP startup grace in milliseconds; the 1 s default excludes cold npx/uvx servers from the first model request. */
 export const CODEX_THREAD_CONFIG = {
@@ -1872,7 +1872,7 @@ export const layerAppServerClientFactory: Layer.Layer<
               }),
           ),
         );
-        // Its shells carry each thread's T3CODE_THREAD_ID, so port discovery reads listeners' threads.
+        // Its shells carry each thread's AOKI_THREAD_ID, so port discovery reads listeners' threads.
         yield* Effect.acquireRelease(Effect.sync(portDiscovery.trackAgent), (release) =>
           Effect.sync(release),
         );

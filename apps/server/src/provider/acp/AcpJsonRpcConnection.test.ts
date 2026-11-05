@@ -364,7 +364,7 @@ describe("AcpSessionRuntime", () => {
         Effect.provideService(AgentScope, {
           ...AgentScope.defaultValue(),
           wrap: ({ command, args }) =>
-            Effect.succeed({ command, args, unit: "t3code-acp-test.scope" }),
+            Effect.succeed({ command, args, unit: "aoki-acp-test.scope" }),
           stop: (unit) => Deferred.succeed(stopped, unit).pipe(Effect.asVoid),
         }),
       );
@@ -372,7 +372,7 @@ describe("AcpSessionRuntime", () => {
       expect(yield* Deferred.isDone(stopped)).toBe(false);
       yield* runtime.notify("_test/exit", {});
       const events = yield* runtime.getEvents().pipe(Stream.take(1), Stream.runCollect);
-      expect(yield* Deferred.await(stopped)).toBe("t3code-acp-test.scope");
+      expect(yield* Deferred.await(stopped)).toBe("aoki-acp-test.scope");
       const event = events[0];
       expect(event).toMatchObject({ _tag: "ConnectionTerminated", error: { code: 19 } });
       if (event?._tag !== "ConnectionTerminated") return;

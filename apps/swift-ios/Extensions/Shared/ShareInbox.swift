@@ -92,7 +92,7 @@ enum T3IncomingShareStoreError: LocalizedError {
 /// A crash-safe handoff from the short-lived share extension to the host app.
 /// Each share gets its own UUID directory and an atomically-written manifest.
 enum T3IncomingShareStore {
-    static let inboxRelativePath = "Library/Application Support/T3Code/IncomingShares"
+    static let inboxRelativePath = "Library/Application Support/Aoki/IncomingShares"
     static let manifestFileName = "manifest.json"
     static let maximumImageBytes = 10 * 1_024 * 1_024
     static let maximumAttachmentCount = 100

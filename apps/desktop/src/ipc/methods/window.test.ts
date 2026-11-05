@@ -277,7 +277,7 @@ describe("installRelayTelemetryEnabled", () => {
 
   it.effect("reads the desktop host opt-out before returning the renderer policy", () =>
     Effect.gen(function* () {
-      assert.deepEqual(yield* relayTelemetryEnabled({ T3CODE_TELEMETRY_ENABLED: "false" }), {
+      assert.deepEqual(yield* relayTelemetryEnabled({ AOKI_TELEMETRY_ENABLED: "false" }), {
         beforeDiscovery: false,
         afterDiscovery: false,
       });
@@ -287,7 +287,7 @@ describe("installRelayTelemetryEnabled", () => {
         afterDiscovery: true,
       });
       assert.deepEqual(
-        yield* relayTelemetryEnabled({}, undefined, { T3CODE_TELEMETRY_ENABLED: "false" }),
+        yield* relayTelemetryEnabled({}, undefined, { AOKI_TELEMETRY_ENABLED: "false" }),
         { beforeDiscovery: null, afterDiscovery: false },
       );
     }),

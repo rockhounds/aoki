@@ -89,23 +89,23 @@ struct ProjectCreationModelsTests {
 
     @Test
     func pathsRequireServerAbsoluteOrHomeRelativeInput() throws {
-        #expect(try ProjectCreationPath.validated(" ~/work/t3code ").get() == "~/work/t3code")
-        #expect(try ProjectCreationPath.validated("/srv/t3code").get() == "/srv/t3code")
-        #expect(try ProjectCreationPath.validated(#"C:\work\t3code"#).get() == #"C:\work\t3code"#)
+        #expect(try ProjectCreationPath.validated(" ~/work/aoki ").get() == "~/work/aoki")
+        #expect(try ProjectCreationPath.validated("/srv/aoki").get() == "/srv/aoki")
+        #expect(try ProjectCreationPath.validated(#"C:\work\aoki"#).get() == #"C:\work\aoki"#)
         #expect(ProjectCreationPath.validated("relative/project").isFailure)
         #expect(ProjectCreationPath.validated("  ").isFailure)
     }
 
     @Test
     func destinationSuggestionsRespectUnixAndWindowsSeparators() {
-        #expect(ProjectCreationPath.appending("t3code", to: "~/work") == "~/work/t3code")
-        #expect(ProjectCreationPath.appending("t3code", to: "~/work/") == "~/work/t3code")
+        #expect(ProjectCreationPath.appending("aoki", to: "~/work") == "~/work/aoki")
+        #expect(ProjectCreationPath.appending("aoki", to: "~/work/") == "~/work/aoki")
         #expect(
-            ProjectCreationPath.appending("t3code", to: #"C:\work"#) == #"C:\work\t3code"#
+            ProjectCreationPath.appending("aoki", to: #"C:\work"#) == #"C:\work\aoki"#
         )
         #expect(
-            ProjectCreationPath.normalizedForComparison(#"C:\Work\T3Code\"#)
-                == "c:/work/t3code"
+            ProjectCreationPath.normalizedForComparison(#"C:\Work\Aoki\"#)
+                == "c:/work/aoki"
         )
         #expect(ProjectCreationPath.normalizedForComparison("/srv/App") == "/srv/App")
         #expect(ProjectCreationPath.normalizedForComparison(#"/srv/a\b"#) == #"/srv/a\b"#)
@@ -114,18 +114,18 @@ struct ProjectCreationModelsTests {
     @Test
     func folderBrowseQueriesNavigateDirectoriesInsteadOfPrefixSearching() {
         #expect(ProjectCreationPath.directoryBrowsePath("~/work") == "~/work/")
-        #expect(ProjectCreationPath.directoryBrowsePath("/srv/t3code/") == "/srv/t3code/")
+        #expect(ProjectCreationPath.directoryBrowsePath("/srv/aoki/") == "/srv/aoki/")
         #expect(
-            ProjectCreationPath.directoryBrowsePath(#"C:\work\t3code"#)
-                == #"C:\work\t3code\"#
+            ProjectCreationPath.directoryBrowsePath(#"C:\work\aoki"#)
+                == #"C:\work\aoki\"#
         )
 
-        #expect(ProjectCreationPath.parentBrowsePath(of: "~/work/t3code/") == "~/work/")
+        #expect(ProjectCreationPath.parentBrowsePath(of: "~/work/aoki/") == "~/work/")
         #expect(ProjectCreationPath.parentBrowsePath(of: "~/") == nil)
-        #expect(ProjectCreationPath.parentBrowsePath(of: "/srv/t3code/") == "/srv/")
+        #expect(ProjectCreationPath.parentBrowsePath(of: "/srv/aoki/") == "/srv/")
         #expect(ProjectCreationPath.parentBrowsePath(of: "/") == nil)
         #expect(
-            ProjectCreationPath.parentBrowsePath(of: #"C:\work\t3code\"#)
+            ProjectCreationPath.parentBrowsePath(of: #"C:\work\aoki\"#)
                 == #"C:\work\"#
         )
         #expect(ProjectCreationPath.parentBrowsePath(of: #"C:\"#) == nil)
@@ -142,46 +142,46 @@ struct ProjectCreationModelsTests {
 
     @Test
     func projectTitlesHandleServerPathStyles() {
-        #expect(ProjectCreationPath.lastPathComponent("/srv/t3code/") == "t3code")
-        #expect(ProjectCreationPath.lastPathComponent(#"C:\work\t3code\"#) == "t3code")
-        #expect(ProjectCreationPath.lastPathComponent(#"\\server\share\t3code"#) == "t3code")
+        #expect(ProjectCreationPath.lastPathComponent("/srv/aoki/") == "aoki")
+        #expect(ProjectCreationPath.lastPathComponent(#"C:\work\aoki\"#) == "aoki")
+        #expect(ProjectCreationPath.lastPathComponent(#"\\server\share\aoki"#) == "aoki")
     }
 
     @Test
     func explicitPathsMatchTheConnectedServerFilesystemStyle() {
         #expect(
             ProjectCreationPath.isCompatibleWithServerPath(
-                "/srv/t3code",
+                "/srv/aoki",
                 serverPath: "/srv"
             )
         )
         #expect(
             !ProjectCreationPath.isCompatibleWithServerPath(
-                #"C:\work\t3code"#,
+                #"C:\work\aoki"#,
                 serverPath: "/srv"
             )
         )
         #expect(
             ProjectCreationPath.isCompatibleWithServerPath(
-                #"C:\work\t3code"#,
+                #"C:\work\aoki"#,
                 serverPath: #"C:\work"#
             )
         )
         #expect(
             ProjectCreationPath.isCompatibleWithServerPath(
-                "//server/share/t3code",
+                "//server/share/aoki",
                 serverPath: #"C:\work"#
             )
         )
         #expect(
             !ProjectCreationPath.isCompatibleWithServerPath(
-                "/srv/t3code",
+                "/srv/aoki",
                 serverPath: #"C:\work"#
             )
         )
         #expect(
             ProjectCreationPath.isCompatibleWithServerPath(
-                "~/work/t3code",
+                "~/work/aoki",
                 serverPath: #"C:\Users\theo"#
             )
         )

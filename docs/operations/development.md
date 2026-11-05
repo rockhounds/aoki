@@ -60,7 +60,7 @@ Use `vp run dev` for server and web, or `vp run dev:desktop` for the Electron cl
 `dev:server` and `dev:web` start those processes separately.
 See the [mobile README](../../apps/mobile/README.md) for native builds and Metro.
 
-Flags go directly after the task name, for example `vp run dev --home-dir /tmp/t3code-dev`.
+Flags go directly after the task name, for example `vp run dev --home-dir /tmp/aoki-dev`.
 Add `--browser` to open a browser automatically.
 
 To stop a worktree's dev stack when its thread settles, import the **Dev** action from
@@ -70,17 +70,17 @@ Running `vp run dev` through an agent's own shell tool does not attach it to thi
 
 ### State and ports
 
-Linked worktrees default to their own `.t3/userdata`, even when `T3CODE_HOME` is set.
+Linked worktrees default to their own `.aoki/userdata`, even when `AOKI_HOME` is set.
 Any other checkout, including the main checkout and every plain `git clone`, uses
-`T3CODE_HOME` when it is set and otherwise `~/.t3/dev`, with default ports. Checkouts on
+`AOKI_HOME` when it is set and otherwise `~/.t3/dev`, with default ports. Checkouts on
 `~/.t3/dev` share one database, settings, and secrets, and only one of their servers can run
-at a time. An explicit `--home-dir` wins in both cases. It and `T3CODE_HOME` store state in
+at a time. An explicit `--home-dir` wins in both cases. It and `AOKI_HOME` store state in
 `<home>/userdata`.
-A home of `~/.t3`, from either source, still selects `~/.t3/dev`, because `~/.t3/userdata` is
+A home of `~/.t3`, from either source, still selects `~/.t3/dev`, because `~/.aoki/userdata` is
 the live install.
 The first start in a worktree seeds its empty database from a read-only copy of
-`~/.t3/userdata/statev2.sqlite` if the source is at most 500 MiB. Larger sources warn
-and dev starts with an empty database. `--no-seed` or `T3CODE_DEV_SEED=0` skips seeding.
+`~/.aoki/userdata/statev2.sqlite` if the source is at most 500 MiB. Larger sources warn
+and dev starts with an empty database. `--no-seed` or `AOKI_DEV_SEED=0` skips seeding.
 Seeding targets only a worktree's own `.t3`, so a plain clone or a `--home-dir` outside the
 worktree starts empty. To give a clone its own seeded state, run
 `vp run migrate-dev-db --base-dir <clone>/.t3` and then `vp run dev --home-dir <clone>/.t3`.
@@ -89,11 +89,11 @@ substantial disk space before pruning.
 The first start in any checkout also builds the native resource monitor with Cargo when
 `native/resource-monitor/target` has no binary. Without Rust, dev starts with a warning
 and no process telemetry; install Rust and run `vp run build:resource-monitor`.
-Never run a development server against the live `~/.t3/userdata`.
+Never run a development server against the live `~/.aoki/userdata`.
 See [test data](../../AGENTS.md#test-data) for copying a consistent database snapshot.
 
 Read ports from the `[dev-runner]` output. Worktrees derive stable preferences from their paths,
-but occupied ports can shift them. `T3CODE_PORT_OFFSET` or `T3CODE_DEV_INSTANCE` can select a
+but occupied ports can shift them. `AOKI_PORT_OFFSET` or `AOKI_DEV_INSTANCE` can select a
 different preference when needed.
 
 ### Replay provider
@@ -112,9 +112,9 @@ and vendor frames, so Grok and fx recordings lose their vendor-only behavior.
 ### Profiling dev startup
 
 Run `vp run profile:startup` to capture the first 20 seconds of inherited Node processes under
-`.t3/startup-profiles/<timestamp>`. Workers that execute the preload get separate profiles.
+`.aoki/startup-profiles/<timestamp>`. Workers that execute the preload get separate profiles.
 It starts the normal dev runner and accepts its flags.
-Stop it with Ctrl+C after the capture. Set `T3CODE_STARTUP_PROFILE_DIR` to choose another output
+Stop it with Ctrl+C after the capture. Set `AOKI_STARTUP_PROFILE_DIR` to choose another output
 directory. Profiling adds overhead, so compare readiness with an ordinary `vp run dev` run.
 
 Open a `.cpuprofile` in Chrome DevTools' Performance panel for sampled function stacks and source
@@ -123,7 +123,7 @@ synchronous subprocess calls, and startup measures. Per-file records include imp
 source loading, preparation, recursive dependency linking, and top-level evaluation. Preparation
 uses synchronous loader boundaries; linking includes dependencies, and CommonJS evaluation can
 include nested `require` calls. Some ESM/CommonJS interop reports a combined stage. `.process.json` records the process, Node version, and capture window.
-The server's nested Effect and SQL spans remain in `.t3/userdata/logs/server.trace.ndjson`.
+The server's nested Effect and SQL spans remain in `.aoki/userdata/logs/server.trace.ndjson`.
 
 The preload temporarily adds module-body timing markers and uses one automatic debugger pause
 to instrument the live Node loader. The launcher adds `--no-node-snapshot` to inherited
@@ -147,7 +147,7 @@ Leave `VITE_HTTP_URL` and `VITE_WS_URL` unset. Vite proxies the backend through 
 origin so the same build works over localhost and remote connections.
 
 Shared runs enable bundled dev to avoid a network round trip for each import level.
-`T3CODE_BUNDLED_DEV=0` opts out when debugging bundler differences. These traps matter
+`AOKI_BUNDLED_DEV=0` opts out when debugging bundler differences. These traps matter
 when changing this setup:
 
 - The web entry must dynamically import the app so React refresh initializes before application
@@ -190,16 +190,16 @@ openssl rand -hex 32
 Put that value in the main checkout's gitignored `.env`:
 
 ```dotenv
-T3CODE_DEV_AUTH_TOKEN=<the value generated above>
+AOKI_DEV_AUTH_TOKEN=<the value generated above>
 ```
 
-The `t3.json` Setup Worktree action links that file to each worktree's `.env`. The dev runner reads repository env files at startup. `.env.local` and inherited process
+The `aoki.json` Setup Worktree action links that file to each worktree's `.env`. The dev runner reads repository env files at startup. `.env.local` and inherited process
 environment values override `.env`, so no per-worktree export is needed after setup.
 
 For a manual worktree or launcher without that link, export the same fixed value instead:
 
 ```sh
-export T3CODE_DEV_AUTH_TOKEN="<the value generated above>"
+export AOKI_DEV_AUTH_TOKEN="<the value generated above>"
 ```
 
 Do not generate a new value at startup. Start or restart `vp run dev --share` after configuration,

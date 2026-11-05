@@ -696,8 +696,8 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				T3CODE_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native.dev;
-				T3CODE_URL_SCHEME = "aoki-native-dev";
+				AOKI_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native.dev;
+				AOKI_URL_SCHEME = "aoki-native-dev";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -754,8 +754,8 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				T3CODE_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native;
-				T3CODE_URL_SCHEME = "aoki-native";
+				AOKI_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native;
+				AOKI_URL_SCHEME = "aoki-native";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -821,8 +821,8 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				T3CODE_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native.dev;
-				T3CODE_WIDGET_DISPLAY_NAME = "Aoki Dev Widgets";
+				AOKI_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native.dev;
+				AOKI_WIDGET_DISPLAY_NAME = "Aoki Dev Widgets";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -853,8 +853,8 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				T3CODE_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native;
-				T3CODE_WIDGET_DISPLAY_NAME = "Aoki Widgets";
+				AOKI_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native;
+				AOKI_WIDGET_DISPLAY_NAME = "Aoki Widgets";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -886,8 +886,8 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				T3CODE_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native.dev;
-				T3CODE_SHARE_DISPLAY_NAME = "Aoki Dev";
+				AOKI_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native.dev;
+				AOKI_SHARE_DISPLAY_NAME = "Aoki Dev";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -918,8 +918,8 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				T3CODE_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native;
-				T3CODE_SHARE_DISPLAY_NAME = Aoki;
+				AOKI_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native;
+				AOKI_SHARE_DISPLAY_NAME = Aoki;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};

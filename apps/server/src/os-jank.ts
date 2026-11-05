@@ -32,7 +32,7 @@ function logPathHydrationWarning(message: string, error?: unknown): void {
 // __MISE_DIFF is mise's record of the PATH entries it added. It must travel
 // with the shell's PATH, or `mise x` can rebuild PATH behind a same-named
 // wrapper (`exec mise x claude -- claude`) that then re-runs itself forever.
-const LOGIN_SHELL_ENV_NAMES = ["PATH", "__MISE_DIFF", "JAVA_HOME", "T3CODE_FEATURE_FLAGS"] as const;
+const LOGIN_SHELL_ENV_NAMES = ["PATH", "__MISE_DIFF", "JAVA_HOME", "AOKI_FEATURE_FLAGS"] as const;
 const LOGIN_SHELL_TIMEOUT = Duration.seconds(5);
 const SLOW_LOGIN_SHELL_TIMEOUT_MS = 20_000;
 
@@ -65,8 +65,8 @@ function applyLoginShellEnvironment(
     env.JAVA_HOME = shellEnvironment.JAVA_HOME;
   }
   // A headless server (systemd, launchd) reads no profile, yet flags belong where users export them.
-  if (env.T3CODE_FEATURE_FLAGS === undefined && shellEnvironment.T3CODE_FEATURE_FLAGS) {
-    env.T3CODE_FEATURE_FLAGS = shellEnvironment.T3CODE_FEATURE_FLAGS;
+  if (env.AOKI_FEATURE_FLAGS === undefined && shellEnvironment.AOKI_FEATURE_FLAGS) {
+    env.AOKI_FEATURE_FLAGS = shellEnvironment.AOKI_FEATURE_FLAGS;
   }
 }
 
@@ -252,7 +252,7 @@ export const expandHomePath = Effect.fn(function* (input: string) {
 export const resolveBaseDir = Effect.fn(function* (raw: string | undefined) {
   const { join, resolve } = yield* Path.Path;
   if (!raw || raw.trim().length === 0) {
-    return join(yield* HostProcess.HomeDirectory, ".t3");
+    return join(yield* HostProcess.HomeDirectory, ".aoki");
   }
   return resolve(yield* expandHomePath(raw.trim()));
 });

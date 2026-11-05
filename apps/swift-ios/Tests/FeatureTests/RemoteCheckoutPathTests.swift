@@ -4,8 +4,8 @@ import Testing
 @Suite("Remote checkout path comparison")
 struct RemoteCheckoutPathTests {
     @Test(arguments: [
-        (#"C:\Work\T3Code"#, "c:/work/t3code"),
-        (#"C:\Work\T3Code\"#, #"C:\Work\T3Code"#),
+        (#"C:\Work\Aoki"#, "c:/work/aoki"),
+        (#"C:\Work\Aoki\"#, #"C:\Work\Aoki"#),
         (#"\\server\share\repo"#, "//SERVER/share/repo"),
         (#"C:\"#, "c:/"),
         (#"\\SERVER\Share\"#, "//server/share"),

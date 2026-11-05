@@ -80,7 +80,7 @@ it.effect("reads the newest version from the update feed file a mirror publishes
     const requested: string[] = [];
     const mirror = {
       organization: "Example Corp",
-      feedUrl: "https://updates.example.com/t3code/?token=abc",
+      feedUrl: "https://updates.example.com/aoki/?token=abc",
     };
     const resolve = (
       channel: "stable" | "nightly" | "preview",
@@ -111,8 +111,8 @@ it.effect("reads the newest version from the update feed file a mirror publishes
       "1.5.0-nightly.20261101.2",
     );
     assert.deepStrictEqual(requested, [
-      "https://updates.example.com/t3code/latest-mac.yml?token=abc",
-      "https://updates.example.com/t3code/nightly-linux-arm64.yml?token=abc",
+      "https://updates.example.com/aoki/latest-mac.yml?token=abc",
+      "https://updates.example.com/aoki/nightly-linux-arm64.yml?token=abc",
     ]);
     // A feed for the wrong track is not trusted to mean the requested one.
     assert.include(
@@ -123,7 +123,7 @@ it.effect("reads the newest version from the update feed file a mirror publishes
   }),
 );
 
-it.layer(NodeServices.layer)("t3 update under a managed policy", (it) => {
+it.layer(NodeServices.layer)("aoki update under a managed policy", (it) => {
   const runWithPolicy = (
     updates: ManagedUpdatesPolicy,
     input: { readonly channel?: "stable" | "nightly"; readonly requestedVersion?: string } = {},
@@ -185,7 +185,7 @@ it.layer(NodeServices.layer)("t3 update under a managed policy", (it) => {
     Effect.gen(function* () {
       const requested: string[] = [];
       const error = yield* runWithPolicy(
-        { mode: "auto", feedUrl: "https://updates.example.com/t3code" },
+        { mode: "auto", feedUrl: "https://updates.example.com/aoki" },
         { channel: "stable" },
         HttpClient.make((request) => {
           requested.push(new URL(request.url).origin);
@@ -200,15 +200,15 @@ it.layer(NodeServices.layer)("t3 update under a managed policy", (it) => {
   );
 });
 
-it.layer(NodeServices.layer)("t3 update launcher", (it) => {
+it.layer(NodeServices.layer)("aoki update launcher", (it) => {
   it.effect("replaces a legacy symlink with a script that execs the new version", () =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-update-" });
-      const oldExe = path.join(root, "runtime/versions/1.0.0/t3");
-      const newExe = path.join(root, "runtime/versions/2.0.0/t3");
-      const launcher = path.join(root, "bin/t3");
+      const root = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-update-" });
+      const oldExe = path.join(root, "runtime/versions/1.0.0/aoki");
+      const newExe = path.join(root, "runtime/versions/2.0.0/aoki");
+      const launcher = path.join(root, "bin/aoki");
       for (const file of [oldExe, newExe]) {
         yield* fs.makeDirectory(path.dirname(file), { recursive: true });
         yield* fs.writeFileString(file, "");
@@ -236,7 +236,7 @@ it.layer(NodeServices.layer)("t3 update launcher", (it) => {
       const root = yield* fs.makeTempDirectoryScoped();
       const baseDir = path.join(root, "home");
       const runtimeDir = path.join(baseDir, "runtime");
-      const launcher = path.join(root, "custom bin", "t3.cmd");
+      const launcher = path.join(root, "custom bin", "aoki.cmd");
       const launchedAs = path.join(runtimeDir, "versions", "1.0.0", "t3.exe");
       const targetEntryPath = path.join(runtimeDir, "versions", "2.0.0", "t3.exe");
       yield* fs.makeDirectory(runtimeDir, { recursive: true });
@@ -263,19 +263,19 @@ it.layer(NodeServices.layer)("t3 update launcher", (it) => {
         const path = yield* Path.Path;
         const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
         const root = yield* fs.realPath(
-          yield* fs.makeTempDirectoryScoped({ prefix: "t3-update-" }),
+          yield* fs.makeTempDirectoryScoped({ prefix: "aoki-update-" }),
         );
         // A quote and a space in the home path exercise the script's quoting.
         const home = path.join(root, "it's home");
-        const entry = (version: string) => path.join(home, "runtime/versions", version, "t3");
+        const entry = (version: string) => path.join(home, "runtime/versions", version, "aoki");
         for (const version of ["1.0.0", "2.0.0"]) {
           yield* fs.makeDirectory(path.dirname(entry(version)), { recursive: true });
           yield* fs.writeFileString(entry(version), '#!/bin/sh\nprintf \'[%s]\\n\' "$0" "$@"\n', {
             mode: 0o755,
           });
         }
-        const launcher = path.join(root, "bin/t3");
-        const alias = path.join(root, "alias/t3");
+        const launcher = path.join(root, "bin/aoki");
+        const alias = path.join(root, "alias/aoki");
         yield* fs.makeDirectory(path.dirname(launcher), { recursive: true });
         yield* fs.makeDirectory(path.dirname(alias), { recursive: true });
         yield* fs.writeFileString(launcher, posixLauncherScript(entry("1.0.0")), { mode: 0o755 });
@@ -301,7 +301,7 @@ it.layer(NodeServices.layer)("t3 update launcher", (it) => {
 
         // Like the shell, a relative PATH entry resolves from the working directory, and a
         // script nobody can execute is passed over.
-        const unrunnable = path.join(root, "unrunnable/t3");
+        const unrunnable = path.join(root, "unrunnable/aoki");
         yield* fs.makeDirectory(path.dirname(unrunnable), { recursive: true });
         yield* fs.writeFileString(unrunnable, posixLauncherScript(entry("2.0.0")), { mode: 0o644 });
         yield* fs.writeFileString(launcher, posixLauncherScript(entry("2.0.0")), { mode: 0o755 });
@@ -329,22 +329,22 @@ it.layer(NodeServices.layer)("t3 update launcher", (it) => {
   it.effect.each([
     { name: "no launcher records", recorded: undefined },
     { name: "an empty launcher record", recorded: "" },
-    { name: "whole launcher records", recorded: "/opt/t3\n" },
-    { name: "Windows launcher records", recorded: "C:\\t3.cmd\r\n" },
+    { name: "whole launcher records", recorded: "/opt/aoki\n" },
+    { name: "Windows launcher records", recorded: "C:\\aoki.cmd\r\n" },
     // An interrupted append cut this record short.
     { name: "an unterminated launcher record", recorded: "/opt/t" },
-    // Another process's append is cut short after t3 update reads the records.
-    { name: "a record cut short after the read", recorded: "/opt/t3\n", cut: "/opt/t" },
+    // Another process's append is cut short after aoki update reads the records.
+    { name: "a record cut short after the read", recorded: "/opt/aoki\n", cut: "/opt/t" },
   ])("keeps the runtime a repointed launcher off PATH points at with $name", ({ recorded, cut }) =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-update-" });
+      const root = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-update-" });
       yield* TestClock.setTime(Duration.toMillis(Duration.days(1)));
       for (const version of ["1.0.0", "2.0.0"]) {
         const directory = path.join(root, "runtime/versions", version);
         yield* fs.makeDirectory(directory, { recursive: true });
-        yield* fs.writeFileString(path.join(directory, "t3"), "");
+        yield* fs.writeFileString(path.join(directory, "aoki"), "");
         yield* fs.writeFileString(path.join(directory, ".install-complete"), `${version}\n`);
         yield* fs.utimes(path.join(directory, ".install-complete"), 0, 0);
       }
@@ -352,14 +352,14 @@ it.layer(NodeServices.layer)("t3 update launcher", (it) => {
         yield* fs.writeFileString(path.join(root, "runtime/launchers"), recorded);
       }
       // A launcher in the T3 home itself, which neither PATH nor the default bin dir reaches.
-      const launcher = path.join(root, "t3");
-      yield* fs.symlink(path.join(root, "runtime/versions/1.0.0/t3"), launcher);
+      const launcher = path.join(root, "aoki");
+      yield* fs.symlink(path.join(root, "runtime/versions/1.0.0/aoki"), launcher);
 
       const launchersFile = path.join(root, "runtime/launchers");
       yield* repointLauncher({
         launchedAs: launcher,
         baseDir: root,
-        targetEntryPath: path.join(root, "runtime/versions/2.0.0/t3"),
+        targetEntryPath: path.join(root, "runtime/versions/2.0.0/aoki"),
       }).pipe(
         Effect.provideService(FileSystem.FileSystem, {
           ...fs,
@@ -375,7 +375,7 @@ it.layer(NodeServices.layer)("t3 update launcher", (it) => {
               ),
         }),
       );
-      // A later server start prunes with no idea how this machine launches t3.
+      // A later server start prunes with no idea how this machine launches aoki.
       const removed = yield* prunePinnedRuntimes({ baseDir: root, keep: [] }).pipe(
         Effect.provideService(ProcessRunner.ProcessRunner, unrelatedLsof),
         Effect.provideService(HostProcess.Platform, "darwin"),
@@ -386,7 +386,7 @@ it.layer(NodeServices.layer)("t3 update launcher", (it) => {
       assert.deepStrictEqual(removed, ["1.0.0"]);
       assert.equal(
         yield* readPosixLauncherTarget(launcher),
-        path.join(root, "runtime/versions/2.0.0/t3"),
+        path.join(root, "runtime/versions/2.0.0/aoki"),
       );
     }).pipe(Effect.provideService(HostProcess.Platform, "linux")),
   );
@@ -394,10 +394,10 @@ it.layer(NodeServices.layer)("t3 update launcher", (it) => {
   const launcherFixture = Effect.fnUntraced(function* () {
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-update-" });
-    const oldExe = path.join(root, "runtime/versions/1.0.0/t3");
-    const newExe = path.join(root, "runtime/versions/2.0.0/t3");
-    const launcher = path.join(root, "t3");
+    const root = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-update-" });
+    const oldExe = path.join(root, "runtime/versions/1.0.0/aoki");
+    const newExe = path.join(root, "runtime/versions/2.0.0/aoki");
+    const launcher = path.join(root, "aoki");
     for (const file of [oldExe, newExe]) {
       yield* fs.makeDirectory(path.dirname(file), { recursive: true });
       yield* fs.writeFileString(file, "");
@@ -441,7 +441,7 @@ it.layer(NodeServices.layer)("t3 update launcher", (it) => {
   );
 
   it.effect.each(["recording", "repointing"] as const)(
-    "never leaves a repointed launcher unrecorded when t3 update dies while %s",
+    "never leaves a repointed launcher unrecorded when aoki update dies while %s",
     (step) =>
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
@@ -456,11 +456,11 @@ it.layer(NodeServices.layer)("t3 update launcher", (it) => {
             ...fs,
             writeFileString: (path, data, options) =>
               step === "recording" && path === launchersFile
-                ? Effect.die("t3 update was killed")
+                ? Effect.die("aoki update was killed")
                 : fs.writeFileString(path, data, options),
             rename: (from, to) =>
               step === "repointing" && to === launcher
-                ? Effect.die("t3 update was killed")
+                ? Effect.die("aoki update was killed")
                 : fs.rename(from, to),
           }),
           Effect.exit,
@@ -480,13 +480,13 @@ it.layer(NodeServices.layer)("t3 update launcher", (it) => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-update-" });
-      const newExe = path.join(root, "runtime/versions/2.0.0/t3");
-      const copy = path.join(root, "copy/t3");
-      const foreign = path.join(root, "foreign/t3");
-      const elsewhere = path.join(root, "elsewhere/t3");
-      const otherHome = path.join(root, "other/runtime/versions/1.0.0/t3");
-      const otherLauncher = path.join(root, "other/bin/t3");
+      const root = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-update-" });
+      const newExe = path.join(root, "runtime/versions/2.0.0/aoki");
+      const copy = path.join(root, "copy/aoki");
+      const foreign = path.join(root, "foreign/aoki");
+      const elsewhere = path.join(root, "elsewhere/aoki");
+      const otherHome = path.join(root, "other/runtime/versions/1.0.0/aoki");
+      const otherLauncher = path.join(root, "other/bin/aoki");
       for (const file of [newExe, copy, elsewhere, otherHome]) {
         yield* fs.makeDirectory(path.dirname(file), { recursive: true });
         yield* fs.writeFileString(file, "");
@@ -514,25 +514,25 @@ it.layer(NodeServices.layer)("t3 update launcher", (it) => {
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
       const delimiter = (yield* HostProcess.Platform) === "win32" ? ";" : ":";
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-update-" });
-      const launcher = path.join(root, "bin/t3");
+      const root = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-update-" });
+      const launcher = path.join(root, "bin/aoki");
       yield* fs.makeDirectory(path.dirname(launcher), { recursive: true });
       yield* fs.writeFileString(launcher, "", { mode: 0o755 });
 
       const bare = yield* resolveLauncherPath.pipe(
-        Effect.provideService(HostProcess.InvokedAs, "t3"),
+        Effect.provideService(HostProcess.InvokedAs, "aoki"),
         Effect.provideService(HostProcess.Environment, {
           PATH: [path.join(root, "missing"), path.join(root, "bin")].join(delimiter),
         }),
         Effect.provideService(HostProcess.WorkingDirectory, root),
       );
       const relative = yield* resolveLauncherPath.pipe(
-        Effect.provideService(HostProcess.InvokedAs, "./bin/t3"),
+        Effect.provideService(HostProcess.InvokedAs, "./bin/aoki"),
         Effect.provideService(HostProcess.Environment, { PATH: "" }),
         Effect.provideService(HostProcess.WorkingDirectory, root),
       );
       const absent = yield* resolveLauncherPath.pipe(
-        Effect.provideService(HostProcess.InvokedAs, "t3"),
+        Effect.provideService(HostProcess.InvokedAs, "aoki"),
         Effect.provideService(HostProcess.Environment, { PATH: path.join(root, "missing") }),
         Effect.provideService(HostProcess.WorkingDirectory, root),
       );
@@ -562,21 +562,21 @@ const withoutTerminals = Effect.acquireRelease(
     }),
 );
 
-it.layer(NodeServices.layer)("t3 update with a background service", (it) => {
+it.layer(NodeServices.layer)("aoki update with a background service", (it) => {
   it.effect("names the version a service with a pending restart still runs", () =>
     Effect.gen(function* () {
       yield* withoutTerminals;
       const fs = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
-      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-update-" });
+      const baseDir = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-update-" });
       const version = packageJson.version;
       const runtime = pinnedRuntimePaths(path, baseDir, version, "linux");
       yield* fs.makeDirectory(runtime.versionDir, { recursive: true });
       yield* fs.writeFileString(runtime.entryPath, "");
       yield* fs.writeFileString(runtime.sentinelPath, `${version}\n`);
-      const unitPath = path.join(baseDir, "t3code.service");
+      const unitPath = path.join(baseDir, "aoki.service");
       const logPath = path.join(baseDir, "boot-service.log");
-      // An earlier `t3 update` pointed the service at this version without restarting it.
+      // An earlier `aoki update` pointed the service at this version without restarting it.
       const service = Layer.mock(BootService.BootService, {
         status: Effect.succeed<BootService.BootServiceStatus>({
           supported: true,
@@ -635,7 +635,7 @@ it.layer(NodeServices.layer)("t3 update with a background service", (it) => {
 
       assert.include(
         output,
-        `Background service still running the version before ${version}. Run \`t3 service restart\` when you are ready to switch it to ${version}.`,
+        `Background service still running the version before ${version}. Run \`aoki service restart\` when you are ready to switch it to ${version}.`,
       );
     }).pipe(
       Effect.provideService(HostProcess.Platform, "linux"),
@@ -644,7 +644,7 @@ it.layer(NodeServices.layer)("t3 update with a background service", (it) => {
   );
 });
 
-it.layer(NodeServices.layer)("t3 update checks the database before switching", (it) => {
+it.layer(NodeServices.layer)("aoki update checks the database before switching", (it) => {
   const preflightOutput = (stdout: string, code = 0) => ({
     stdout,
     stderr: code === 0 ? "" : "Unknown command: __service-preflight",
@@ -655,7 +655,7 @@ it.layer(NodeServices.layer)("t3 update checks the database before switching", (
     stdoutInvalidUtf8: false,
     stderrInvalidUtf8: false,
   });
-  const blockedReason = "This database has migrations that t3@0.1.8 does not know: 79_example.";
+  const blockedReason = "This database has migrations that aoki@0.1.8 does not know: 79_example.";
 
   it.effect.each([
     {
@@ -682,7 +682,7 @@ it.layer(NodeServices.layer)("t3 update checks the database before switching", (
       launcherProtocol: 3,
       preflight: preflightOutput("", 1),
       failure:
-        "t3@0.1.8 could not confirm it supports this database (its check exited with code 1), so t3 did not switch to it.",
+        "aoki@0.1.8 could not confirm it supports this database (its check exited with code 1), so aoki did not switch to it.",
     },
     {
       // Newer builds keep accepting the current launcher protocol, which may drop 3.

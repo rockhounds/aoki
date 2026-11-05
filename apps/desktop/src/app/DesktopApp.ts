@@ -78,7 +78,7 @@ export class DesktopDevelopmentBackendPortRequiredError extends Schema.TaggedErr
   {},
 ) {
   override get message(): string {
-    return "T3CODE_PORT is required in desktop development.";
+    return "AOKI_PORT is required in desktop development.";
   }
 }
 
@@ -175,7 +175,7 @@ const stopAllPoolInstances = Effect.fn("desktop.app.stopAllPoolInstances")(
 
 // Spawns the local backend as soon as the protocol, IPC, and legacy storage that every window needs exist.
 /**
- * The server reads T3CODE_FEATURE_FLAGS once at start, from the value cached at the last
+ * The server reads AOKI_FEATURE_FLAGS once at start, from the value cached at the last
  * discovery. When the login shell now sets different flags, restart it so they apply.
  */
 const restartOnFeatureFlagChange = Effect.fn("desktop.restartOnFeatureFlagChange")(function* (
@@ -183,15 +183,15 @@ const restartOnFeatureFlagChange = Effect.fn("desktop.restartOnFeatureFlagChange
 ) {
   const state = yield* DesktopState.DesktopState;
   const shellEnvironment = yield* DesktopShellEnvironment.DesktopShellEnvironment;
-  let startedWith = (yield* HostProcess.Environment).T3CODE_FEATURE_FLAGS;
+  let startedWith = (yield* HostProcess.Environment).AOKI_FEATURE_FLAGS;
   yield* shellEnvironment.updates.pipe(
     Stream.filter((snapshot) => snapshot.discovered),
     Stream.runForEach(
       Effect.fnUntraced(function* (snapshot) {
-        const flags = snapshot.environment.T3CODE_FEATURE_FLAGS ?? undefined;
+        const flags = snapshot.environment.AOKI_FEATURE_FLAGS ?? undefined;
         if (flags === startedWith || (yield* Ref.get(state.quitting))) return;
         startedWith = flags;
-        yield* logBootstrapInfo("restarting backend for changed T3CODE_FEATURE_FLAGS");
+        yield* logBootstrapInfo("restarting backend for changed AOKI_FEATURE_FLAGS");
         yield* backend.stop();
         yield* backend.start;
       }),

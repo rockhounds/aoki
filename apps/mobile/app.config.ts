@@ -11,20 +11,20 @@ Object.assign(process.env, repoEnv);
 process.env.EXPO_NO_TYPESCRIPT_SETUP = "1";
 
 const APP_VARIANT = resolveAppVariant(repoEnv.APP_VARIANT);
-const isIosPersonalTeamBuild = repoEnv.T3CODE_IOS_PERSONAL_TEAM === "1";
+const isIosPersonalTeamBuild = repoEnv.AOKI_IOS_PERSONAL_TEAM === "1";
 const runtimeVersionPolicy =
   process.env.MOBILE_VERSION_POLICY ??
   (APP_VARIANT === "development" ? "appVersion" : "fingerprint");
 
 const expoProjectId = repoEnv.AOKI_EXPO_PROJECT_ID?.trim();
 
-const personalTeamBundleIdentifier = repoEnv.T3CODE_IOS_PERSONAL_TEAM_BUNDLE_ID?.trim();
+const personalTeamBundleIdentifier = repoEnv.AOKI_IOS_PERSONAL_TEAM_BUNDLE_ID?.trim();
 const IOS_BUNDLE_IDENTIFIER_PATTERN = /^[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/;
 
 // Compiled into the native project. Without a relay, Observe's native side could dispatch to
 // Expo's own ingest before observe.ts turns it off; `.invalid` never resolves (RFC 6761).
-const observeEndpointUrl = repoEnv.T3CODE_RELAY_URL?.trim()
-  ? new URL("/v1/mobile/observe", repoEnv.T3CODE_RELAY_URL.trim()).toString()
+const observeEndpointUrl = repoEnv.AOKI_RELAY_URL?.trim()
+  ? new URL("/v1/mobile/observe", repoEnv.AOKI_RELAY_URL.trim()).toString()
   : "https://observe.invalid";
 
 const fromRepoRoot = (relativePath: string) => `../../${relativePath}`;
@@ -36,7 +36,7 @@ if (
     !IOS_BUNDLE_IDENTIFIER_PATTERN.test(personalTeamBundleIdentifier))
 ) {
   throw new Error(
-    "T3CODE_IOS_PERSONAL_TEAM_BUNDLE_ID must be a reverse-DNS identifier such as com.example.t3code when T3CODE_IOS_PERSONAL_TEAM=1.",
+    "AOKI_IOS_PERSONAL_TEAM_BUNDLE_ID must be a reverse-DNS identifier such as com.example.aoki when AOKI_IOS_PERSONAL_TEAM=1.",
   );
 }
 
@@ -82,25 +82,25 @@ const RELEASE_ASSETS = {
 const VARIANT_CONFIG = {
   development: {
     appName: "Aoki Dev",
-    scheme: "t3code-dev",
+    scheme: "aoki-dev",
     iosBundleIdentifier: "io.github.rockhounds.aoki.dev",
-    androidPackage: "com.t3tools.t3code.dev",
+    androidPackage: "io.github.rockhounds.aoki.dev",
     relyingParty: "clerk.t3.codes",
     assets: DEVELOPMENT_ASSETS,
   },
   preview: {
     appName: "Aoki Preview",
-    scheme: "t3code-preview",
+    scheme: "aoki-preview",
     iosBundleIdentifier: "io.github.rockhounds.aoki.preview",
-    androidPackage: "com.t3tools.t3code.preview",
+    androidPackage: "io.github.rockhounds.aoki.preview",
     relyingParty: "clerk.t3.codes",
     assets: PREVIEW_ASSETS,
   },
   production: {
     appName: "Aoki",
-    scheme: "t3code",
+    scheme: "aoki",
     iosBundleIdentifier: "io.github.rockhounds.aoki",
-    androidPackage: "com.t3tools.t3code",
+    androidPackage: "io.github.rockhounds.aoki",
     relyingParty: "clerk.t3.codes",
     assets: RELEASE_ASSETS,
   },
@@ -239,7 +239,7 @@ const config: ExpoConfig = {
   slug: "aoki",
   platforms: ["ios", "android"],
   scheme: variant.scheme,
-  version: repoEnv.T3CODE_MOBILE_VERSION ?? "2.3.0",
+  version: repoEnv.AOKI_MOBILE_VERSION ?? "2.3.0",
   runtimeVersion: {
     // Skip costly fingerprinting on dev launches; preview and production OTAs require matching native projects.
     policy: runtimeVersionPolicy,
@@ -248,7 +248,7 @@ const config: ExpoConfig = {
   icon: variant.assets.appIcon,
   userInterfaceStyle: "automatic",
   updates: {
-    enabled: Boolean(expoProjectId) && repoEnv.T3CODE_MOBILE_UPDATES_ENABLED !== "0",
+    enabled: Boolean(expoProjectId) && repoEnv.AOKI_MOBILE_UPDATES_ENABLED !== "0",
     ...(expoProjectId ? { url: `https://u.expo.dev/${expoProjectId}` } : {}),
     checkAutomatically: "ON_LOAD",
     fallbackToCacheTimeout: 0,
@@ -300,8 +300,8 @@ const config: ExpoConfig = {
   android: {
     icon: variant.assets.appIcon,
     package: variant.androidPackage,
-    ...(repoEnv.T3CODE_ANDROID_GOOGLE_SERVICES_FILE
-      ? { googleServicesFile: repoEnv.T3CODE_ANDROID_GOOGLE_SERVICES_FILE }
+    ...(repoEnv.AOKI_ANDROID_GOOGLE_SERVICES_FILE
+      ? { googleServicesFile: repoEnv.AOKI_ANDROID_GOOGLE_SERVICES_FILE }
       : {}),
     adaptiveIcon: {
       backgroundColor: variant.assets.androidAdaptiveBackgroundColor,
@@ -474,7 +474,7 @@ const config: ExpoConfig = {
     appVariant: APP_VARIANT,
     iosPersonalTeamBuild: isIosPersonalTeamBuild,
     relay: {
-      url: repoEnv.T3CODE_RELAY_URL ?? null,
+      url: repoEnv.AOKI_RELAY_URL ?? null,
     },
     clerk: {
       publishableKey: repoEnv.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? null,

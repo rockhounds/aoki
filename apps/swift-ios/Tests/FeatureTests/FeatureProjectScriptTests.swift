@@ -57,14 +57,14 @@ struct FeatureProjectScriptTests {
         #expect(remote.cwd == #"D:\worktrees\task"#)
         #expect(remote.worktreePath == remote.cwd)
         #expect(remote.environmentVariables == [
-            "T3CODE_PROJECT_ROOT": #"C:\projects\app"#,
-            "T3CODE_WORKTREE_PATH": #"D:\worktrees\task"#,
+            "AOKI_PROJECT_ROOT": #"C:\projects\app"#,
+            "AOKI_WORKTREE_PATH": #"D:\worktrees\task"#,
         ])
         #expect(remote.input == command + "\r")
         let local = FeatureProjectScriptLaunch(projectRoot: "/repo", worktreePath: nil, command: "vp test")
         #expect(local.cwd == "/repo")
         #expect(local.worktreePath == nil)
-        #expect(local.environmentVariables == ["T3CODE_PROJECT_ROOT": "/repo"])
+        #expect(local.environmentVariables == ["AOKI_PROJECT_ROOT": "/repo"])
     }
 
     @Test func scriptSessionSelectionNeverUsesAnotherEnvironmentOrRunningShell() {

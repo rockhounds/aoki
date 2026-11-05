@@ -1,5 +1,5 @@
 {
-  "name": "t3",
+  "name": "aoki",
   "version": "0.1.11",
   "license": "MIT",
   "repository": {
@@ -8,7 +8,7 @@
     "directory": "apps/server"
   },
   "bin": {
-    "t3": "./dist/bin.mjs"
+    "aoki": "./dist/bin.mjs"
   },
   "files": [
     "dist"

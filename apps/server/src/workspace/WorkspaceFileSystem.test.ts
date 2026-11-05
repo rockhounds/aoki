@@ -49,7 +49,7 @@ const whitespaceFilePaths =
     ? [" report.txt"]
     : [" report.txt", "report.txt ", "\treport.txt\t", " "];
 
-const UNKNOWN_WORKSPACE_PREFIX = "t3code-unknown-workspace-";
+const UNKNOWN_WORKSPACE_PREFIX = "aoki-unknown-workspace-";
 const layerKnownWorkspacesTest = Layer.mock(KnownWorkspaces.KnownWorkspaces)({
   assertContains: (cwd) =>
     cwd.includes(UNKNOWN_WORKSPACE_PREFIX)
@@ -79,7 +79,7 @@ const layerTest = Layer.empty.pipe(
 const makeTempDir = Effect.gen(function* () {
   const fileSystem = yield* FileSystem.FileSystem;
   return yield* fileSystem.makeTempDirectoryScoped({
-    prefix: "t3code-workspace-files-",
+    prefix: "aoki-workspace-files-",
   });
 });
 
@@ -560,7 +560,7 @@ it.layer(layerTest, { excludeTestServices: true })("WorkspaceFileSystemLive", (i
           const missingChildError = yield* workspaceFileSystem
             .readFile(
               Object.assign(
-                { cwd, relativePath: "linked-dir/missing/t3.json" },
+                { cwd, relativePath: "linked-dir/missing/aoki.json" },
                 { allowMissing: true },
               ),
             )

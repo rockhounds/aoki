@@ -86,14 +86,14 @@ function layerEnvironment(
         NodeServices.layer,
         NodeCrypto.layer,
         DesktopConfig.layerTest({
-          T3CODE_HOME: baseDir,
-          T3CODE_PORT: "9999",
-          T3CODE_MODE: "desktop",
-          T3CODE_DESKTOP_LAN_HOST: "192.168.1.50",
+          AOKI_HOME: baseDir,
+          AOKI_PORT: "9999",
+          AOKI_MODE: "desktop",
+          AOKI_DESKTOP_LAN_HOST: "192.168.1.50",
           VITE_DEV_SERVER_URL: options?.devServerUrl,
-          T3CODE_OTLP_TRACES_URL: options?.otlpTracesUrl,
-          T3CODE_OTLP_METRICS_URL: options?.otlpMetricsUrl,
-          T3CODE_OTLP_LOGS_URL: options?.otlpLogsUrl,
+          AOKI_OTLP_TRACES_URL: options?.otlpTracesUrl,
+          AOKI_OTLP_METRICS_URL: options?.otlpMetricsUrl,
+          AOKI_OTLP_LOGS_URL: options?.otlpLogsUrl,
         }),
       ),
     ),
@@ -242,10 +242,10 @@ describe("DesktopBackendConfiguration", () => {
         assert.equal(first.cwd, environment.backendCwd);
         assert.equal(first.captureOutput, true);
         assert.equal(first.env.ELECTRON_RUN_AS_NODE, "1");
-        assert.equal(first.env.T3CODE_DESKTOP_SHELL_DISCOVERY_PENDING, "1");
-        assert.isUndefined(first.env.T3CODE_PORT);
-        assert.isUndefined(first.env.T3CODE_MODE);
-        assert.isUndefined(first.env.T3CODE_DESKTOP_LAN_HOST);
+        assert.equal(first.env.AOKI_DESKTOP_SHELL_DISCOVERY_PENDING, "1");
+        assert.isUndefined(first.env.AOKI_PORT);
+        assert.isUndefined(first.env.AOKI_MODE);
+        assert.isUndefined(first.env.AOKI_DESKTOP_LAN_HOST);
 
         assert.equal(first.bootstrap.mode, "desktop");
         assert.equal(first.bootstrap.noBrowser, true);
@@ -451,8 +451,8 @@ describe("DesktopBackendConfiguration", () => {
             "--exec",
             "env",
             `PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${resolvedPath}`,
-            `T3CODE_HOME=${t3Home}`,
-            `${linuxAppRoot}/t3`,
+            `AOKI_HOME=${t3Home}`,
+            `${linuxAppRoot}/aoki`,
             "--bootstrap-fd",
             "0",
           ]);
@@ -497,9 +497,9 @@ describe("DesktopBackendConfiguration", () => {
 
           assert.deepEqual(observedRuntimeIds, [`sha256-${firstHash}`, `sha256-${secondHash}`]);
           assert.equal(first.wslRuntimeId, observedRuntimeIds[0]);
-          assert.include(first.args, `/runtime/sha256-${firstHash}/t3`);
+          assert.include(first.args, `/runtime/sha256-${firstHash}/aoki`);
           assert.equal(second.wslRuntimeId, observedRuntimeIds[1]);
-          assert.include(second.args, `/runtime/sha256-${secondHash}/t3`);
+          assert.include(second.args, `/runtime/sha256-${secondHash}/aoki`);
           assert.isUndefined(invalidIdentity.wslRuntimeId);
           assert.include(invalidIdentity.args, "/usr/bin/node");
           assert.include(invalidIdentity.args, `${mountedAppRoot}/apps/server/dist/bin.mjs`);
@@ -542,7 +542,7 @@ describe("DesktopBackendConfiguration", () => {
 
   it.effect("resolveWsl does not stage a runtime when the login-shell probe fails", () => {
     const archiveHash = "c".repeat(64);
-    const stagedAppRoot = `/home/test/.t3/wsl-runtime/sha256-${archiveHash}`;
+    const stagedAppRoot = `/home/test/.aoki/wsl-runtime/sha256-${archiveHash}`;
     let probeCount = 0;
     const observedNodePtyRoots: string[] = [];
     return withPackagedWslHarness(
@@ -576,7 +576,7 @@ describe("DesktopBackendConfiguration", () => {
           assert.deepEqual(observedNodePtyRoots, [mountedAppRoot]);
           assert.include(config.args, "/usr/bin/node");
           assert.include(config.args, `${mountedAppRoot}/apps/server/dist/bin.mjs`);
-          assert.notInclude(config.args, `${stagedAppRoot}/t3`);
+          assert.notInclude(config.args, `${stagedAppRoot}/aoki`);
           assert.equal(config.entryPath, mountedEntryPath);
           assert.isUndefined(config.wslRuntimeId);
           assert.isTrue(Option.isNone(config.preflightFailure));
@@ -585,7 +585,7 @@ describe("DesktopBackendConfiguration", () => {
   });
 
   it.effect("resolveWsl keeps WSL retryable when the mounted fallback fails transiently", () => {
-    const stagedAppRoot = "/home/test/.t3/wsl-runtime/cache";
+    const stagedAppRoot = "/home/test/.aoki/wsl-runtime/cache";
     return withPackagedWslHarness(
       {
         archiveHash: "f".repeat(64),
@@ -626,7 +626,7 @@ describe("DesktopBackendConfiguration", () => {
         yield* fileSystem.writeFileString(entryPath, "");
 
         const nodePath = "/home/test user's/.nvm/versions/node/v22.0.0/bin/node";
-        const linuxAppRoot = "/tmp/t3 code's launch";
+        const linuxAppRoot = "/tmp/aoki code's launch";
         const linuxEntryPath = `${linuxAppRoot}/apps/server/dist/bin.mjs`;
         const resolvedPath = "/home/test user/bin:/opt/test's tools/bin:/usr/bin:/bin";
         const devServerUrl = "http://127.0.0.1:5733/dev%20assets/?label=hello%20world";
@@ -709,9 +709,9 @@ describe("DesktopBackendConfiguration", () => {
         const configuration = yield* DesktopBackendConfiguration.DesktopBackendConfiguration;
         const primary = yield* configuration.resolvePrimary;
         const wsl = yield* configuration.resolveWsl({ port: 5050, distro: null });
-        assert.equal(wsl.env.T3CODE_DESKTOP_HOST_SCOPE, primary.env.T3CODE_DESKTOP_HOST_SCOPE);
-        assert.include((wsl.env.WSLENV ?? "").split(":"), "T3CODE_DESKTOP_HOST_SCOPE");
-        return primary.env.T3CODE_DESKTOP_HOST_SCOPE;
+        assert.equal(wsl.env.AOKI_DESKTOP_HOST_SCOPE, primary.env.AOKI_DESKTOP_HOST_SCOPE);
+        assert.include((wsl.env.WSLENV ?? "").split(":"), "AOKI_DESKTOP_HOST_SCOPE");
+        return primary.env.AOKI_DESKTOP_HOST_SCOPE;
       }).pipe(
         Effect.provide(
           layerBackendConfiguration().pipe(
@@ -749,8 +749,8 @@ describe("DesktopBackendConfiguration", () => {
 
         assert.equal(config.env.OTEL_SDK_DISABLED, "true");
         assert.include((config.env.WSLENV ?? "").split(":"), "OTEL_SDK_DISABLED");
-        assert.equal(config.env.T3CODE_TELEMETRY_ENABLED, "false");
-        assert.include((config.env.WSLENV ?? "").split(":"), "T3CODE_TELEMETRY_ENABLED");
+        assert.equal(config.env.AOKI_TELEMETRY_ENABLED, "false");
+        assert.include((config.env.WSLENV ?? "").split(":"), "AOKI_TELEMETRY_ENABLED");
         assert.equal(config.env.OTEL_RESOURCE_ATTRIBUTES, "deployment.environment.name=staging");
         assert.include((config.env.WSLENV ?? "").split(":"), "OTEL_RESOURCE_ATTRIBUTES");
       }).pipe(
@@ -771,7 +771,7 @@ describe("DesktopBackendConfiguration", () => {
         ),
         Effect.provideService(HostProcess.Environment, {
           OTEL_SDK_DISABLED: "true",
-          T3CODE_TELEMETRY_ENABLED: "false",
+          AOKI_TELEMETRY_ENABLED: "false",
           OTEL_RESOURCE_ATTRIBUTES: "deployment.environment.name=staging",
         }),
       );
@@ -798,10 +798,10 @@ describe("DesktopBackendConfiguration", () => {
         assert.equal(config.httpBaseUrl.href, "http://172.27.0.99:5050/");
         assert.equal(config.env.OPENAI_API_KEY, "openai-key");
         assert.equal(config.env.ANTHROPIC_API_KEY, "anthropic-key");
-        assert.equal(config.env.T3CODE_OTLP_PROTOCOL, "http/protobuf");
+        assert.equal(config.env.AOKI_OTLP_PROTOCOL, "http/protobuf");
         assert.equal(
           config.env.WSLENV,
-          "GOPATH/p:OPENAI_API_KEY/u:EMPTY::AZURE_DEVOPS_EXT_PAT/u:T3CODE_DESKTOP_HOST_SCOPE:ANTHROPIC_API_KEY:T3CODE_OTLP_HEADERS:T3CODE_OTLP_PROTOCOL",
+          "GOPATH/p:OPENAI_API_KEY/u:EMPTY::AZURE_DEVOPS_EXT_PAT/u:AOKI_DESKTOP_HOST_SCOPE:ANTHROPIC_API_KEY:AOKI_OTLP_HEADERS:AOKI_OTLP_PROTOCOL",
         );
       }).pipe(
         Effect.provide(
@@ -823,8 +823,8 @@ describe("DesktopBackendConfiguration", () => {
           WSLENV: "GOPATH/p:OPENAI_API_KEY/u:EMPTY::AZURE_DEVOPS_EXT_PAT/u",
           OPENAI_API_KEY: "openai-key",
           ANTHROPIC_API_KEY: "anthropic-key",
-          T3CODE_OTLP_HEADERS: 'authorization="Bearer%20my-token"',
-          T3CODE_OTLP_PROTOCOL: "http/protobuf",
+          AOKI_OTLP_HEADERS: 'authorization="Bearer%20my-token"',
+          AOKI_OTLP_PROTOCOL: "http/protobuf",
         }),
       );
     }).pipe(Effect.scoped, Effect.provide(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))),

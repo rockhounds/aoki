@@ -441,7 +441,7 @@ it.live("adopts the checkouts a project's own layout command makes, and runs its
       const web = yield* repository("shop/web");
       // The project checks `api` out itself, copies its build cache and leaves `web` out.
       yield* fileSystem.writeFileString(
-        path.join(shop, "t3.json"),
+        path.join(shop, "aoki.json"),
         JSON.stringify({
           worktreeLayout: {
             // A plain project's folder is no worktree, even when the command leaves a `.git` there.
@@ -503,7 +503,7 @@ it.live(
         const taskFolders = yield* TaskFolders.TaskFolders;
         const attempt = Effect.fnUntraced(function* (command: string) {
           yield* fileSystem.writeFileString(
-            path.join(shop, "t3.json"),
+            path.join(shop, "aoki.json"),
             JSON.stringify({ worktreeLayout: { create: command } }),
           );
           const plan = yield* taskFolders.plan({ projectId, repositories: [{ path: api }] });
@@ -559,7 +559,7 @@ it.live.each([{ linked: false }, { linked: true }])(
         const mono = path.join(tmp, "mono");
         if (linked) yield* run(origin, "worktree", "add", "-q", "-b", "dev", mono);
         yield* fileSystem.writeFileString(
-          path.join(mono, "t3.json"),
+          path.join(mono, "aoki.json"),
           JSON.stringify({
             worktreeLayout: {
               create:
@@ -920,7 +920,7 @@ it.live("restores a recorded repository the project stopped tracking as its work
 
       yield* fileSystem.remove(root, { recursive: true });
       yield* fileSystem.writeFileString(
-        path.join(shop, "t3.json"),
+        path.join(shop, "aoki.json"),
         JSON.stringify({ ignoreRepositories: ["web"] }),
       );
       yield* (yield* TaskFolders.TaskFolders).restore({
@@ -938,7 +938,7 @@ it.live("restores a recorded repository the project stopped tracking as its work
         assert.isFalse(yield* isLink(worktree));
         assert.equal(yield* run(worktree, "symbolic-ref", "--short", "HEAD"), "feature");
       }
-      assert.isTrue(yield* isLink(path.join(root, "t3.json")));
+      assert.isTrue(yield* isLink(path.join(root, "aoki.json")));
     }),
   ),
 );

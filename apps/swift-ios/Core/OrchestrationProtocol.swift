@@ -13,7 +13,7 @@ public enum OrchestrationProtocolError: LocalizedError, Equatable, Sendable {
         case let .unsupportedServerVersion(version):
             "This server uses orchestration protocol V\(version), which this app does not support. Update the app to connect."
         case .hostUpdateRequired:
-            "This host uses an older orchestration protocol. Update T3 Code on the host to connect."
+            "This host uses an older orchestration protocol. Update Aoki on the host to connect."
         }
     }
 }

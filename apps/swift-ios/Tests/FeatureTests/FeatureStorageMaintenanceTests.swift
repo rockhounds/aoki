@@ -10,7 +10,7 @@ final class FeatureStorageMaintenanceTests: XCTestCase {
                                     canRead: true, canRun: false, hasRules: true)
         let model = FeatureStorageMaintenanceModel(environmentID: "remote", client: client)
         await model.observe()
-        XCTAssertEqual(model.database?.compactCommand, "t3 doctor --home-dir /srv/t3")
+        XCTAssertEqual(model.database?.compactCommand, "aoki doctor --home-dir /srv/t3")
         XCTAssertEqual(model.report?.counts.failed, 1)
         XCTAssertEqual(Set(client.readTargets), ["database:remote", "report:remote"])
         await model.run()
@@ -86,7 +86,7 @@ private final class StorageMaintenanceFeatureStub: FeatureStorageMaintenance {
         if failDatabase { throw RPCError.disconnected }
         return AsyncThrowingStream {
             $0.yield(DatabaseStorageStatus(databaseBytes: 3_000_000_000, reclaimableBytes: 2_000_000_000,
-                incrementalVacuumEnabled: false, compactCommand: "t3 doctor --home-dir /srv/t3"))
+                incrementalVacuumEnabled: false, compactCommand: "aoki doctor --home-dir /srv/t3"))
             $0.finish()
         }
     }

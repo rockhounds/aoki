@@ -2064,7 +2064,7 @@ describe("PiAdapterV2", () => {
         Effect.provideService(AgentScope, {
           ...AgentScope.defaultValue(),
           wrap: ({ command, args }) =>
-            Effect.succeed({ command, args, unit: "t3code-pi-test.scope" }),
+            Effect.succeed({ command, args, unit: "aoki-pi-test.scope" }),
           stop: (unit) =>
             Effect.sync(() => void stopped.push({ unit, processReleased })).pipe(
               Effect.andThen(Deferred.succeed(scopeStopped, undefined)),
@@ -2073,7 +2073,7 @@ describe("PiAdapterV2", () => {
         }),
       );
       assert.deepStrictEqual(stopped, [
-        { unit: "t3code-pi-test.scope", processReleased: exit === "session" },
+        { unit: "aoki-pi-test.scope", processReleased: exit === "session" },
       ]);
     }).pipe(Effect.provide(layerTest)),
   );
@@ -2176,7 +2176,7 @@ describe("PiAdapterV2", () => {
       assert.equal(spawn.env.T3_MCP_URL, "http://127.0.0.1:43123/mcp");
       assert.equal(spawn.env.T3_MCP_BEARER_TOKEN, "secret-pi-token");
       assert.equal(spawn.env.T3_PI_RUNTIME_MODE, "full-access");
-      assert.equal(spawn.env.T3CODE_THREAD_ID, THREAD_ID);
+      assert.equal(spawn.env.AOKI_THREAD_ID, THREAD_ID);
     }).pipe(Effect.scoped, Effect.provide(layerTest)),
   );
 

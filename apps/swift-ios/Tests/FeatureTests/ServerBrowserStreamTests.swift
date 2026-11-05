@@ -22,12 +22,12 @@ struct ServerBrowserStreamTests {
     }
 
     @Test func hostSetupRemainsTerminalAcrossLateFramesAndBackgrounding() throws {
-        let message = try #require(ServerBrowserStreamMessage(data: #"{"type":"hostSetup","need":"libraries","command":"sudo npx t3 browser setup"}"#))
+        let message = try #require(ServerBrowserStreamMessage(data: #"{"type":"hostSetup","need":"libraries","command":"sudo npx aoki browser setup"}"#))
         var state = ServerBrowserStreamState()
         state.receive(message)
         state.receive(.status(.streaming, nil))
         state.suspend()
-        #expect(state.hostSetup?.command == "sudo npx t3 browser setup")
+        #expect(state.hostSetup?.command == "sudo npx aoki browser setup")
         #expect(!state.streaming)
         #expect(!state.permits(.takeControl))
         #expect(state.error != nil)

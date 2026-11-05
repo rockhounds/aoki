@@ -50,7 +50,7 @@ struct CodexArtifactTemplate: Equatable, Sendable {
 
     var useURL: URL? {
         var components = URLComponents()
-        components.scheme = "t3code"
+        components.scheme = "aoki"
         components.host = "codex-artifact-template"
         components.path = "/use"
         components.queryItems = [URLQueryItem(name: "prompt", value: usePrompt)]

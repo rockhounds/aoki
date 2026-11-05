@@ -28,8 +28,8 @@ import * as MobileDatabase from "./mobile-database";
 import * as MobileSecureStorage from "./mobile-secure-storage";
 import { MobileStorageDecodeError, MobileStorageEncodeError } from "./mobile-storage";
 
-const PREFERENCES_KEY = "t3code.preferences";
-const PREFERENCES_FALLBACK_KEY = "t3code.preferences.fallback";
+const PREFERENCES_KEY = "aoki.preferences";
+const PREFERENCES_FALLBACK_KEY = "aoki.preferences.fallback";
 const encodeJson = Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown));
 
 export const PullRequestListControls = Schema.Struct({

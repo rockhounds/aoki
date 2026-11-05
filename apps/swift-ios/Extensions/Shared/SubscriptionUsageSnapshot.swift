@@ -76,7 +76,7 @@ enum T3SubscriptionUsageSnapshotStore {
 
     private static func fileURL() -> URL? {
         T3SharedContainer.rootURL?
-            .appending(path: "Library/Application Support/T3Code", directoryHint: .isDirectory)
+            .appending(path: "Library/Application Support/Aoki", directoryHint: .isDirectory)
             .appending(path: "subscription-usage-widget.json", directoryHint: .notDirectory)
     }
 }

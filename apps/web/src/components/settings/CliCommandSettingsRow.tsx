@@ -16,11 +16,11 @@ import { useSearchableSetting } from "./settingsSearch";
 
 const FAILURE_TITLES = {
   install: msg("Could not install t3"),
-  uninstall: msg("Could not remove t3"),
+  uninstall: msg("Could not remove aoki"),
   addToPath: msg("Could not add t3 to PATH"),
 } as const;
 
-/** The desktop `t3` command's state, and its actions with a toast on failure. */
+/** The desktop `aoki` command's state, and its actions with a toast on failure. */
 export function useDesktopCliCommand() {
   const bridge = getDesktopCliCommandBridge();
   const query = useEnvironmentQuery(bridge ? desktopCliCommandStateAtom : null);
@@ -62,7 +62,7 @@ export function CliCommandSettingsRow() {
   const installed = state.installedPath !== null;
   const description = state.shadowedBy
     ? resolve(
-        msg("Another t3 at {path} runs first in a new terminal. Remove it to use Aoki's.", {
+        msg("Another aoki at {path} runs first in a new terminal. Remove it to use Aoki's.", {
           path: state.shadowedBy,
         }),
       )

@@ -200,7 +200,7 @@ private extension T3TaskWidgetSnapshot {
             T3RelayAgentActivityAggregateRow(
                 environmentId: "preview",
                 threadId: "one",
-                projectTitle: "t3code",
+                projectTitle: "aoki",
                 threadTitle: "Polish native task list",
                 modelTitle: "GPT-5.6 Sol",
                 phase: .running,

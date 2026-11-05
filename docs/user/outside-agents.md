@@ -65,7 +65,7 @@ Either page names the agent and where its access goes:
 
 Only approve a sign-in you just started. On the environment's own page, enter a
 code from **Use T3 Code in another app (MCP)**, **Settings → Sharing & access**,
-or `t3 auth pairing create` on the host. A browser already signed in to the
+or `aoki auth pairing create` on the host. A browser already signed in to the
 environment with permission to manage access can approve without a code. On the
 web app, **Use a sign-in code instead** opens the environment's own page.
 
@@ -99,24 +99,24 @@ T3 Code.
 ## Claude Code
 
 ```sh
-claude mcp add --transport http t3 https://<environment-address>/mcp
-claude mcp login t3
+claude mcp add --transport http aoki https://<environment-address>/mcp
+claude mcp login aoki
 ```
 
 `claude mcp login` opens the sign-in page in your browser. On a machine
 without a browser, add `--no-browser`, open the printed URL elsewhere, and
-paste the final URL back when asked. `claude mcp list` shows `t3` as connected
+paste the final URL back when asked. `claude mcp list` shows `aoki` as connected
 once you approve.
 
 ## Codex
 
 ```sh
-codex mcp add t3 --url https://<environment-address>/mcp
-codex mcp login t3
+codex mcp add aoki --url https://<environment-address>/mcp
+codex mcp login aoki
 ```
 
 `codex mcp login --no-browser` prints the sign-in URL instead of opening it.
-`codex mcp list` shows `t3` with OAuth once you approve.
+`codex mcp list` shows `aoki` with OAuth once you approve.
 
 ## ChatGPT
 
@@ -137,14 +137,14 @@ Agents without OAuth support cannot connect.
 
 ## Scripts on the host
 
-On the machine that runs the environment, `t3 thread` uses the same tools
+On the machine that runs the environment, `aoki thread` uses the same tools
 without a sign-in:
 
 ```sh
-id=$(t3 thread start . "Find why the tests are slow")
-t3 thread send "$id" "Now fix it" --wait
-t3 thread show "$id"
-t3 thread list
+id=$(aoki thread start . "Find why the tests are slow")
+aoki thread send "$id" "Now fix it" --wait
+aoki thread show "$id"
+aoki thread list
 ```
 
 `.` means the project that contains the current folder, or a git worktree of

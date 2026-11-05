@@ -61,7 +61,7 @@ export const disabledServiceTask = (taskXml: string): string =>
 
 export function serviceUnitEnvironmentValueOf(
   contents: string,
-  name: "T3CODE_HOME" | "T3CODE_INSTALL_BIN_DIR",
+  name: "AOKI_HOME" | "AOKI_INSTALL_BIN_DIR",
 ): string | undefined {
   const systemd = new RegExp(`^Environment=${name}=(.*)$`, "m").exec(contents)?.[1];
   if (systemd !== undefined) return unquoteSystemdValue(systemd.trim());
@@ -70,7 +70,7 @@ export function serviceUnitEnvironmentValueOf(
 }
 
 export function serviceUnitBaseDirOf(contents: string): string | undefined {
-  const unix = serviceUnitEnvironmentValueOf(contents, "T3CODE_HOME");
+  const unix = serviceUnitEnvironmentValueOf(contents, "AOKI_HOME");
   if (unix !== undefined) return unix;
   const task = /<Arguments>[^<]* "--base-dir" "([^"]*)"/.exec(contents)?.[1];
   return task === undefined ? undefined : unquoteWindowsArgument(task);

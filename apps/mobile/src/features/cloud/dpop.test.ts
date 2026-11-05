@@ -69,7 +69,7 @@ describe("mobile DPoP", () => {
 
   it.effect("rejects malformed persisted proof keys", () =>
     Effect.gen(function* () {
-      secureStore.set("t3code.cloud.dpop-proof-key", `{"kty":"EC","crv":"P-256","d":42}`);
+      secureStore.set("aoki.cloud.dpop-proof-key", `{"kty":"EC","crv":"P-256","d":42}`);
 
       const error = yield* loadOrCreateDpopProofKeyPair().pipe(Effect.flip);
 
@@ -84,7 +84,7 @@ describe("mobile DPoP", () => {
       secureStore.clear();
       const other = yield* loadOrCreateDpopProofKeyPair();
       secureStore.set(
-        "t3code.cloud.dpop-proof-key",
+        "aoki.cloud.dpop-proof-key",
         JSON.stringify({ ...privateJwk, x: other.publicJwk.x, y: other.publicJwk.y }),
       );
 
@@ -110,7 +110,7 @@ describe("mobile DPoP", () => {
   ])("rejects a persisted key with a $length coordinate", ({ x }) =>
     Effect.gen(function* () {
       secureStore.set(
-        "t3code.cloud.dpop-proof-key",
+        "aoki.cloud.dpop-proof-key",
         JSON.stringify({ ...privateJwkWithZeroEndedX, x: x.toString("base64url") }),
       );
 

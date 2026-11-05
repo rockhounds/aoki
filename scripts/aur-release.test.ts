@@ -62,7 +62,7 @@ describe.skipIf(HostProcess.Platform.defaultValue() !== "linux")("AUR release", 
         yield* fs.chmod(file, 0o755);
       }
       const version = nightly ? "1.2.4-nightly.20261104.1" : "1.2.3";
-      const pkgname = nightly ? "t3code-nightly-bin" : "t3code-bin";
+      const pkgname = nightly ? "aoki-nightly-bin" : "aoki-bin";
       const prefix =
         naming === "versioned" ? `T3-Code-${version}` : nightly ? "T3-Code-Nightly" : "T3-Code";
       const assets = [
@@ -117,7 +117,7 @@ describe.skipIf(HostProcess.Platform.defaultValue() !== "linux")("AUR release", 
         assert.deepEqual(selected.stdout.trim().split("\n"), [
           version.replace("-nightly.", "_nightly."),
           "x86_64 aarch64",
-          `${localName}::https://github.com/pingdotgg/t3code/releases/download/v${version}/${prefix}-${upstreamArch}.AppImage`,
+          `${localName}::https://github.com/pingdotgg/aoki/releases/download/v${version}/${prefix}-${upstreamArch}.AppImage`,
           checksum.repeat(64),
           localName,
         ]);

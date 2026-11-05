@@ -701,7 +701,7 @@ export const buildBase = (
     readonly arm?: Arm;
   },
 ) => {
-  const t3 = visibleT3Tools(options);
+  const aoki = visibleT3Tools(options);
   const firstAssistant = template.messages.findIndex((message) => message.role === "assistant");
   const head = template.messages.slice(0, firstAssistant === -1 ? undefined : firstAssistant);
   const systemTexts = [
@@ -717,7 +717,7 @@ export const buildBase = (
   const nativeDeferred = deferredList.split("\n").filter((name) => name && !isT3Name(name));
   const names = [
     ...nativeDeferred,
-    ...t3.filter((tool) => !alwaysLoaded.has(tool.name)).map((tool) => tool.name),
+    ...aoki.filter((tool) => !alwaysLoaded.has(tool.name)).map((tool) => tool.name),
   ]
     .toSorted()
     .join("\n");
@@ -766,11 +766,11 @@ export const buildBase = (
     },
     nativeTools: [
       ...template.tools.filter((tool) => !isT3Name(tool.name)),
-      ...t3.filter((tool) => alwaysLoaded.has(tool.name)),
+      ...aoki.filter((tool) => alwaysLoaded.has(tool.name)),
     ],
     /** Tools ToolSearch loads: T3 tools from source, and native tools the template only names. */
-    t3,
-    deferred: [...t3, ...nativeDeferred.map((name) => ({ name, ...nativeSchema(name) }))],
+    aoki,
+    deferred: [...aoki, ...nativeDeferred.map((name) => ({ name, ...nativeSchema(name) }))],
   };
 };
 
@@ -797,7 +797,7 @@ const buildCodexBase = (
     readonly arm?: Arm;
   },
 ): Base => {
-  const t3 = visibleT3Tools(options);
+  const aoki = visibleT3Tools(options);
   const contentText = (item: Block) =>
     Array.isArray(item.content)
       ? item.content.map((block: Block) => valueText(block.text)).join("\n")
@@ -859,8 +859,8 @@ const buildCodexBase = (
       date: /<current_date>(.*?)<\/current_date>/.exec(joined)?.[1],
     },
     nativeTools,
-    t3,
-    deferred: [...t3],
+    aoki,
+    deferred: [...aoki],
     codex: { ...template, input, reasoning: { ...template.reasoning, effort } },
   };
 };
@@ -1663,7 +1663,7 @@ export const t3Default = (
         .slice(0, 32);
       const home =
         /^\/(?:home|Users)\/[^/]+/.exec(sample.base.environment.cwd)?.[0] ?? "/home/user";
-      const fileFor = (key: string) => `${home}/.t3/userdata/secrets/files/${key}`;
+      const fileFor = (key: string) => `${home}/.aoki/userdata/secrets/files/${key}`;
       // A card with `fields` saves one file per field name.
       if (Array.isArray(input.fields) && !pastedSecret(name, input)) {
         const names = input.fields.flatMap((field) =>
@@ -2656,7 +2656,7 @@ export const executeCodex = async (
 };
 
 const codexCatalog = (base: Base) => [
-  ...base.t3.map((tool) => ({
+  ...base.aoki.map((tool) => ({
     name: tool.name.replace("mcp__t3-code__", "mcp__t3_code__"),
     description: `${valueText(tool.description)}\nInput JSON schema: ${JSON.stringify(tool.input_schema)}`,
   })),

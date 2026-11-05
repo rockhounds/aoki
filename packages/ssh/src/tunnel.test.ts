@@ -100,7 +100,7 @@ function commandArgs(command: ChildProcess.Command): ReadonlyArray<string> {
 
 const ARCHIVE = { archiveVersion: "1.2.3-preview.20260911.4" } as const;
 
-// Emulates `t3 serve`: it takes the home owner lock at startup, then binds
+// Emulates `aoki serve`: it takes the home owner lock at startup, then binds
 // once a second server has tried the same home (or after 2s), so a concurrent
 // launch always sees the home still unclaimed. Like the real server, it
 // publishes server-runtime.json after it starts answering HTTP, if at all.
@@ -176,7 +176,7 @@ describe("ssh tunnel scripts", () => {
   it.live("distinguishes an incompatible remote Node from a missing executable", () =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
-      const home = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ssh-node-" });
+      const home = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-ssh-node-" });
       const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
       for (const missing of [false, true]) {
         const nodeFixture = missing
@@ -226,9 +226,9 @@ describe("ssh tunnel scripts", () => {
   it.live("reports only the failed launch's own output, not an earlier launch's log", () =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
-      const home = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ssh-launch-log-" });
+      const home = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-ssh-launch-log-" });
       const target = { alias: "devbox", hostname: "devbox", username: null, port: null };
-      const stateDir = NodePath.join(home, ".t3", "ssh-launch", yield* remoteStateKey(target));
+      const stateDir = NodePath.join(home, ".aoki", "ssh-launch", yield* remoteStateKey(target));
       const bin = NodePath.join(home, "bin");
       yield* fs.makeDirectory(stateDir, { recursive: true });
       yield* fs.makeDirectory(bin);
@@ -297,6 +297,10 @@ describe("ssh tunnel scripts", () => {
       SshTunnel.buildRemoteT3RunnerScript(ARCHIVE),
       "T3_ARCHIVE_VERSION='1.2.3-preview.20260911.4'",
     );
+    assert.include(
+      SshTunnel.buildRemoteT3RunnerScript(ARCHIVE),
+      'T3_ARCHIVE="aoki-$T3_ARCHIVE_VERSION-$T3_PLATFORM_KEY.tar.gz"',
+    );
   });
 
   it.each([
@@ -305,7 +309,7 @@ describe("ssh tunnel scripts", () => {
   ])(
     "only downloads a release archive the host can run: $host",
     ({ system, machine, downloads }) => {
-      const root = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "t3-ssh-runner-"));
+      const root = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "aoki-ssh-runner-"));
       try {
         const bin = NodePath.join(root, "bin");
         NodeFS.mkdirSync(bin);
@@ -329,12 +333,12 @@ describe("ssh tunnel scripts", () => {
         assert.notEqual(result.status, 0);
         if (downloads) {
           assert.include(result.stderr, "download attempt");
-          // A bare curl error does not tell the user that t3 itself could not be downloaded.
+          // A bare curl error does not tell the user that aoki itself could not be downloaded.
           assert.include(result.stderr, ARCHIVE.archiveVersion);
-          assert.include(result.stderr, "https://github.com/pingdotgg/t3code/releases/download");
+          assert.include(result.stderr, "https://github.com/rockhounds/aoki/releases/download");
         } else {
           assert.notInclude(result.stderr, "download attempt");
-          assert.include(result.stderr, "has no t3 release archive.");
+          assert.include(result.stderr, "has no aoki release archive.");
         }
       } finally {
         NodeFS.rmSync(root, { recursive: true, force: true });
@@ -347,7 +351,7 @@ describe("ssh tunnel scripts", () => {
     { installed: ARCHIVE.archiveVersion, status: 1, reuses: false },
     { installed: "9.9.9", status: 0, reuses: false },
   ])(
-    "reuses a host t3 only at exactly the requested version: installed $installed, status $status",
+    "reuses a host aoki only at exactly the requested version: installed $installed, status $status",
     ({ installed, status, reuses }) => {
       const root = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "t3-ssh-runner-"));
       try {
@@ -361,8 +365,8 @@ describe("ssh tunnel scripts", () => {
           { mode: 0o755 },
         );
         NodeFS.writeFileSync(
-          NodePath.join(bin, "t3"),
-          `#!/bin/sh\ncase "$1" in --version) echo "t3 v${installed}"; exit ${status} ;; *) echo "host t3 $*" ;; esac\n`,
+          NodePath.join(bin, "aoki"),
+          `#!/bin/sh\ncase "$1" in --version) echo "aoki v${installed}"; exit ${status} ;; *) echo "host aoki $*" ;; esac\n`,
           { mode: 0o755 },
         );
         const runner = NodePath.join(root, "run-t3.sh");
@@ -373,10 +377,10 @@ describe("ssh tunnel scripts", () => {
         });
         if (reuses) {
           assert.equal(result.status, 0);
-          assert.equal(result.stdout, "host t3 serve\n");
+          assert.equal(result.stdout, "host aoki serve\n");
         } else {
           assert.notEqual(result.status, 0);
-          assert.include(result.stderr, "has no t3 release archive.");
+          assert.include(result.stderr, "has no aoki release archive.");
         }
       } finally {
         NodeFS.rmSync(root, { recursive: true, force: true });
@@ -390,19 +394,19 @@ describe("ssh tunnel scripts", () => {
       ? ["sha256sum", "shasum"]
       : ["sha256sum"];
   it.each(checksumTools)("names missing gzip after verifying with %s", (checksum) => {
-    const root = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "t3-ssh-runner-"));
+    const root = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "aoki-ssh-runner-"));
     try {
       const bin = NodePath.join(root, "bin");
       const release = NodePath.join(root, "release");
       const home = NodePath.join(root, "home\ncache");
-      const archive = `t3-${ARCHIVE.archiveVersion}-linux-x64.tar.gz`;
+      const archive = `aoki-${ARCHIVE.archiveVersion}-linux-x64.tar.gz`;
       NodeFS.mkdirSync(bin);
       NodeFS.mkdirSync(home);
-      NodeFS.mkdirSync(NodePath.join(release, "t3"), { recursive: true });
-      NodeFS.writeFileSync(NodePath.join(release, "t3", "t3"), "#!/bin/sh\necho ok\n", {
+      NodeFS.mkdirSync(NodePath.join(release, "aoki"), { recursive: true });
+      NodeFS.writeFileSync(NodePath.join(release, "aoki", "aoki"), "#!/bin/sh\necho ok\n", {
         mode: 0o755,
       });
-      NodeChildProcess.execFileSync("tar", ["-czf", archive, "t3"], { cwd: release });
+      NodeChildProcess.execFileSync("tar", ["-czf", archive, "aoki"], { cwd: release });
       NodeChildProcess.execFileSync("sh", ["-c", `sha256sum ${archive} > SHA256SUMS`], {
         cwd: release,
       });
@@ -515,7 +519,7 @@ describe("ssh tunnel scripts", () => {
     () =>
       Effect.gen(function* () {
         const fs = yield* FileSystem.FileSystem;
-        const directory = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ssh-login-" });
+        const directory = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-ssh-login-" });
         const startupFile = `${directory}/bash-env`;
         const bash = `${directory}/bash`;
         // System profiles can reset HOME. Suppress profile reads while BASH_ENV
@@ -1286,7 +1290,7 @@ describe("ssh tunnel scripts", () => {
         const publishDelayMs = variant === "wrapper" ? 0 : variant;
         const fs = yield* FileSystem.FileSystem;
         const path = yield* Path.Path;
-        const home = yield* fs.makeTempDirectoryScoped({ prefix: "t3-ssh-launch-" });
+        const home = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-ssh-launch-" });
         const serversFile = path.join(home, "servers");
         yield* Effect.addFinalizer(() =>
           fs.readFileString(serversFile).pipe(
@@ -1300,7 +1304,7 @@ describe("ssh tunnel scripts", () => {
             Effect.ignore,
           ),
         );
-        const serverScript = path.join(home, "fake-t3.cjs");
+        const serverScript = path.join(home, "fake-aoki.cjs");
         yield* fs.writeFileString(serverScript, fakeT3Serve(publishDelayMs));
         const wrapperScript = path.join(home, "wrapper.cjs");
         yield* fs.writeFileString(
@@ -1309,7 +1313,7 @@ describe("ssh tunnel scripts", () => {
 child.on("exit", (code) => process.exit(code ?? 1));`,
         );
         // A launch that died holding the lock must not block or double-admit later ones.
-        const launchLock = path.join(home, ".t3", "ssh-launch", ".launch.lock");
+        const launchLock = path.join(home, ".aoki", "ssh-launch", ".launch.lock");
         yield* fs.makeDirectory(path.dirname(launchLock), { recursive: true });
         yield* fs.writeFileString(launchLock, "999999999\n");
         const targets = [
@@ -1327,7 +1331,7 @@ child.on("exit", (code) => process.exit(code ?? 1));`,
         ).pipe(Effect.provide(localRemoteShellLayer(home)));
 
         const ownerPid = Number(
-          yield* fs.readFileString(path.join(home, ".t3", "userdata", "server.lock")),
+          yield* fs.readFileString(path.join(home, ".aoki", "userdata", "server.lock")),
         );
         assert.sameMembers(
           launches.map((launch) => launch.remoteServerKind),
@@ -1341,7 +1345,7 @@ child.on("exit", (code) => process.exit(code ?? 1));`,
           if (launch.remoteServerKind !== "managed") continue;
           const stateKey = yield* remoteStateKey(targets[index]!);
           const recordedPid = yield* fs.readFileString(
-            path.join(home, ".t3", "ssh-launch", stateKey, "pid"),
+            path.join(home, ".aoki", "ssh-launch", stateKey, "pid"),
           );
           assert.equal(
             Number(recordedPid.trim()),
@@ -1399,9 +1403,9 @@ server.listen(Number(flag("--port") ?? 0), "127.0.0.1", () => {
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const realSpawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-      const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-stale-pid-" });
+      const root = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-stale-pid-" });
       const home = `${root}/home`;
-      const fakeServer = `${root}/fake-t3.cjs`;
+      const fakeServer = `${root}/fake-aoki.cjs`;
       yield* fs.makeDirectory(home, { recursive: true });
       yield* fs.writeFileString(fakeServer, FAKE_SERVER);
       // Runs the remote command locally under the temp HOME. setsid keeps a launched server alive
@@ -1444,7 +1448,7 @@ server.listen(Number(flag("--port") ?? 0), "127.0.0.1", () => {
         holderPort,
         sshAsLocalShell,
         staleId: staleId === "an unrelated process" ? holder.pid : tid,
-        stateDir: `${home}/.t3/ssh-launch/${yield* remoteStateKey(target)}`,
+        stateDir: `${home}/.aoki/ssh-launch/${yield* remoteStateKey(target)}`,
       };
     });
 
@@ -1478,7 +1482,7 @@ server.listen(Number(flag("--port") ?? 0), "127.0.0.1", () => {
       // Reboot: our server is gone and its recorded PID now names something that
       // answers on the recorded port.
       process.kill(firstPid, "SIGKILL");
-      yield* fs.remove(`${home}/.t3/userdata/server-runtime.json`);
+      yield* fs.remove(`${home}/.aoki/userdata/server-runtime.json`);
       yield* fs.writeFileString(`${stateDir}/pid`, `${staleId}\n`);
       yield* fs.writeFileString(`${stateDir}/port`, `${holderPort}\n`);
 
@@ -1528,7 +1532,7 @@ server.listen(Number(flag("--port") ?? 0), "127.0.0.1", () => {
     Effect.gen(function* () {
       const { fs, home, fakeServer, sshAsLocalShell, stateDir } =
         yield* prepare("an unrelated process");
-      const updatedServer = `${home}/fake-t3-next.cjs`;
+      const updatedServer = `${home}/fake-aoki-next.cjs`;
       yield* fs.writeFileString(updatedServer, FAKE_SERVER);
       const renamed = { ...target, alias: "devbox-renamed" };
       const launch = (
@@ -1543,7 +1547,7 @@ server.listen(Number(flag("--port") ?? 0), "127.0.0.1", () => {
           launcherId,
         ).pipe(Effect.provideService(ChildProcessSpawner.ChildProcessSpawner, sshAsLocalShell));
       const runtimePid = fs
-        .readFileString(`${home}/.t3/userdata/server-runtime.json`)
+        .readFileString(`${home}/.aoki/userdata/server-runtime.json`)
         .pipe(Effect.map((runtime) => Number(JSON.parse(runtime).pid)));
       const launchedPids: Array<number> = [];
       yield* Effect.addFinalizer(() =>
@@ -1751,26 +1755,26 @@ const canBind = (port) =>
       const fs = yield* FileSystem.FileSystem;
       const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-archive-launch-" });
       const home = `${root}/home`;
-      const stateDir = `${home}/.t3/ssh-launch/test-state`;
-      const fakeT3 = `${root}/fake-t3.cjs`;
+      const stateDir = `${home}/.aoki/ssh-launch/test-state`;
+      const fakeT3 = `${root}/fake-aoki.cjs`;
       yield* fs.makeDirectory(stateDir, { recursive: true });
       yield* fs.writeFileString(`${stateDir}/port`, `${yield* freeLoopbackPort}\n`);
       yield* fs.writeFileString(fakeT3, FAKE_T3);
       for (const version of versions) {
-        const runtimeDir = `${home}/.t3/runtime/versions/${version}`;
+        const runtimeDir = `${home}/.aoki/runtime/versions/${version}`;
         yield* fs.makeDirectory(runtimeDir, { recursive: true });
         yield* fs.writeFileString(
-          `${runtimeDir}/t3`,
+          `${runtimeDir}/aoki`,
           `#!/bin/sh\nexec node '${fakeT3}' '${version}' "$@"\n`,
         );
-        yield* fs.chmod(`${runtimeDir}/t3`, 0o755);
+        yield* fs.chmod(`${runtimeDir}/aoki`, 0o755);
         yield* fs.writeFileString(`${runtimeDir}/.install-complete`, `${version}\n`);
       }
       const readManagedPid = fs
         .readFileString(`${stateDir}/pid`)
         .pipe(Effect.map((pid) => Number(pid.trim())));
       const readServerVersion = fs
-        .readFileString(`${home}/.t3/userdata/server-runtime.json`)
+        .readFileString(`${home}/.aoki/userdata/server-runtime.json`)
         .pipe(Effect.map((raw) => (JSON.parse(raw) as { serverVersion: string }).serverVersion));
       // Launched servers outlive the script, so stop each PID it recorded.
       const launchedPids = new Set<number>();
@@ -1816,15 +1820,15 @@ const canBind = (port) =>
       }).pipe(Effect.provide(NodeServices.layer)),
   );
 
-  // An NFS home can carry a ~/.t3 symlink whose target exists only on another host.
-  it.live.skipIf(windowsHost)("launches through a ~/.t3 symlink whose target is missing", () =>
+  // An NFS home can carry a ~/.aoki symlink whose target exists only on another host.
+  it.live.skipIf(windowsHost)("launches through a ~/.aoki symlink whose target is missing", () =>
     Effect.gen(function* () {
       const fs = yield* FileSystem.FileSystem;
       const root = yield* fs.makeTempDirectoryScoped({ prefix: "t3-dangling-home-" });
       const home = `${root}/home`;
-      const target = `${root}/shared/t3`;
+      const target = `${root}/shared/aoki`;
       yield* fs.makeDirectory(home, { recursive: true });
-      yield* fs.symlink(target, `${home}/.t3`);
+      yield* fs.symlink(target, `${home}/.aoki`);
       const launch = `${root}/launch.sh`;
       yield* fs.writeFileString(
         launch,

@@ -4862,8 +4862,8 @@ describe("AcpAdapterV2", () => {
         results: undefined,
       });
       assert.deepEqual(webItem("grok-web-search", "completed"), {
-        title: "Web search: t3 code",
-        patterns: ["t3 code"],
+        title: "Web search: aoki code",
+        patterns: ["aoki code"],
         results: [{ url: "https://t3.codes" }, { url: "https://github.com/pingdotgg/t3code" }],
       });
       assert.deepEqual(webItem("antigravity-web-search", "completed"), {
@@ -6227,7 +6227,7 @@ describe("AcpAdapterV2", () => {
             name: "t3-code",
             command: process.execPath,
             args: [
-              process.argv[1] === undefined ? "t3" : NodePath.resolve(process.argv[1]),
+              process.argv[1] === undefined ? "aoki" : NodePath.resolve(process.argv[1]),
               "acp-mcp-bridge",
             ],
             env: [
@@ -6280,7 +6280,7 @@ describe("AcpAdapterV2", () => {
           command: process.execPath,
           args: [
             "-e",
-            "process.stdout.write(`${process.env.T3CODE_THREAD_ID ?? ''}\n${process.env.T3_ACP_MCP_AUTHORIZATION ?? ''}`)",
+            "process.stdout.write(`${process.env.AOKI_THREAD_ID ?? ''}\n${process.env.T3_ACP_MCP_AUTHORIZATION ?? ''}`)",
           ],
         },
         { requestId: "test-terminal-create", method: "terminal/create" },
@@ -7086,7 +7086,7 @@ describe("AcpAdapterV2", () => {
         "Bearer rollback-target-token",
       );
       assert.equal(
-        runtimeInputs[1]?.processEnvironment?.T3CODE_THREAD_ID,
+        runtimeInputs[1]?.processEnvironment?.AOKI_THREAD_ID,
         "thread-acp-rollback-session-target",
       );
       const replacementMcpServer = runtimeInputs[1]?.mcpServers[0];

@@ -21,7 +21,7 @@ export class IssueTrackerRegistry extends Context.Service<
     /** The trackers a user connects with a credential of their own, in registration order. */
     readonly standalone: ReadonlyArray<StandaloneIssueTrackerApi>;
   }
->()("t3/issue/IssueTrackerRegistry") {}
+>()("aoki/issue/IssueTrackerRegistry") {}
 
 /** Exported for tests, which stand a registry up from trackers they supply themselves. */
 export function fromTrackers(

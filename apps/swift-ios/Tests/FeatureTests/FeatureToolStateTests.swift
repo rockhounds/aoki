@@ -373,7 +373,7 @@ struct FeatureToolStateTests {
     @Test
     func typedMediaPreviewRouteKeepsHostPathAndKind() {
         var components = URLComponents()
-        components.scheme = "t3code"
+        components.scheme = "aoki"
         components.host = "media-preview"
         components.path = "/open"
         components.queryItems = [
@@ -389,7 +389,7 @@ struct FeatureToolStateTests {
         )
         #expect(
             FeatureTypedMediaPreviewRoute.parse(
-                URL(string: "t3code://media-preview/open?path=/tmp/a.pdf&kind=pdf")!
+                URL(string: "aoki://media-preview/open?path=/tmp/a.pdf&kind=pdf")!
             ) == FeatureTypedMediaPreviewRoute(path: "/tmp/a.pdf", kind: .pdf)
         )
     }

@@ -164,7 +164,7 @@ const layerTools = Layer.mergeAll(
         Effect.succeed({
           id: input.projectId,
           title: input.title ?? "Untitled",
-          workspaceRoot: "/p/t3code",
+          workspaceRoot: "/p/aoki",
           defaultModelSelection: null,
           scripts: [],
           createdAt: "2026-10-18T00:00:00.000Z",
@@ -417,7 +417,7 @@ it.layer(Layer.provideMerge(layerTools, layerOrchestration))("work a link starts
       assert.equal(renamed.isError, false, JSON.stringify(renamed.content));
       for (const [name, args] of [
         ["t3_project_update", { projectId, title: "The desk's now" }],
-        ["t3_project_create", { title: "t3code", workspaceRoot: "/p/t3code" }],
+        ["t3_project_create", { title: "aoki", workspaceRoot: "/p/aoki" }],
       ] as const) {
         const changed = yield* call(trusted, name, args);
         assert.equal(changed.isError, false, `${name}: ${JSON.stringify(changed.content)}`);

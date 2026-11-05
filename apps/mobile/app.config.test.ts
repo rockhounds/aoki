@@ -10,9 +10,9 @@ vi.mock("../../scripts/lib/public-config.ts", () => ({
     AOKI_APPLE_TEAM_ID: process.env.AOKI_APPLE_TEAM_ID,
     AOKI_EXPO_OWNER: process.env.AOKI_EXPO_OWNER,
     AOKI_EXPO_PROJECT_ID: process.env.AOKI_EXPO_PROJECT_ID,
-    T3CODE_IOS_PERSONAL_TEAM: process.env.T3CODE_IOS_PERSONAL_TEAM,
-    T3CODE_IOS_PERSONAL_TEAM_BUNDLE_ID: process.env.T3CODE_IOS_PERSONAL_TEAM_BUNDLE_ID,
-    T3CODE_MOBILE_UPDATES_ENABLED: process.env.T3CODE_MOBILE_UPDATES_ENABLED,
+    AOKI_IOS_PERSONAL_TEAM: process.env.AOKI_IOS_PERSONAL_TEAM,
+    AOKI_IOS_PERSONAL_TEAM_BUNDLE_ID: process.env.AOKI_IOS_PERSONAL_TEAM_BUNDLE_ID,
+    AOKI_MOBILE_UPDATES_ENABLED: process.env.AOKI_MOBILE_UPDATES_ENABLED,
   }),
 }));
 
@@ -30,9 +30,9 @@ async function loadConfig(
     "AOKI_APPLE_TEAM_ID",
     "AOKI_EXPO_OWNER",
     "AOKI_EXPO_PROJECT_ID",
-    "T3CODE_IOS_PERSONAL_TEAM",
-    "T3CODE_IOS_PERSONAL_TEAM_BUNDLE_ID",
-    "T3CODE_MOBILE_UPDATES_ENABLED",
+    "AOKI_IOS_PERSONAL_TEAM",
+    "AOKI_IOS_PERSONAL_TEAM_BUNDLE_ID",
+    "AOKI_MOBILE_UPDATES_ENABLED",
   ]) {
     vi.stubEnv(key, overrides[key]);
   }
@@ -46,10 +46,10 @@ it.each(["prod", ""])("rejects APP_VARIANT=%j before selecting production IDs", 
 });
 
 it.each([
-  [undefined, "io.github.rockhounds.aoki", "com.t3tools.t3code"],
-  ["development", "io.github.rockhounds.aoki.dev", "com.t3tools.t3code.dev"],
-  ["preview", "io.github.rockhounds.aoki.preview", "com.t3tools.t3code.preview"],
-  ["production", "io.github.rockhounds.aoki", "com.t3tools.t3code"],
+  [undefined, "io.github.rockhounds.aoki", "io.github.rockhounds.aoki"],
+  ["development", "io.github.rockhounds.aoki.dev", "io.github.rockhounds.aoki.dev"],
+  ["preview", "io.github.rockhounds.aoki.preview", "io.github.rockhounds.aoki.preview"],
+  ["production", "io.github.rockhounds.aoki", "io.github.rockhounds.aoki"],
 ])("isolates the iOS build identity for APP_VARIANT=%j", async (value, iosId, androidId) => {
   const config = await loadConfig(value);
   expect(config.ios?.bundleIdentifier).toBe(iosId);
@@ -83,9 +83,9 @@ it.each([
       AOKI_APPLE_TEAM_ID: "EXAMPLE123",
       AOKI_EXPO_OWNER: "aoki-test",
       AOKI_EXPO_PROJECT_ID: projectId,
-      T3CODE_IOS_PERSONAL_TEAM: personalTeam ? "1" : undefined,
-      T3CODE_IOS_PERSONAL_TEAM_BUNDLE_ID: personalTeam ? bundleId : undefined,
-      T3CODE_MOBILE_UPDATES_ENABLED: "0",
+      AOKI_IOS_PERSONAL_TEAM: personalTeam ? "1" : undefined,
+      AOKI_IOS_PERSONAL_TEAM_BUNDLE_ID: personalTeam ? bundleId : undefined,
+      AOKI_MOBILE_UPDATES_ENABLED: "0",
     });
     expect(config.ios?.bundleIdentifier).toBe(bundleId);
     expect(config.ios?.entitlements?.["keychain-access-groups"]).toEqual([

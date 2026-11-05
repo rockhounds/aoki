@@ -661,7 +661,7 @@ export class EnvironmentAuth extends Context.Service<
       ServerAuthMcpApprovalCodeError | ServerAuthInternalError
     >;
   }
->()("t3/auth/EnvironmentAuth") {}
+>()("aoki/auth/EnvironmentAuth") {}
 
 type BootstrapExchangeResult = {
   readonly response: AuthBrowserSessionResult;

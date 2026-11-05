@@ -169,7 +169,7 @@ function steps(
   resolve: MFunctionType,
 ): string[] {
   const checkHost = resolve(
-    msg("On {host}, check Settings > Sharing & access or run `t3 connect status`.", { host }),
+    msg("On {host}, check Settings > Sharing & access or run `aoki connect status`.", { host }),
   );
   switch (located.cause) {
     case "offline":

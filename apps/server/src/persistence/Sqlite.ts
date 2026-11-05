@@ -115,7 +115,7 @@ const makeLayerFromPath = <E, R>(makeSetup: (dbPath: string) => Layer.Layer<neve
         writerWorker: true,
         spanAttributes: {
           "db.name": path.basename(dbPath),
-          "service.name": "t3code-server",
+          "service.name": "aoki-server",
         },
       }),
     ).pipe(

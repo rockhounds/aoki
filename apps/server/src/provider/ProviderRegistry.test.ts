@@ -109,7 +109,7 @@ const defaultClaudeSettings: ClaudeSettings = Schema.decodeSync(ClaudeSettings)(
 const decodeCodexSettings = Schema.decodeSync(CodexSettings);
 const defaultCodexSettings: CodexSettings = Schema.decodeSync(CodexSettings)({});
 
-process.env.T3CODE_CURSOR_ENABLED = "1";
+process.env.AOKI_CURSOR_ENABLED = "1";
 
 const encoder = new TextEncoder();
 const TEST_EPOCH = DateTime.makeUnsafe("1970-01-01T00:00:00.000Z");
@@ -640,7 +640,7 @@ it.layer(
         const fiber = yield* checkCodexProviderStatus(
           defaultCodexSettings,
           () => Effect.sleep("22 seconds").pipe(Effect.as(makeCodexProbeSnapshot())),
-          { T3CODE_CODEX_PROBE_TIMEOUT_MS: "60000" },
+          { AOKI_CODEX_PROBE_TIMEOUT_MS: "60000" },
         ).pipe(Effect.forkChild);
         yield* TestClock.adjust("22 seconds");
         const status = yield* Fiber.join(fiber);

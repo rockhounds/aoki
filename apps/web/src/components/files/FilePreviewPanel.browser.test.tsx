@@ -166,7 +166,7 @@ import FilePreviewPanel from "./FilePreviewPanel";
 const environmentId = EnvironmentId.make("markdown-preview-test");
 const threadRef = { environmentId, threadId: ThreadId.make("thread") };
 function setup() {
-  const keys = ["t3code.fileExplorerOpen", "t3code.renderMarkdown"];
+  const keys = ["aoki.fileExplorerOpen", "aoki.renderMarkdown"];
   const previous = keys.map((key) => localStorage.getItem(key));
   localStorage.setItem(keys[0]!, "false");
   localStorage.setItem(keys[1]!, "true");
@@ -401,7 +401,7 @@ describe("source file scroll", () => {
       expectedIncludedLine,
     }) => {
       using _settings = setup();
-      localStorage.setItem("t3code.renderMarkdown", "false");
+      localStorage.setItem("aoki.renderMarkdown", "false");
       const style = document.createElement("style");
       style.textContent = appCss;
       document.head.append(style);

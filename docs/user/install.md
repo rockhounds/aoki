@@ -20,69 +20,69 @@ On Windows, in PowerShell:
 irm https://t3.codes/install.ps1 | iex
 ```
 
-This installs the `t3` command to `~/.local/bin`. If that folder is not on your
+This installs the `aoki` command to `~/.local/bin`. If that folder is not on your
 `PATH` yet, the installer says so and, for zsh, bash on Linux, and fish, prints
-a command to add it. On Windows, `t3` works in the same PowerShell window right
-away; add the folder to your `PATH` for new windows. If a `t3` that the
+a command to add it. On Windows, `aoki` works in the same PowerShell window right
+away; add the folder to your `PATH` for new windows. If a `aoki` that the
 installer or the desktop app did not create is already there, it leaves that
-one alone and stops. Set `T3CODE_CHANNEL=nightly` to install the nightly train, or
-`T3CODE_VERSION` to pin an exact version.
+one alone and stops. Set `AOKI_CHANNEL=nightly` to install the nightly train, or
+`AOKI_VERSION` to pin an exact version.
 
-| Task                                  | Command                                                                 |
-| ------------------------------------- | ----------------------------------------------------------------------- |
-| Start the server and open the web app | `t3`                                                                    |
-| Start the server without a browser    | `t3 serve`                                                              |
-| Use it from your other devices        | `t3 up` ([details](./remote-access.md))                                 |
-| Keep it running in the background     | `t3 service install` ([details](./background-service.md))               |
-| Move to the newest release            | `t3 update`                                                             |
-| Reclaim database space                | `t3 doctor` ([details](./background-service.md#reclaim-database-space)) |
-| Remove it again                       | `t3 uninstall`                                                          |
+| Task                                  | Command                                                                   |
+| ------------------------------------- | ------------------------------------------------------------------------- |
+| Start the server and open the web app | `aoki`                                                                    |
+| Start the server without a browser    | `aoki serve`                                                              |
+| Use it from your other devices        | `aoki up` ([details](./remote-access.md))                                 |
+| Keep it running in the background     | `aoki service install` ([details](./background-service.md))               |
+| Move to the newest release            | `aoki update`                                                             |
+| Reclaim database space                | `aoki doctor` ([details](./background-service.md#reclaim-database-space)) |
+| Remove it again                       | `aoki uninstall`                                                          |
 
-Run `t3 help` or `t3 --help` for the full reference. To start in a new working
-directory, use an explicit path such as `t3 ./my-project`. A bare directory name
+Run `aoki help` or `aoki --help` for the full reference. To start in a new working
+directory, use an explicit path such as `aoki ./my-project`. A bare directory name
 is accepted only if it already exists.
 
-If `t3` or `t3 start` reports an already running server, run the `t3 pair`
+If `aoki` or `aoki start` reports an already running server, run the `t3 pair`
 command it names and open the pairing URL to connect to that server. Stop it
 before starting a replacement, or use a different `--base-dir` for an
 independent server.
 
-To try T3 Code once without installing it, run `npx t3@latest` instead (needs
-Node.js for `npx`). It offers to install the `t3` command first. If you say no,
-it asks again at the next minor release, and `npx t3 install` installs it later.
-`npx t3` always runs the version npm picked, even when a `t3` is installed. On
-the nightly train, run your installed `t3` (for example `t3 connect`), not
-`npx t3`, which runs the latest stable release.
+To try T3 Code once without installing it, run `npx aoki@latest` instead (needs
+Node.js for `npx`). It offers to install the `aoki` command first. If you say no,
+it asks again at the next minor release, and `npx aoki install` installs it later.
+`npx aoki` always runs the version npm picked, even when a `aoki` is installed. On
+the nightly train, run your installed `aoki` (for example `aoki connect`), not
+`npx aoki`, which runs the latest stable release.
 
 ### Intel Macs
 
-There is no `t3` executable for Intel Macs (the desktop app is available). To
+There is no `aoki` executable for Intel Macs (the desktop app is available). To
 run a server there, build it from source with `vp`, which provides the Node version it needs
 ([Install vp](../operations/development.md#first-checkout)):
 
 ```bash
-git clone https://github.com/pingdotgg/t3code
-cd t3code && vp i && vp run build:desktop
+git clone https://github.com/rockhounds/aoki
+cd aoki && vp i && vp run build:desktop
 node apps/server/dist/bin.mjs
 ```
 
-`t3 update` and the background service do not apply to a server run this way;
+`aoki update` and the background service do not apply to a server run this way;
 update it with `git pull` and a rebuild.
 
 ## Desktop app
 
-Download a release from [GitHub Releases](https://github.com/pingdotgg/t3code/releases),
+Download a release from [GitHub Releases](https://github.com/rockhounds/aoki/releases),
 or use a package manager:
 
-| Platform           | Install                                                      |
-| ------------------ | ------------------------------------------------------------ |
-| Windows            | `winget install T3Tools.T3Code`                              |
-| Windows (Scoop)    | `scoop install extras/t3code`                                |
-| macOS              | `brew install --cask t3-code`                                |
-| Debian, Ubuntu     | `sudo apt install ./T3-Code-*.deb`                           |
-| Arch Linux         | `yay -S t3code-bin`                                          |
-| Arch Linux nightly | `yay -S t3code-nightly-bin`                                  |
-| Nix                | `nix profile add github:NixOS/nixpkgs/nixos-unstable#t3code` |
+| Platform | Install |
+| | |
+| Windows | `winget install T3Tools.T3Code` |
+| Windows (Scoop) | `scoop install extras/aoki` |
+| macOS | `brew install cask t3-code` |
+| Debian, Ubuntu | `sudo apt install ./Aoki-*.deb` |
+| Arch Linux | `yay -S aoki-bin` |
+| Arch Linux nightly | `yay -S aoki-nightly-bin` |
+| Nix | `nix profile add github:NixOS/nixpkgs/nixos-unstable#aoki` |
 
 ### Linux
 
@@ -92,11 +92,11 @@ architecture with `uname -m`: for `x86_64`, choose a file ending in
 `arm64.deb`.
 
 To launch an AppImage, open a terminal in its download folder. Replace
-`T3-Code.AppImage` below with the exact filename you downloaded:
+`Aoki.AppImage` below with the exact filename you downloaded:
 
 ```bash
-chmod +x ./T3-Code.AppImage
-./T3-Code.AppImage
+chmod +x ./Aoki.AppImage
+./Aoki.AppImage
 ```
 
 The `.deb` updates itself like the other desktop builds. It asks for your
@@ -109,36 +109,36 @@ in-app updater.
 
 ### Nix (nixpkgs)
 
-T3 Code is maintained in [nixpkgs](https://github.com/NixOS/nixpkgs/tree/nixos-unstable/pkgs/by-name/t3/t3code).
+T3 Code is maintained in [nixpkgs](https://github.com/NixOS/nixpkgs/tree/nixos-unstable/pkgs/by-name/aoki/aoki).
 The command above installs from `nixos-unstable` and requires Nix 2.30 or later with
-`nix-command` and `flakes` enabled. Launch the desktop app with `t3code-desktop`;
-the package also includes the `t3` command.
+`nix-command` and `flakes` enabled. Launch the desktop app with `aoki-desktop`;
+the package also includes the `aoki` command.
 
 On NixOS, you can instead add the package to your system configuration, using
-a nixpkgs revision that includes `t3code`:
+a nixpkgs revision that includes `aoki`:
 
 ```nix
-environment.systemPackages = [ pkgs.t3code ];
+environment.systemPackages = [ pkgs.aoki ];
 ```
 
 Apply the change with `sudo nixos-rebuild switch`. For Home Manager, add
-`pkgs.t3code` to `home.packages` and run `home-manager switch`.
+`pkgs.aoki` to `home.packages` and run `home-manager switch`.
 
-Update a profile installation with `nix profile upgrade t3code`. For NixOS or
+Update a profile installation with `nix profile upgrade aoki`. For NixOS or
 Home Manager, update your configuration's nixpkgs input or channel and rebuild.
 Nix manages both the desktop app and the bundled
-`t3` command; use Nix to update them instead of the in-app updater or `t3 update`.
+`aoki` command; use Nix to update them instead of the in-app updater or `aoki update`.
 
-### The `t3` command
+### The `aoki` command
 
-The desktop app includes the `t3` command-line tool. A new install sets it up
+The desktop app includes the `aoki` command-line tool. A new install sets it up
 on first launch; after an update, or any time, choose **Install** next to
-**t3 command** in **Settings → About**. On macOS and Linux it adds a `t3` link
+**aoki command** in **Settings → About**. On macOS and Linux it adds a `aoki` link
 in `~/.local/bin` (or `~/bin`); on Windows it adds the app's command folder to
 your `PATH`. Open a new terminal afterwards. If the folder is not on your
 `PATH`, **Add to PATH** on the Welcome page or in **Settings → About** adds one
 line to your shell's startup file. **Remove** takes it off, and the app does not
-add it again. If you already have another `t3`, it stays as it is.
+add it again. If you already have another `aoki`, it stays as it is.
 
 ### Windows Subsystem for Linux
 
@@ -152,11 +152,11 @@ take longer.
 With the desktop app already running on the same machine:
 
 ```bash
-t3 app
+aoki app
 ```
 
 This opens a new thread for the current directory, adding the project if needed.
-Pass a path, such as `t3 app ../my-project`, to open another directory. It requires
+Pass a path, such as `aoki app ../my-project`, to open another directory. It requires
 the desktop app, so a standalone server or an SSH session is not enough. If the
 command cannot reach the app, start or update the desktop app and try again.
 
@@ -171,7 +171,7 @@ folder paths, so in the web app use **Add project** instead.
 
 Install T3 Code from the
 [App Store](https://apps.apple.com/us/app/t3-code-remote-claude-more/id6787819824) or
-[Google Play](https://play.google.com/store/apps/details?id=com.t3tools.t3code).
+[Google Play](https://play.google.com/store/apps/details?id=com.t3tools.aoki).
 The phone connects to a server on another machine. Follow
 [remote access](./remote-access.md) to link it through T3 Connect or a pairing URL.
 
@@ -180,7 +180,7 @@ on web and desktop. The store apps work with both stable and Nightly servers. Te
 
 - **iPhone and iPad:** TestFlight is invite-only.
 - **Android:** download an APK from the
-  [Android beta releases](https://github.com/pingdotgg/t3code/releases?q=android-beta-).
+  [Android beta releases](https://github.com/rockhounds/aoki/releases?q=android-beta-).
 
 If the app crashes during launch, open Settings → Diagnostics on the next launch
 that succeeds. It lists startup crashes from the last 7 days with the error and

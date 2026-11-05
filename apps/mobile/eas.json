@@ -59,7 +59,7 @@
     "testflight": {
       "extends": "production",
       "env": {
-        "T3CODE_MOBILE_VERSION": "3.0.0"
+        "AOKI_MOBILE_VERSION": "3.0.0"
       }
     },
     "production": {
@@ -86,7 +86,7 @@
       "channel": "aoki-device",
       "autoIncrement": false,
       "env": {
-        "T3CODE_MOBILE_UPDATES_ENABLED": "0"
+        "AOKI_MOBILE_UPDATES_ENABLED": "0"
       }
     }
   },

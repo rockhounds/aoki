@@ -335,8 +335,8 @@ struct HomeThreadMetadataTests {
                 FeatureProject(
                     id: "project",
                     environmentID: "device",
-                    name: "t3code",
-                    path: "/work/t3code"
+                    name: "aoki",
+                    path: "/work/aoki"
                 ),
             ],
             providers: [FeatureProvider(id: "codex-work", name: "Config name")]
@@ -367,8 +367,8 @@ struct HomeThreadMetadataTests {
                 FeatureProject(
                     id: "project",
                     environmentID: "device",
-                    name: "t3code",
-                    path: "/work/t3code"
+                    name: "aoki",
+                    path: "/work/aoki"
                 ),
             ],
             providersByEnvironment: [
@@ -399,8 +399,8 @@ struct HomeThreadMetadataTests {
                 FeatureProject(
                     id: "project",
                     environmentID: "device",
-                    name: "t3code",
-                    path: "/work/t3code"
+                    name: "aoki",
+                    path: "/work/aoki"
                 ),
             ],
             threads: [knownThread, customThread],
@@ -418,7 +418,7 @@ struct HomeThreadMetadataTests {
 
         #expect(known.providerID == "work-claude")
         #expect(known.projectEnvironmentID == "device")
-        #expect(known.projectWorkspaceRoot == "/work/t3code")
+        #expect(known.projectWorkspaceRoot == "/work/aoki")
         #expect(known.providerDriver == "custom")
         #expect(known.providerName == "Claude Code")
         #expect(
@@ -453,12 +453,12 @@ struct HomeThreadMetadataTests {
                     id: "project",
                     environmentID: "bb-1",
                     name: "wat",
-                    path: "/work/t3code",
+                    path: "/work/aoki",
                     repositoryIdentity: FeatureRepositoryIdentity(
                         canonicalKey: "github.com/pingdotgg/t3code",
-                        rootPath: "/work/t3code",
+                        rootPath: "/work/aoki",
                         displayName: "pingdotgg/t3code",
-                        name: "t3code"
+                        name: "aoki"
                     )
                 ),
             ],
@@ -510,8 +510,8 @@ struct HomeThreadMetadataTests {
                 FeatureProject(
                     id: "project",
                     environmentID: "device",
-                    name: "t3code",
-                    path: "/work/t3code"
+                    name: "aoki",
+                    path: "/work/aoki"
                 ),
             ],
             threads: [thread]
@@ -610,7 +610,7 @@ struct HomeThreadMetadataTests {
             wireID: "project-wire",
             environmentID: "studio",
             name: "Aoki",
-            path: "/work/t3code"
+            path: "/work/aoki"
         )
         let thread = FeatureThread(
             id: "thread",

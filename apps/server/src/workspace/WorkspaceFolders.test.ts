@@ -163,7 +163,7 @@ it.layer(NodeServices.layer)("WorkspaceFolders", (it) => {
       // A link to a repository elsewhere is not inside the project.
       yield* fileSystem.symlink(outside, path.join(workspaceRoot, "linked"));
       yield* fileSystem.writeFileString(
-        path.join(workspaceRoot, "t3.json"),
+        path.join(workspaceRoot, "aoki.json"),
         JSON.stringify({ ignoreRepositories: ["vendor/big"] }),
       );
       // The stored list is only trusted for what someone added.
@@ -193,7 +193,7 @@ it.layer(NodeServices.layer)("WorkspaceFolders", (it) => {
     }),
   );
 
-  it.effect("does not walk a project's folders when t3.json ignores the whole project", () =>
+  it.effect("does not walk a project's folders when aoki.json ignores the whole project", () =>
     Effect.gen(function* () {
       const fileSystem = yield* FileSystem.FileSystem;
       const path = yield* Path.Path;
@@ -202,7 +202,7 @@ it.layer(NodeServices.layer)("WorkspaceFolders", (it) => {
         yield* fileSystem.makeDirectory(path.join(workspaceRoot, folder), { recursive: true });
       }
       yield* fileSystem.writeFileString(
-        path.join(workspaceRoot, "t3.json"),
+        path.join(workspaceRoot, "aoki.json"),
         JSON.stringify({ ignoreRepositories: ["."] }),
       );
       const probed: Array<string> = [];

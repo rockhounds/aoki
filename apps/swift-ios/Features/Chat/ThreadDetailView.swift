@@ -1649,7 +1649,7 @@ public struct ThreadDetailView: View {
     }
 
     private func handleArtifactTemplateURL(_ url: URL) -> Bool {
-        guard url.scheme?.lowercased() == "t3code",
+        guard url.scheme?.lowercased() == "aoki",
               url.host?.lowercased() == "codex-artifact-template",
               url.path == "/use",
               let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
@@ -2533,7 +2533,7 @@ public struct ThreadDetailView: View {
                     return .handled
                 }
             }
-            if url.scheme?.lowercased() == "t3code" { return .discarded }
+            if url.scheme?.lowercased() == "aoki" { return .discarded }
             parent(url)
             return .handled
         }

@@ -10,7 +10,7 @@ final class StorageMaintenanceContractTests: XCTestCase {
         ] {
             let status = try JSONValue.object([
                 "databaseBytes": .number(2_147_483_648), "reclaimableBytes": .number(reclaimable),
-                "incrementalVacuumEnabled": .bool(incremental), "compactCommand": .string("t3 doctor"),
+                "incrementalVacuumEnabled": .bool(incremental), "compactCommand": .string("aoki doctor"),
             ]).decode(DatabaseStorageStatus.self)
             XCTAssertEqual(status.shouldRecommendCompaction, expected)
         }

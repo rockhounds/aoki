@@ -20,17 +20,17 @@ timings, environment identifiers and the connected machine's name. Failed spans 
 messages and stack traces; error text can quote a value the app was handling.
 
 To disable product events and relay tracing from the server, set
-`T3CODE_TELEMETRY_ENABLED=false` in its environment before starting it. Relay tracing also stops
-when `T3CODE_OTEL_SDK_DISABLED` or `OTEL_SDK_DISABLED` turns OpenTelemetry export off.
+`AOKI_TELEMETRY_ENABLED=false` in its environment before starting it. Relay tracing also stops
+when `AOKI_OTEL_SDK_DISABLED` or `OTEL_SDK_DISABLED` turns OpenTelemetry export off.
 
 An administrator can turn product events and relay tracing off in the server and desktop app with
 a [managed policy](./managed-policy.md#other-capabilities). This does not control traces sent by
 separate browser or mobile clients.
 
-The desktop app reads `T3CODE_TELEMETRY_ENABLED` from your shell profile (for example `~/.zshrc`) on macOS and
+The desktop app reads `AOKI_TELEMETRY_ENABLED` from your shell profile (for example `~/.zshrc`) on macOS and
 Linux, so export it there and restart the app. On Windows, set it as a user environment variable.
 
-The web app in a browser, including one the `t3` CLI opens, does not read these environment
+The web app in a browser, including one the `aoki` CLI opens, does not read these environment
 variables. When its build has relay tracing configured, it sends its own connection traces even
 if the server has opted out. The browser app has no relay tracing toggle.
 
@@ -71,9 +71,9 @@ saved endpoints are checked when the section opens. Checks send authentication h
 the signal's currently running endpoint and do not follow redirects. To check a new endpoint
 that requires authentication, save it and restart the server first.
 
-`T3CODE_OTLP_*_URL` and standard `OTEL_EXPORTER_OTLP_*` environment variables override the saved
+`AOKI_OTLP_*_URL` and standard `OTEL_EXPORTER_OTLP_*` environment variables override the saved
 settings. An overridden signal shows **Set by environment** and names the variable that set it, and its
-**Test** checks the running endpoint instead of the field. For endpoints saved here or set with `T3CODE_OTLP_*_URL`, set `T3CODE_OTLP_HEADERS` for
-receivers that need authentication and `T3CODE_OTLP_PROTOCOL=http/protobuf` for receivers that do
+**Test** checks the running endpoint instead of the field. For endpoints saved here or set with `AOKI_OTLP_*_URL`, set `AOKI_OTLP_HEADERS` for
+receivers that need authentication and `AOKI_OTLP_PROTOCOL=http/protobuf` for receivers that do
 not accept JSON. An endpoint set with `OTEL_EXPORTER_OTLP_*` takes its headers and protocol from
 `OTEL_EXPORTER_OTLP_HEADERS` and `OTEL_EXPORTER_OTLP_PROTOCOL` instead.

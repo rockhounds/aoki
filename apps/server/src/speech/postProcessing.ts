@@ -22,7 +22,7 @@ export class SpeechPostProcessing extends Context.Service<
       input: EnvironmentSpeechPostProcessingRequest,
     ) => Effect.Effect<{ readonly text: string }, SpeechOperationError>;
   }
->()("t3/speech/postProcessing/SpeechPostProcessing") {}
+>()("aoki/speech/postProcessing/SpeechPostProcessing") {}
 
 const make = Effect.gen(function* () {
   const settingsService = yield* ServerSettings.ServerSettingsService;

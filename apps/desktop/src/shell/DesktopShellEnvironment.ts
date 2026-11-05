@@ -122,9 +122,9 @@ const LOGIN_SHELL_ENV_NAMES = [
   "SSL_CERT_FILE",
   "SSL_CERT_DIR",
   "NODE_EXTRA_CA_CERTS",
-  "T3CODE_TELEMETRY_ENABLED",
-  "T3CODE_FEATURE_FLAGS",
-  "T3CODE_RELEASE_BASE_URL",
+  "AOKI_TELEMETRY_ENABLED",
+  "AOKI_FEATURE_FLAGS",
+  "AOKI_RELEASE_BASE_URL",
   "__MISE_DIFF",
   "JAVA_HOME",
   "PNPM_HOME",
@@ -216,8 +216,8 @@ const knownWindowsCliDirs = (env: NodeJS.ProcessEnv): ReadonlyArray<string> => [
   ),
 ];
 
-const startMarker = (name: string) => `__T3CODE_ENV_${name}_START__`;
-const endMarker = (name: string) => `__T3CODE_ENV_${name}_END__`;
+const startMarker = (name: string) => `__AOKI_ENV_${name}_START__`;
+const endMarker = (name: string) => `__AOKI_ENV_${name}_END__`;
 
 const executableName = (command: string): string => command.split(/[\\/]/u).at(-1) ?? command;
 
@@ -553,9 +553,9 @@ const installPosixEnvironment = Effect.fn("desktop.shellEnvironment.installPosix
       "NODE_EXTRA_CA_CERTS",
       "JAVA_HOME",
       "PNPM_HOME",
-      "T3CODE_TELEMETRY_ENABLED",
-      "T3CODE_FEATURE_FLAGS",
-      "T3CODE_RELEASE_BASE_URL",
+      "AOKI_TELEMETRY_ENABLED",
+      "AOKI_FEATURE_FLAGS",
+      "AOKI_RELEASE_BASE_URL",
     ] as const) {
       if (!config.env[name] && shellEnvironment[name]) {
         config.env[name] = shellEnvironment[name];
@@ -660,9 +660,9 @@ const CACHED_ENV_NAMES = [
   "SSL_CERT_FILE",
   "SSL_CERT_DIR",
   "NODE_EXTRA_CA_CERTS",
-  "T3CODE_TELEMETRY_ENABLED",
+  "AOKI_TELEMETRY_ENABLED",
   // The server reads its flags once at start, before discovery can finish.
-  "T3CODE_FEATURE_FLAGS",
+  "AOKI_FEATURE_FLAGS",
 ] as const;
 
 /** @public */

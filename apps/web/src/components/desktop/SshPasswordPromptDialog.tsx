@@ -177,8 +177,8 @@ function ActiveSshPasswordPrompt({
               <code>
                 <Var>{target}</Var>
               </code>
-              . Aoki passes your response to the local SSH process and keeps it in memory to
-              reuse for this host. Aoki does not write it to disk.
+              . Aoki passes your response to the local SSH process and keeps it in memory to reuse
+              for this host. Aoki does not write it to disk.
             </T>
           </DialogDescription>
         </DialogHeader>

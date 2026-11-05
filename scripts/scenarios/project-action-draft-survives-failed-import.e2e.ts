@@ -14,7 +14,7 @@ test(
   WEB,
   async ({ t3, app, browser, screen }) => {
     const project = await t3.project("demo", {
-      "t3.json": JSON.stringify({
+      "aoki.json": JSON.stringify({
         scripts: [{ name: "Shared build", command: "echo build" }],
       }),
     });

@@ -688,7 +688,7 @@ private struct MarkdownImageView: View {
             case let .workspaceFile(path):
                 guard let context else { return }
                 var components = URLComponents()
-                components.scheme = "t3code"
+                components.scheme = "aoki"
                 components.host = "media-preview"
                 components.path = "/open"
                 components.queryItems = [

@@ -66,9 +66,9 @@ describe("issueFilterProjects", () => {
       ({
         id: ProjectId.make(id),
         environmentId,
-        title: "t3code",
+        title: "aoki",
         workspaceRoot: `/work/${id}`,
-        repositoryIdentity: { canonicalKey: "github.com/pingdotgg/t3code" },
+        repositoryIdentity: { canonicalKey: "github.com/rockhounds/aoki" },
         isScratch,
       }) as unknown as EnvironmentProject;
     const choices = issueFilterProjects(
@@ -76,9 +76,9 @@ describe("issueFilterProjects", () => {
       new Map([[environmentId, "laptop"]]),
     );
     expect(choices.map((choice) => [choice.id, choice.title])).toEqual([
-      ["main", "t3code · laptop · /work/main"],
-      ["scratch", "t3code · laptop · /work/scratch"],
-      ["worktree", "t3code · laptop · /work/worktree"],
+      ["main", "aoki · laptop · /work/main"],
+      ["scratch", "aoki · laptop · /work/scratch"],
+      ["worktree", "aoki · laptop · /work/worktree"],
     ]);
   });
 });

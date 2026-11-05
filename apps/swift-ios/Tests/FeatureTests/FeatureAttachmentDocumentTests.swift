@@ -89,7 +89,7 @@ struct FeatureAttachmentDocumentTests {
 
     @Test
     func capturedLinksCannotInvokeHostOrApplicationRoutes() throws {
-        for raw in ["file:///tmp/secret", "t3code://media-preview/open?path=/tmp/a.png&kind=image", "javascript:alert(1)", "../README.md"] {
+        for raw in ["file:///tmp/secret", "aoki://media-preview/open?path=/tmp/a.png&kind=image", "javascript:alert(1)", "../README.md"] {
             #expect(!FeatureAttachmentLinkPolicy.allowsExternal(try #require(URL(string: raw))))
         }
         #expect(FeatureAttachmentLinkPolicy.allowsExternal(try #require(URL(string: "https://example.com/docs"))))

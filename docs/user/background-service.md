@@ -5,81 +5,81 @@ do not need to keep a terminal open.
 
 ## Manage the service
 
-Install the `t3` CLI first ([Install T3 Code](./install.md#command-line)), then
+Install the `aoki` CLI first ([Install T3 Code](./install.md#command-line)), then
 run these commands on the machine that will host T3 Code:
 
-| Task                                  | Command                |
-| ------------------------------------- | ---------------------- |
-| Set up access from your other devices | `t3 up`                |
-| See how your other devices reach it   | `t3 status`            |
-| Install and start                     | `t3 service install`   |
-| Inspect status and log location       | `t3 service status`    |
-| Move to a newer release               | `t3 update`            |
-| Restart                               | `t3 service restart`   |
-| Stop and remove from startup          | `t3 service uninstall` |
+| Task                                  | Command                  |
+| ------------------------------------- | ------------------------ |
+| Set up access from your other devices | `aoki up`                |
+| See how your other devices reach it   | `aoki status`            |
+| Install and start                     | `aoki service install`   |
+| Inspect status and log location       | `aoki service status`    |
+| Move to a newer release               | `aoki update`            |
+| Restart                               | `aoki service restart`   |
+| Stop and remove from startup          | `aoki service uninstall` |
 
 Uninstalling the service leaves your projects, threads, and settings intact.
-Running `t3 service install` again repairs a service that `t3 service status`
+Running `aoki service install` again repairs a service that `aoki service status`
 reports as broken.
 
-`t3 update` downloads the newest release on your channel and switches `t3`
+`aoki update` downloads the newest release on your channel and switches `aoki`
 and the service to it. Restarting interrupts running agent turns, terminals,
 and remote clients, so it asks first; answer no and the service keeps running
-the old version until you run `t3 service restart`. Pass `--yes` from a
+the old version until you run `aoki service restart`. Pass `--yes` from a
 script. A server you started by hand is left running; stop and start it again
 to pick up the new version. Wait for any remote update already in progress
 before updating; to match a remote client's version, follow
 [Updating T3 Code](./updating.md).
 
-Pass an exact version (`t3 update 0.0.42`) to pin one, `--channel nightly` to
+Pass an exact version (`aoki update 0.0.42`) to pin one, `--channel nightly` to
 switch trains, or `--allow-downgrade` to move backwards. `preview` is a
 maintainers' test train: its builds can be broken and are never offered as
-updates, so the installer and `t3 update` ask for confirmation before
+updates, so the installer and `aoki update` ask for confirmation before
 installing one.
 
-`t3 uninstall` removes the background service, the `t3` launcher, and the
+`aoki uninstall` removes the background service, the `aoki` launcher, and the
 downloaded versions after showing you the list and asking once. Your projects,
-threads, and settings under `~/.t3/userdata` are kept, along with `service.env`
+threads, and settings under `~/.aoki/userdata` are kept, along with `service.env`
 under T3 home. Pass `--yes` from a script.
 
 ## Local network access
 
 A new service answers only on this machine. Other devices reach it through
-T3 Connect, or directly once you choose the local network in `t3 up` (or run
-`t3 up --lan`, which sets `T3CODE_LAN=true` in `service.env`). It then listens on
+T3 Connect, or directly once you choose the local network in `aoki up` (or run
+`aoki up --lan`, which sets `AOKI_LAN=true` in `service.env`). It then listens on
 your local network and Tailscale addresses, so the desktop and mobile apps on
 the same network connect directly instead of through T3 Connect. It still does
 not answer on public addresses. Anyone on the same network can reach the port,
 so a pairing code is all that keeps them out. The hosted web app at app.t3.codes
 stays on T3 Connect, because browsers block plain HTTP from an HTTPS page.
 
-A service installed before `T3CODE_LAN` existed keeps listening on the local
-network. `t3 status` says so, and `t3 up --no-lan` turns it off. Any
-`T3CODE_HOST` value replaces this setting.
+A service installed before `AOKI_LAN` existed keeps listening on the local
+network. `aoki status` says so, and `aoki up --no-lan` turns it off. Any
+`AOKI_HOST` value replaces this setting.
 
 ## Configure the service environment
 
 Put custom environment variables in `service.env` under the service's T3 home
-directory, normally `~/.t3/service.env`. This file survives service installation
+directory, normally `~/.aoki/service.env`. This file survives service installation
 and updates. For example:
 
 ```dotenv
-T3CODE_PORT=3773
-T3CODE_HOST=127.0.0.1
+AOKI_PORT=3773
+AOKI_HOST=127.0.0.1
 ```
 
 Use `KEY=VALUE` entries, quoting values that contain spaces or `#`. Values are
 literal: shell commands and variable expansion are not evaluated. Entries
-override the inherited service environment, except for `PATH`, `T3CODE_HOME`,
+override the inherited service environment, except for `PATH`, `AOKI_HOME`,
 `T3_BOOT_SERVICE_UNIT`, and `T3_SERVICE_LAUNCHER_CONTEXT` (including case variants).
 
-Run `t3 service restart` after changing the file. Changes apply when the service
+Run `aoki service restart` after changing the file. Changes apply when the service
 starts again; switching the server version alone keeps the current values.
-For a service installed before env-file support, run `t3 service install` once
+For a service installed before env-file support, run `aoki service install` once
 with an up-to-date CLI.
 A missing file is ignored; other read failures stop service startup.
 If the file contains credentials, restrict access to that file with `chmod 600`
-(for the default T3 home, `chmod 600 ~/.t3/service.env`).
+(for the default T3 home, `chmod 600 ~/.aoki/service.env`).
 
 ## Platform support
 
@@ -99,7 +99,7 @@ of signing out, and keep the PC awake, for unattended remote access. Installing
 over SSH while nobody is signed in at the PC can fail at the final start step;
 the service is still installed and will start at the next sign-in.
 
-`t3 up` installs the service when you set up T3 Connect, but the two are managed
+`aoki up` installs the service when you set up T3 Connect, but the two are managed
 separately. Signing out of T3 Connect does not stop or uninstall the service.
 
 ## Keep the server responsive when agents use all memory
@@ -110,19 +110,19 @@ server, because only an administrator can reserve memory for it. Run, as your
 normal user:
 
 ```sh
-t3 service protect
+aoki service protect
 ```
 
 It shows the system settings it will change, asks before applying them, and
 then asks for your sudo password. If the machine runs Tailscale or SSH, it
 also offers to protect them, so you can still reach the machine. Memory
 protection takes effect at once. The server's protection from the kernel's
-out-of-memory killer takes effect after `t3 service restart`. `t3 service status` reports whether
-the protection is in place, and `t3 service protect --undo` removes it.
+out-of-memory killer takes effect after `aoki service restart`. `aoki service status` reports whether
+the protection is in place, and `aoki service protect --undo` removes it.
 
 ## Troubleshooting
 
-Start with `t3 service status` on the host. It prints the log path and, on Linux,
+Start with `aoki service status` on the host. It prints the log path and, on Linux,
 checks whether the installed service is running, enabled, and allowed to survive
 logout.
 
@@ -141,21 +141,21 @@ ssh -t your-server 'sudo loginctl enable-linger "$(id -un)"'
 
 Then retry service setup as your normal user. Run only the `loginctl` command
 with sudo; running T3 Code as root creates a separate installation and Connect
-identity. Without administrator access, run `t3 serve` in a terminal and keep
+identity. Without administrator access, run `aoki serve` in a terminal and keep
 that session open.
 
 | Status problem                          | Next step                                                                                                                      |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | `linger-unavailable`                    | Run `loginctl show-user "$(id -un)" --property=Linger` and check that systemd-logind is available.                             |
 | `user-manager-unavailable`              | Run `systemctl --user status` in a login session for the service user; check your distribution's systemd user-session support. |
-| `service-disabled` or `service-stopped` | Read the log and, on Linux, `systemctl --user status t3code.service`, then use the repair command printed by T3 Code.          |
-| `restart-pending`                       | A newer version is installed but the service still runs the previous one. Run `t3 service restart`.                            |
+| `service-disabled` or `service-stopped` | Read the log and, on Linux, `systemctl --user status aoki.service`, then use the repair command printed by T3 Code.            |
+| `restart-pending`                       | A newer version is installed but the service still runs the previous one. Run `aoki service restart`.                          |
 
 On macOS, check **System Settings → General → Login Items** if the service no
 longer starts at login. If agent work cannot access Desktop, Documents, or
-Downloads, it may need Full Disk Access for the `t3` executable listed in
+Downloads, it may need Full Disk Access for the `aoki` executable listed in
 `ProgramArguments` in
-`~/Library/LaunchAgents/com.t3tools.t3code.service.plist`.
+`~/Library/LaunchAgents/io.github.rockhounds.aoki.service.plist`.
 
 For failures after signing in to T3 Connect, see
 [connection troubleshooting](./t3-connect-troubleshooting.md).
@@ -175,7 +175,7 @@ space, then stops, repairs the database, and starts again. It is offline while
 the repair runs, and running agents stop. If the repair fails, Settings shows
 why.
 
-In other cases, such as a server you started by hand, run `t3 doctor` on the
+In other cases, such as a server you started by hand, run `aoki doctor` on the
 machine that hosts the environment. It reports the database size and the
 space it can reclaim, then asks which repairs to run;
 pass `--fix` to run the recommended ones without a prompt (for scripts), or
@@ -197,7 +197,7 @@ directory (on Linux and macOS, `TMPDIR`, or `/var/tmp` when it is not set) and
 once next to the database for its write-ahead log.
 
 If you upgraded from a version before 0.1.0, its database (`state.sqlite`) is
-still kept next to the current one so you can roll back. `t3 doctor` offers to
+still kept next to the current one so you can roll back. `aoki doctor` offers to
 delete it, but never selects that repair for you and `--fix` skips it: once it
 is gone, a version before 0.1.0 starts with no threads or settings. It does
 not offer to delete it while any project or thread you have not deleted is

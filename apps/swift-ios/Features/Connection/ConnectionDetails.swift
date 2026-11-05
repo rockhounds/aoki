@@ -39,14 +39,13 @@ enum ConnectionDetailsParser {
         let trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw ConnectionDetailsError.empty }
 
-        let extracted = ["t3code:", "aoki-native:", "aoki-native-dev:"].contains { trimmed.lowercased().hasPrefix($0) }
+        let extracted = ["aoki:", "aoki-native:", "aoki-native-dev:"].contains { trimmed.lowercased().hasPrefix($0) }
             ? trimmed
             : (firstURL(in: trimmed) ?? trimmed)
         let candidate = trimmingTrailingProsePunctuation(extracted)
         let loweredCandidate = candidate.lowercased()
         if candidate.contains("://")
-            || loweredCandidate.hasPrefix("t3code:")
-            || loweredCandidate.hasPrefix("t3:") {
+            || loweredCandidate.hasPrefix("aoki:") {
             return try parseURL(candidate)
         }
 
@@ -118,7 +117,7 @@ enum ConnectionDetailsParser {
         let allItems = queryItems + fragmentItems
         let token = firstValue(named: tokenNames, in: allItems)
 
-        if ["t3", "t3code", "t3code-swiftui", "t3code-swiftui-dev", "aoki-native", "aoki-native-dev"].contains(scheme) {
+        if ["aoki", "aoki-swiftui", "aoki-swiftui-dev", "aoki-native", "aoki-native-dev"].contains(scheme) {
             if let wrappedPairingURL = firstValue(named: wrappedPairingURLNames, in: allItems) {
                 var wrapped = try parse(wrappedPairingURL)
                 if wrapped.pairingCode == nil {
@@ -159,7 +158,7 @@ enum ConnectionDetailsParser {
 
     private static func firstURL(in input: String) -> String? {
         guard let expression = try? NSRegularExpression(
-            pattern: #"(?i)(?:(?:https?|wss?|t3)://|(?:t3code(?:-swiftui(?:-dev)?)?|aoki-native(?:-dev)?):(?://)?)[^\s<>"']+"#
+            pattern: #"(?i)(?:(?:https?|wss?)://|(?:aoki(?:-swiftui(?:-dev)?)?|aoki-native(?:-dev)?):(?://)?)[^\s<>"']+"#
         ) else {
             return nil
         }

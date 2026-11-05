@@ -135,7 +135,7 @@ export class RemoteDelegation extends Context.Service<
      */
     readonly start: () => Effect.Effect<void, never, Scope.Scope>;
   }
->()("t3/peer/RemoteDelegation") {}
+>()("aoki/peer/RemoteDelegation") {}
 
 /** The other side refused because the thread there runs above this caller's modes. */
 const isModeRefusal = (error: OrchestratorMcpFailure) =>

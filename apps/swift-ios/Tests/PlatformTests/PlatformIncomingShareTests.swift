@@ -422,7 +422,7 @@ struct PlatformIncomingShareTests {
             id: "project:environment:project",
             wireID: "project",
             environmentID: "environment",
-            name: "t3code",
+            name: "aoki",
             path: "/repo",
             repositoryIdentity: repositoryIdentity
         )

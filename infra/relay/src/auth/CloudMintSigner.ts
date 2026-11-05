@@ -34,7 +34,7 @@ export class CloudMintSigner extends Context.Service<
       },
     ) => Effect.Effect<A, RelayJwtError>;
   }
->()("t3code-relay/auth/CloudMintSigner") {}
+>()("aoki-relay/auth/CloudMintSigner") {}
 
 // Parsed on first use and kept; a failed parse is retried so a bad key fails requests, not boot.
 const cacheSuccess = <A, E>(load: Effect.Effect<A, E>) => {

@@ -513,7 +513,7 @@ function QueuedMessage(props: {
 
   return (
     <>
-      {attribution === "t3code" ? (
+      {attribution === "aoki" ? (
         <p className="me-1 text-2xs text-muted-foreground/70">
           <T>Sent by T3 Code</T>
         </p>

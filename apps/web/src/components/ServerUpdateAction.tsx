@@ -325,12 +325,12 @@ export function ServerUpdateAction({
         type: "success",
         title: updatesInstall ? gt("Update command copied") : gt("Relaunch command copied"),
         description: updatesInstall
-          ? gt("Run `{command}` on {serverLabel}, then restart t3 with your usual options.", {
+          ? gt("Run `{command}` on {serverLabel}, then restart aoki with your usual options.", {
               command,
               serverLabel,
             })
           : gt(
-              "Stop t3 on {serverLabel}, then relaunch with `{command}` using the same subcommand and options. This does not update an installed t3 command.",
+              "Stop aoki on {serverLabel}, then relaunch with `{command}` using the same subcommand and options. This does not update an installed t3 command.",
               { command, serverLabel },
             ),
       });

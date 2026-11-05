@@ -33,8 +33,8 @@ struct FeatureProjectScriptLaunch: Equatable, Sendable {
     init(projectRoot: String, worktreePath: String?, command: String) {
         cwd = worktreePath ?? projectRoot
         self.worktreePath = worktreePath
-        var variables = ["T3CODE_PROJECT_ROOT": projectRoot]
-        if let worktreePath, !worktreePath.isEmpty { variables["T3CODE_WORKTREE_PATH"] = worktreePath }
+        var variables = ["AOKI_PROJECT_ROOT": projectRoot]
+        if let worktreePath, !worktreePath.isEmpty { variables["AOKI_WORKTREE_PATH"] = worktreePath }
         environmentVariables = variables
         input = command + "\r"
     }

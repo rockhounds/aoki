@@ -791,7 +791,7 @@ export function IssuesPage() {
             open={rightPanelState.isOpen}
             keybindings={keybindings}
             getShortcutContext={getShortcutContext}
-            widthStorageKey="t3code:issue-panel-width"
+            widthStorageKey="aoki:issue-panel-width"
             defaultWidth={typeof window === "undefined" ? 640 : Math.floor(window.innerWidth / 2)}
             surfaces={presence.value?.surfaces ?? []}
             environmentId={panelEnvironmentId}
