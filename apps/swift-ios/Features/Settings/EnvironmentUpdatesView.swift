@@ -25,7 +25,7 @@ enum EnvironmentReleaseIndex {
         var page = 1
         while true {
             try Task.checkCancellation()
-            let url = URL(string: "https://api.github.com/repos/pingdotgg/t3code/releases?per_page=100&page=\(page)")!
+            let url = URL(string: "https://api.github.com/repos/rockhounds/aoki/releases?per_page=100&page=\(page)")!
             let (data, response) = try await URLSession.shared.data(from: url)
             guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw URLError(.badServerResponse) }
             let releases = try JSONDecoder().decode([Release].self, from: data)

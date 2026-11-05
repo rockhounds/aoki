@@ -79,6 +79,22 @@ both cases fix the named change in place and `--continue`, or `--abort`.
 - `AOKI.md`: this file
 - `scripts/aoki/`: fork maintenance scripts
 
+## Upstream services
+
+Aoki does not contact T3 Tools' services unless you opt in:
+
+- **Product analytics** are off. The server sends events only when `T3CODE_POSTHOG_KEY` and
+  `T3CODE_POSTHOG_HOST` point at your own PostHog project. `docs/user/telemetry.md` describes
+  upstream builds.
+- **Releases** come from `rockhounds/aoki`: `t3 update`, server self-update, the mobile apps'
+  update checks, desktop release links, and the server archive that desktop SSH environments
+  install on the remote machine. Aoki publishes no releases yet, so these find nothing, and desktop SSH
+  environments cannot install a server on the remote machine.
+- **The model list** refreshes from `apps/server/src/provider/model-manifest.json` on Aoki's
+  `main`.
+- **T3 Connect** (Clerk sign-in and the relay) exists only in builds made with T3 Connect values
+  in `.env` (see `.env.example`). Copied thread links still open `app.t3.codes`.
+
 ## Toolchain
 
 Upstream pins Node `26.12.1` and pnpm `12.14.0` (see `package.json`). On this machine:
