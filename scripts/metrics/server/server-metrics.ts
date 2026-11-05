@@ -741,7 +741,7 @@ const prepareSeed = Effect.fn("serverMetrics.prepareSeed")(function* (
 ) {
   const fs = yield* FileSystem.FileSystem;
   const node = yield* HostProcess.ExecutablePath;
-  const dir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-server-metrics-seed-" });
+  const dir = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-server-metrics-seed-" });
   yield* Console.error(`seeding ${checkout} from the real database (read-only)...`);
   // Its output names the kept projects, so it stays out of ours.
   const seeded = yield* run(
@@ -807,7 +807,7 @@ const startServer = Effect.fn("serverMetrics.startServer")(function* (
   );
   const dropped = new Set([
     "ANTHROPIC_AUTH_TOKEN",
-    "T3CODE_HOME",
+    "AOKI_HOME",
     "CLAUDE_CONFIG_DIR",
     ...(environment.noAgentScope ? ["XDG_RUNTIME_DIR"] : []),
   ]);
@@ -823,7 +823,7 @@ const startServer = Effect.fn("serverMetrics.startServer")(function* (
     ANTHROPIC_API_KEY: "sk-bench",
     CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1",
     OTEL_SDK_DISABLED: "true",
-    T3CODE_DEV_SEED: "0",
+    AOKI_DEV_SEED: "0",
     ...options.forge?.env,
   };
   const port = yield* freePort;
@@ -1612,7 +1612,7 @@ const runOnce = Effect.fn("serverMetrics.runOnce")(function* (options: RunOption
   const platform = yield* HostProcess.Platform;
   const path = yield* Path.Path;
   const machine = yield* watchMachine;
-  const home = yield* fs.makeTempDirectoryScoped({ prefix: "t3-server-metrics-" });
+  const home = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-server-metrics-" });
   const api = yield* serveFakeAnthropic();
   const environment: Environment = {
     home,

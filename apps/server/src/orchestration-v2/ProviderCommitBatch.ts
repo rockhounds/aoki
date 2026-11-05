@@ -20,7 +20,7 @@ const STARVATION_MILLIS = 30_000;
 const MAX_QUEUED = 4 * MAX_EVENTS;
 const encodeQueue = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
-export const enabled = Config.Boolean("T3CODE_PROVIDER_COMMIT_BATCHING").pipe(
+export const enabled = Config.Boolean("AOKI_PROVIDER_COMMIT_BATCHING").pipe(
   Config.withDefault(true),
   Effect.orDie,
 );
@@ -143,7 +143,7 @@ function coalesce(jobs: ReadonlyArray<Job>): Array<Unit> {
 }
 
 const CurrentWorker = Context.Reference<number | undefined>(
-  "t3/ProviderCommitBatch/CurrentWorker",
+  "aoki/ProviderCommitBatch/CurrentWorker",
   {
     defaultValue: () => undefined,
   },

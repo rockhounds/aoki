@@ -19,7 +19,7 @@ struct ProjectFaviconStoreTests {
         defer { try? FileManager.default.removeItem(at: directory) }
         let key = FeatureProjectFaviconCacheKey(
             environmentID: "leftbook",
-            workspaceRoot: "/work/t3code/"
+            workspaceRoot: "/work/aoki/"
         )
         let data = Data("known-icon".utf8)
         let checkedAt = Date(timeIntervalSince1970: 1_000)
@@ -46,7 +46,7 @@ struct ProjectFaviconStoreTests {
         let store = FeatureProjectFaviconStore(directoryURL: directory)
         let key = FeatureProjectFaviconCacheKey(
             environmentID: "leftbook",
-            workspaceRoot: "/work/t3code"
+            workspaceRoot: "/work/aoki"
         )
         let data = Data("cached-icon".utf8)
 
@@ -73,15 +73,15 @@ struct ProjectFaviconStoreTests {
     func projectKeysSeparateEnvironmentsAndNormalizePaths() {
         let first = FeatureProjectFaviconCacheKey(
             environmentID: "leftbook",
-            workspaceRoot: "/work/./t3code/"
+            workspaceRoot: "/work/./aoki/"
         )
         let sameProject = FeatureProjectFaviconCacheKey(
             environmentID: "leftbook",
-            workspaceRoot: "/work/t3code"
+            workspaceRoot: "/work/aoki"
         )
         let otherEnvironment = FeatureProjectFaviconCacheKey(
             environmentID: "big-o",
-            workspaceRoot: "/work/t3code"
+            workspaceRoot: "/work/aoki"
         )
 
         #expect(first == sameProject)

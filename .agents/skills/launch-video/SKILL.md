@@ -31,7 +31,7 @@ There are three ways to build one:
 2. **Write the story** before any code: who the user is, what they want, and two or three
    beats that get them there. Show it to the maintainer if the angle is a guess.
 3. **Stage it.** Copy `stagings/linked-environments/` to `stagings/<slug>/`.
-   - `serve.mjs` builds fresh homes under `.t3/launch/<slug>/` with `scripts/stage-env.mjs`.
+   - `serve.mjs` builds fresh homes under `.aoki/launch/<slug>/` with `scripts/stage-env.mjs`.
      Each home gets a fictional machine label, the replay agent, and no paid provider.
      It starts the servers, creates projects, writes `<out>/stage.json` and keeps running.
      Run it in the background.
@@ -67,7 +67,7 @@ There are three ways to build one:
    - Data a real flow can't produce cheaply goes into the app's own stores, never into pixels.
      `insertPeerLinks` writes link rows into a stopped server; `serveDescriptors` makes fake
      machines answer the reachability probe. The client's saved environments and routes live
-     in IndexedDB (`t3code:connection-runtime` / `catalog` / `document`): write the document
+     in IndexedDB (`aoki:connection-runtime` / `catalog` / `document`): write the document
      from the page after its first load, then reload. Route kinds come from hostnames
      (`*.localhost` is LAN, `*.ts.net` Tailscale); Chrome's
      `--host-resolver-rules=MAP *.tail-demo.ts.net 127.0.0.1` makes fake tailnet names work.
@@ -86,7 +86,7 @@ There are three ways to build one:
    `scripts/sheet.sh ~/launch-videos/<slug> 1,4.5,8,12,16,21,26` then Read `sheet.png`.
    The times are video seconds (after `Kit.timeline`), not animation seconds. Read the
    full-size frames in `probe/` to check small text. A probe takes about 2 s a frame.
-7. **Render:** `scripts/render.sh ~/launch-videos/<slug> t3code-<slug>` gives
+7. **Render:** `scripts/render.sh ~/launch-videos/<slug> aoki-<slug>` gives
    `t3code-<slug>.mp4` and `outro.png`. A 30 s video takes 3–6 minutes.
 8. **Hand back** with the video and outro embedded (`![...](/abs/path.mp4)`), the caption
    copy, any `Kit.text` edits, and anything you assumed rather than verified.
@@ -97,7 +97,7 @@ harness's task stop; it ends its servers' process groups.
 
 ### Staging traps
 
-- **Machine names and icons.** `T3CODE_ENVIRONMENT_LABEL` and `T3CODE_ENVIRONMENT_MACHINE_KIND`
+- **Machine names and icons.** `AOKI_ENVIRONMENT_LABEL` and `AOKI_ENVIRONMENT_MACHINE_KIND`
   (laptop, desktop, cloud, linux, mac-mini, mac-studio) override what the server detects.
   `prepareHome({ label, machine })` records them and `startEnvironment` and `cli()` pass them
   on; the CLI needs them too, because a link introduces the machine by its label.

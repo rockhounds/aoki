@@ -50,7 +50,7 @@ export interface CheckpointCaptureServiceV2Shape {
 export class CheckpointCaptureServiceV2 extends Context.Service<
   CheckpointCaptureServiceV2,
   CheckpointCaptureServiceV2Shape
->()("t3/orchestration-v2/CheckpointCaptureService/CheckpointCaptureServiceV2") {}
+>()("aoki/orchestration-v2/CheckpointCaptureService/CheckpointCaptureServiceV2") {}
 
 export const layer: Layer.Layer<
   CheckpointCaptureServiceV2,

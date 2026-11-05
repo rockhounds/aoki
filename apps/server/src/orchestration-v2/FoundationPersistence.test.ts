@@ -797,7 +797,7 @@ it.effect.each(
       Effect.withTracerEnabled(true),
       Effect.provideService(
         ConfigProvider.ConfigProvider,
-        ConfigProvider.fromUnknown({ T3CODE_PROVIDER_COMMIT_BATCHING: true }),
+        ConfigProvider.fromUnknown({ AOKI_PROVIDER_COMMIT_BATCHING: true }),
       ),
     );
   },

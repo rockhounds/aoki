@@ -101,8 +101,8 @@ enum FeatureEmbeddedContent: Equatable, Sendable {
             .trimmingCharacters(in: .whitespacesAndNewlines)
         if name == "html_render" { return true }
         for pattern in [
-            "(?i)^mcp__(?:t3-code|t3_code|t3code)__html_render$",
-            "(?i)^(?:t3-code|t3_code|t3code)(?:[.:/]|\\s*·\\s*)html_render$",
+            "(?i)^mcp__(?:t3-code|t3_code|aoki)__html_render$",
+            "(?i)^(?:t3-code|t3_code|aoki)(?:[.:/]|\\s*·\\s*)html_render$",
             "(?i)^(?:mcp[-_]{1,2})?t3[-_ ]?code(?:__|[-_.:/ ])html_render$",
             "(?i)^t3-code-.+_html_render$",
         ] where name.range(of: pattern, options: .regularExpression) != nil { return true }

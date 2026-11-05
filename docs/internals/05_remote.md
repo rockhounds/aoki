@@ -22,7 +22,7 @@ execution model.
 ## Peer links
 
 A [peer link](../../apps/server/src/peer/PeerLinks.ts) lets one environment's agents work in another
-by signing in to the target's `/mcp` as an ordinary OAuth client (`t3code-peer-link`). The receiving
+by signing in to the target's `/mcp` as an ordinary OAuth client (`aoki-peer-link`). The receiving
 side lists and revokes it in Sharing & access like any other session, and owns its expiry/renewal.
 
 - **Mode ceilings always narrow.** Forwarded calls carry the calling agent's modes in

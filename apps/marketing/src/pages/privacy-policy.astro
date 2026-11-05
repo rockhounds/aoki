@@ -386,11 +386,11 @@ const sections = [
 
           <h3>Product Usage Data</h3>
           <p>
-            To stop sending product usage data and T3 Connect diagnostic traces from the desktop app
-            or server, set the environment variable{" "}<code>T3CODE_TELEMETRY_ENABLED=false</code
-            >{" "}or{" "}<code>DO_NOT_TRACK=1</code>{" "}where T3 Code runs, for example in your
-            shell profile, and restart T3 Code. Administrators can also turn this off with a
-            managed policy.
+            Aoki sends product usage data only when you configure an analytics endpoint. To stop
+            sending product usage data and T3 Connect diagnostic traces from the desktop app or
+            server, set <code>AOKI_TELEMETRY_ENABLED=false</code>{" "}or{" "}
+            <code>DO_NOT_TRACK=1</code>{" "}where Aoki runs and restart the app. Administrators can
+            also turn this off with a managed policy.
           </p>
           <p>
             In the mobile app, turn off <strong>Send crash reports</strong> and

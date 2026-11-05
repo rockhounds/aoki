@@ -156,7 +156,7 @@ export interface CreateWorktreeProgress {
   }) => Effect.Effect<void, never>;
   readonly onSubmodulesStarted?: () => Effect.Effect<void, never>;
   readonly onSubmodulesDisabled?: (input: {
-    source: "settings" | "t3.json";
+    source: "settings" | "aoki.json";
   }) => Effect.Effect<void, never>;
   readonly onSubmoduleLine?: (line: string) => Effect.Effect<void, never>;
   readonly onSubmodulesFinished?: (input: {
@@ -167,7 +167,7 @@ export interface CreateWorktreeProgress {
 
 export interface CreateWorktreeOptions {
   readonly progress?: CreateWorktreeProgress;
-  /** Null or omitted defers to the checkout's t3.json. */
+  /** Null or omitted defers to the checkout's aoki.json. */
   readonly submodules?: WorktreeSubmodules | null;
   readonly worktreesDirectory?: string;
   /** Clone the checkout from the macOS worktree checkout cache. */
@@ -349,7 +349,7 @@ export interface GitRemoteStatusOptions {
  * slow status fetch land. Its status read waits for a running fetch instead of using the last
  * fetched references after five seconds. The fetch keeps its own safety limit.
  */
-export const AwaitStatusFetch = Context.Reference<boolean>("t3/vcs/AwaitStatusFetch", {
+export const AwaitStatusFetch = Context.Reference<boolean>("aoki/vcs/AwaitStatusFetch", {
   defaultValue: () => false,
 });
 
@@ -397,12 +397,12 @@ export type RepositoryHooksPolicy =
   | { readonly _tag: "none" }
   | { readonly _tag: "approved-push"; readonly digest: string | null };
 
-export const RepositoryHooks = Context.Reference<RepositoryHooksPolicy>("t3/vcs/RepositoryHooks", {
+export const RepositoryHooks = Context.Reference<RepositoryHooksPolicy>("aoki/vcs/RepositoryHooks", {
   defaultValue: () => ({ _tag: "all" }),
 });
 
 /** Set by background discovery so its Git commands run in their own small lane, not the user's. */
-export const BackgroundGitWork = Context.Reference<boolean>("t3/vcs/BackgroundGitWork", {
+export const BackgroundGitWork = Context.Reference<boolean>("aoki/vcs/BackgroundGitWork", {
   defaultValue: () => false,
 });
 
@@ -571,7 +571,7 @@ export class GitVcsDriver extends Context.Service<
     readonly invalidateRefs: (cwd: string) => Effect.Effect<void>;
     readonly listLocalBranchNames: (cwd: string) => Effect.Effect<string[], GitCommandError>;
   }
->()("t3/vcs/GitVcsDriver") {}
+>()("aoki/vcs/GitVcsDriver") {}
 
 const WORKSPACE_FILES_MAX_OUTPUT_BYTES = 16 * 1024 * 1024;
 const FLAGGED_INDEX_ENTRIES_MAX_BYTES = 1024 * 1024;
@@ -1211,9 +1211,9 @@ export const makeVcsDriverShape = Effect.fn("makeGitVcsDriverShape")(function* (
 
   const checkpointIdentity: NodeJS.ProcessEnv = {
     GIT_AUTHOR_NAME: "T3 Code",
-    GIT_AUTHOR_EMAIL: "t3code@users.noreply.github.com",
+    GIT_AUTHOR_EMAIL: "aoki@users.noreply.github.com",
     GIT_COMMITTER_NAME: "T3 Code",
-    GIT_COMMITTER_EMAIL: "t3code@users.noreply.github.com",
+    GIT_COMMITTER_EMAIL: "aoki@users.noreply.github.com",
   };
 
   // Index files known to hold no assume-unchanged or skip-worktree entry, by their stat. Setting
@@ -1413,9 +1413,9 @@ export const makeVcsDriverShape = Effect.fn("makeGitVcsDriverShape")(function* (
           ? quotedObjects
           : `"${quotedObjects}"`,
         GIT_AUTHOR_NAME: "T3 Code",
-        GIT_AUTHOR_EMAIL: "t3code@users.noreply.github.com",
+        GIT_AUTHOR_EMAIL: "aoki@users.noreply.github.com",
         GIT_COMMITTER_NAME: "T3 Code",
-        GIT_COMMITTER_EMAIL: "t3code@users.noreply.github.com",
+        GIT_COMMITTER_EMAIL: "aoki@users.noreply.github.com",
         // Any command on the scratch index can run the clean filter, not just add.
         ...VcsProcess.gitConfigEnv(hostEnv, "lfs.storage", privateLfs, hostPlatform),
       };

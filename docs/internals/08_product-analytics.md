@@ -45,5 +45,5 @@ count as product use.
 - Dev-runner servers and servers on CI runners disable telemetry (and relay tracing) by default so
   they do not inflate install counts. CI detection is `isCiEnvironment` in
   [`otelEnvironment.ts`](../../packages/shared/src/otelEnvironment.ts). An explicit
-  `T3CODE_TELEMETRY_ENABLED=true` overrides both defaults; a managed policy that denies telemetry
+  `AOKI_TELEMETRY_ENABLED=true` overrides both defaults; a managed policy that denies telemetry
   overrides everything.

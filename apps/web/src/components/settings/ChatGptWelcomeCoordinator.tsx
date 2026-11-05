@@ -70,8 +70,8 @@ export function ChatGptWelcomeCoordinator() {
           </DialogTitle>
           <DialogDescription>
             <T>
-              Eligible usage in Aoki uses your ChatGPT plan. Manage your shared usage and any
-              credit settings in ChatGPT.
+              Eligible usage in Aoki uses your ChatGPT plan. Manage your shared usage and any credit
+              settings in ChatGPT.
             </T>
           </DialogDescription>
           <p className="text-xs text-muted-foreground">

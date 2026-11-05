@@ -40,7 +40,7 @@ export function layerFromConfig(config: TracingConfig | null, resource: TracingR
   return RelayTracing.layer(
     config,
     {
-      serviceName: "t3code-mobile",
+      serviceName: "aoki-mobile",
       serviceVersion: resource.serviceVersion,
       runtime: "react-native",
       serviceInstanceId: resource.serviceInstanceId,

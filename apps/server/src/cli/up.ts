@@ -39,10 +39,10 @@ interface Setup {
   readonly service: BootService.BootServiceStatus;
   /** Null in builds without T3 Connect. Off when T3 Connect revoked the link. */
   readonly connect: boolean | null;
-  /** T3 Connect revoked the link; `t3 connect` links again. */
+  /** T3 Connect revoked the link; `aoki connect` links again. */
   readonly connectRevoked: boolean;
   readonly lan: boolean;
-  /** An installed service with no T3CODE_LAN or T3CODE_HOST keeps the old default: on. */
+  /** An installed service with no AOKI_LAN or AOKI_HOST keeps the old default: on. */
   readonly lanFromOldDefault: boolean;
   readonly host: string | undefined;
 }
@@ -65,7 +65,7 @@ const readSetup = Effect.fn("cli.up.read_setup")(function* () {
   const service = yield* (yield* BootService.BootService).status;
   const { entries } = yield* CliService.readServiceEnv(baseDir);
   // Parsed as the server parses it.
-  const lan = yield* Config.Boolean("T3CODE_LAN")
+  const lan = yield* Config.Boolean("AOKI_LAN")
     .pipe(Config.option)
     .parse(ConfigProvider.fromEnv({ env: entries }));
   const secrets = yield* ServerSecretStore.ServerSecretStore;
@@ -86,13 +86,13 @@ const readSetup = Effect.fn("cli.up.read_setup")(function* () {
     connect,
     connectRevoked,
     lan: Option.getOrElse(lan, () => servesThisHome),
-    lanFromOldDefault: Option.isNone(lan) && servesThisHome && entries.T3CODE_HOST === undefined,
-    host: entries.T3CODE_HOST,
+    lanFromOldDefault: Option.isNone(lan) && servesThisHome && entries.AOKI_HOST === undefined,
+    host: entries.AOKI_HOST,
   } satisfies Setup;
 });
 
 /**
- * The routes `t3 up` starts from. With no route flag it asks about every
+ * The routes `aoki up` starts from. With no route flag it asks about every
  * route, starting a machine with no service from T3 Connect. Any route flag
  * means it asks nothing and keeps the routes not named as they are.
  */
@@ -116,7 +116,7 @@ export const planRoutes = (
   };
 };
 
-/** A running service reads T3CODE_LAN and its T3 Connect link only when it starts. */
+/** A running service reads AOKI_LAN and its T3 Connect link only when it starts. */
 const needsRestart = (before: Routes, after: Routes) =>
   after.lan !== before.lan || (after.connect && !before.connect);
 
@@ -159,7 +159,7 @@ const formatSetup = (setup: Setup, hints: Hints) => {
       !service.supported
         ? "unavailable"
         : service.installed
-          ? `installed · t3@${service.installedVersion ?? packageJson.version}`
+          ? `installed · aoki@${service.installedVersion ?? packageJson.version}`
           : "not installed",
     ],
     ...(setup.connect === null
@@ -177,7 +177,7 @@ const formatSetup = (setup: Setup, hints: Hints) => {
     [
       "Local network",
       setup.host !== undefined
-        ? `overridden · T3CODE_HOST=${setup.host}`
+        ? `overridden · AOKI_HOST=${setup.host}`
         : setup.lanFromOldDefault
           ? "on · kept from an older install"
           : setup.lan
@@ -277,7 +277,7 @@ const setUp = Effect.fn("cli.up")(function* (flags: {
       cause: "routes",
       userMessage: `No terminal. Choose access with ${
         before.connect === null ? "--lan" : "--connect or --lan"
-      }, or use --yes for the default. See \`t3 up --help\`.`,
+      }, or use --yes for the default. See \`aoki up --help\`.`,
     });
   }
   if (routes.connect && !current.connect) yield* requireConnectAllowed;
@@ -292,7 +292,7 @@ const setUp = Effect.fn("cli.up")(function* (flags: {
     if (current.connect || before.connectRevoked) {
       yield* disconnectCloud({ clearAuthorization: false });
     }
-    if (current.lan) yield* CliService.writeServiceEnv(baseDir, { T3CODE_LAN: "false" });
+    if (current.lan) yield* CliService.writeServiceEnv(baseDir, { AOKI_LAN: "false" });
     return yield* Console.log(formatNextSteps(routes, false, hints));
   }
   const { installedVersion } = before.service;
@@ -337,15 +337,15 @@ const setUp = Effect.fn("cli.up")(function* (flags: {
     !routes.connect && (current.connect || before.connectRevoked)
       ? (yield* disconnectCloud({ clearAuthorization: false })).status === "failed"
       : false;
-  const previousLan = (yield* CliService.readServiceEnv(baseDir)).entries.T3CODE_LAN;
-  // Also with no service manager: the file records the choice that `t3 status` shows.
-  yield* CliService.writeServiceEnv(baseDir, { T3CODE_LAN: String(routes.lan) });
+  const previousLan = (yield* CliService.readServiceEnv(baseDir)).entries.AOKI_LAN;
+  // Also with no service manager: the file records the choice that `aoki status` shows.
+  yield* CliService.writeServiceEnv(baseDir, { AOKI_LAN: String(routes.lan) });
   // When the service step fails, an installed service still runs with the old
   // value, so the file goes back to match it.
   // A new T3 Connect link is undone too, with any tunnel the failed start saved, so a
   // rerun sees it as a change and restarts. The sign-in stays.
   const restoreServiceEnv = before.service.installed
-    ? CliService.writeServiceEnv(baseDir, { T3CODE_LAN: previousLan }).pipe(
+    ? CliService.writeServiceEnv(baseDir, { AOKI_LAN: previousLan }).pipe(
         Effect.andThen(
           !routes.connect || current.connect
             ? Effect.void
@@ -362,22 +362,22 @@ const setUp = Effect.fn("cli.up")(function* (flags: {
     : Effect.void;
   if (before.host !== undefined) {
     yield* Console.warn(
-      `T3CODE_HOST=${before.host} in service.env overrides the network choice. Remove it to apply it.`,
+      `AOKI_HOST=${before.host} in service.env overrides the network choice. Remove it to apply it.`,
     );
   }
 
   const printServeCommand = Effect.fn(function* (reason: string) {
     const { command } = yield* resolveHostCliCommand("serve", [
       ...baseDirArgs,
-      // Explicit either way, so a T3CODE_LAN in the shell cannot override the choice.
+      // Explicit either way, so a AOKI_LAN in the shell cannot override the choice.
       routes.lan ? "--lan" : "--no-lan",
     ]);
     yield* Console.log(`${reason} Keep this command running:\n  ${command}`);
     // A host wins over --lan and --no-lan, as it does in service.env.
-    const shellHost = (yield* HostProcess.Environment).T3CODE_HOST;
+    const shellHost = (yield* HostProcess.Environment).AOKI_HOST;
     if (shellHost !== undefined) {
       yield* Console.warn(
-        `T3CODE_HOST=${shellHost} in this shell overrides that choice. Unset it before you run the command.`,
+        `AOKI_HOST=${shellHost} in this shell overrides that choice. Unset it before you run the command.`,
       );
     }
   });
@@ -386,7 +386,7 @@ const setUp = Effect.fn("cli.up")(function* (flags: {
     yield* printServeCommand("Background service unavailable.");
   } else {
     if (newer) {
-      yield* Console.log(`Keeping installed service version t3@${installedVersion}.`);
+      yield* Console.log(`Keeping installed service version aoki@${installedVersion}.`);
     }
     if (update && !interactive) {
       yield* Console.log("Updating Aoki. Running agent turns will stop.");
@@ -435,7 +435,7 @@ const setUp = Effect.fn("cli.up")(function* (flags: {
         }
         if (outcome === "skipped") {
           yield* Console.log(
-            "The installed service was not restarted. Run `t3 service status` to see why.",
+            "The installed service was not restarted. Run `aoki service status` to see why.",
           );
         }
         started = outcome === "restarted";
@@ -482,12 +482,12 @@ export const upCommand = Command.make("up", {
     "Set up remote access and the Aoki background service. Access flags skip the question, and routes not named keep their settings. Without a terminal, a needed restart runs without asking and stops running agent turns.",
   ),
   Command.withExamples([
-    { command: "t3 up", description: "Choose remote access." },
-    { command: "t3 up --connect", description: "Turn on T3 Connect. Keep other settings." },
-    { command: "t3 up --lan", description: "Allow LAN access with pairing codes." },
-    { command: "t3 up --no-lan", description: "Stop LAN access." },
-    { command: "t3 up --yes", description: "Take the defaults with no questions." },
-    { command: "t3 status --json", description: "Read the settings from a script." },
+    { command: "aoki up", description: "Choose remote access." },
+    { command: "aoki up --connect", description: "Turn on T3 Connect. Keep other settings." },
+    { command: "aoki up --lan", description: "Allow LAN access with pairing codes." },
+    { command: "aoki up --no-lan", description: "Stop LAN access." },
+    { command: "aoki up --yes", description: "Take the defaults with no questions." },
+    { command: "aoki status --json", description: "Read the settings from a script." },
   ]),
   Command.withHandler((flags) => runCloudCommand(flags, setUp(flags), { quietLogs: true })),
 );
@@ -496,7 +496,7 @@ export const connectCommand = Command.make("connect", {
   ...projectLocationFlags,
   headless: headlessFlag,
 }).pipe(
-  Command.withDescription("Set up T3 Connect for this machine. Same as `t3 up --connect`."),
+  Command.withDescription("Set up T3 Connect for this machine. Same as `aoki up --connect`."),
   Command.withHandler((flags) =>
     runCloudCommand(
       flags,
@@ -507,7 +507,7 @@ export const connectCommand = Command.make("connect", {
   Command.withSubcommands(connectSubcommands),
 );
 
-/** `t3 status --json`, for scripts and agents. */
+/** `aoki status --json`, for scripts and agents. */
 const setupJson = (setup: Setup) =>
   JSON.stringify(
     {
@@ -538,8 +538,8 @@ export const statusCommand = Command.make("status", {
 }).pipe(
   Command.withDescription("Show service setup and remote access settings."),
   Command.withExamples([
-    { command: "t3 status", description: "Show the settings." },
-    { command: "t3 status --json", description: "Print them for scripts and agents." },
+    { command: "aoki status", description: "Show the settings." },
+    { command: "aoki status --json", description: "Print them for scripts and agents." },
   ]),
   Command.withHandler(
     Effect.fn("cli.status")(function* (flags) {

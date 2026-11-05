@@ -35,7 +35,7 @@ public enum PairingURL {
     private static let supportedSchemes = Set(["http", "https", "ws", "wss"])
 
     /// Resolves a complete pairing link from a clipboard, universal link, or
-    /// QR scanner. `t3code://pair?pairingUrl=...` wrappers are unwrapped.
+    /// QR scanner. `aoki://pair?pairingUrl=...` wrappers are unwrapped.
     public static func resolve(_ rawValue: String) throws -> PairingTarget {
         let extracted = try extractPairingURL(from: rawValue)
         let fields = try parseFields(extracted)
@@ -137,7 +137,7 @@ public enum PairingURL {
         }
 
         guard let components = URLComponents(string: trimmed),
-              components.scheme?.lowercased() == "t3code"
+              components.scheme?.lowercased() == "aoki"
         else {
             return trimmed
         }

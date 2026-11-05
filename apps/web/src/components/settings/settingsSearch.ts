@@ -561,7 +561,7 @@ export const SETTINGS_SEARCH_ITEMS = [
     title: msg("Guest links"),
     to: "/settings/labs",
     scope: "environment",
-    searchTerms: [msg("beta share guest invite link teammate watch t3 connect tunnel")],
+    searchTerms: [msg("beta share guest invite link teammate watch aoki connect tunnel")],
   },
   {
     id: "linked-environments-beta",
@@ -909,7 +909,7 @@ export const SETTINGS_SEARCH_ITEMS = [
     title: msg("Submodules"),
     to: "/settings/worktrees",
     scope: "project-defaults",
-    searchTerms: [msg("git submodule init recursive top-level none worktree t3.json")],
+    searchTerms: [msg("git submodule init recursive top-level none worktree aoki.json")],
   },
   {
     id: "start-from-origin",
@@ -1369,7 +1369,7 @@ export const SETTINGS_SEARCH_ITEMS = [
     id: "project-actions",
     title: msg("Actions"),
     to: "/settings/projects",
-    searchTerms: [msg("commands scripts setup run dev server checkout worktree t3.json import")],
+    searchTerms: [msg("commands scripts setup run dev server checkout worktree aoki.json import")],
   },
   {
     id: "project-repositories",
@@ -1457,7 +1457,7 @@ export const SETTINGS_SEARCH_ITEMS = [
     title: msg("Hold webhooks while offline"),
     to: "/settings/access",
     targetId: "connections-environment",
-    searchTerms: [msg("webhook automations offline queue mailbox t3 connect")],
+    searchTerms: [msg("webhook automations offline queue mailbox aoki connect")],
     cloudOnly: true,
     managedTunnelOnly: true,
   },
@@ -1501,7 +1501,7 @@ export const SETTINGS_SEARCH_ITEMS = [
     id: "remote-environments",
     title: msg("Environments"),
     to: "/settings/connections",
-    searchTerms: [msg("add pair backend host code ssh config agent tunnel saved t3 connect")],
+    searchTerms: [msg("add pair backend host code ssh config agent tunnel saved aoki connect")],
   },
   {
     id: "load-balancing",

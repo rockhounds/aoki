@@ -9,7 +9,7 @@ import * as NodePath from "node:path";
 import * as NodeUtil from "node:util";
 
 const API_ORIGIN = "https://api.appstoreconnect.apple.com";
-const BUNDLE_ID = "com.t3tools.t3code.swiftui";
+const BUNDLE_ID = "io.github.rockhounds.aoki.swiftui";
 const TOKEN_SECONDS = 600;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -594,7 +594,7 @@ export function parseTestFlightArgs(args: string[]) {
   const envFile =
     values["env-file"] ??
     process.env.T3_SWIFT_TESTFLIGHT_ENV_FILE ??
-    NodePath.join(NodeOS.homedir(), ".config/t3code/.env.testflight");
+    NodePath.join(NodeOS.homedir(), ".config/aoki/.env.testflight");
   if (command === "upload") {
     if (values.build || values.version || values["notes-file"]) {
       throw new Error(
@@ -640,7 +640,7 @@ async function main() {
   node scripts/swift-testflight.ts upload --archive /path/to/T3Code.xcarchive --export-options /path/to/ExportOptions.plist
 
 Optional: --env-file /path/to/.env or T3_SWIFT_TESTFLIGHT_ENV_FILE.
-Default env file: ~/.config/t3code/.env.testflight (mode 600, never committed).
+Default env file: ~/.config/aoki/.env.testflight (mode 600, never committed).
 Required variables: T3_SWIFT_ASC_KEY_ID, T3_SWIFT_ASC_ISSUER_ID,
 T3_SWIFT_ASC_PRIVATE_KEY_BASE64, T3_SWIFT_ASC_APP_ID,
 T3_SWIFT_ASC_PUBLIC_GROUP_ID, T3_SWIFT_ASC_INTERNAL_GROUP_ID.

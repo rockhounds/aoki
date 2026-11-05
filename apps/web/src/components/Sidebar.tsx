@@ -350,9 +350,9 @@ const SETTLED_TAIL_INITIAL_COUNT = 10;
 const SETTLED_TAIL_PAGE_COUNT = 25;
 const REVEAL_ROW_CLASS_NAME =
   "flex h-9 w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 text-left text-sm text-sidebar-muted-foreground hover:bg-sidebar-row-hover hover:text-sidebar-foreground aria-disabled:cursor-default";
-const SETTLED_SHELF_EXPANDED_KEY = "t3code:sidebar:settled-expanded";
-const SNOOZED_SHELF_EXPANDED_KEY = "t3code:sidebar:snoozed-expanded";
-const WORKING_SHELF_EXPANDED_KEY = "t3code:sidebar:working-expanded";
+const SETTLED_SHELF_EXPANDED_KEY = "aoki:sidebar:settled-expanded";
+const SNOOZED_SHELF_EXPANDED_KEY = "aoki:sidebar:snoozed-expanded";
+const WORKING_SHELF_EXPANDED_KEY = "aoki:sidebar:working-expanded";
 
 const inboxReturns = createInboxReturnTracker();
 

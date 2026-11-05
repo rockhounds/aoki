@@ -43,7 +43,7 @@ vi.mock(import("~/components/files/projectFilesQueryState"), async (importOrigin
         for (const listener of t3File.listeners) listener();
       };
       const data =
-        relativePath === "t3.json" && contents !== ""
+        relativePath === "aoki.json" && contents !== ""
           ? { relativePath, contents, byteLength: contents.length, truncated: false }
           : null;
       return {

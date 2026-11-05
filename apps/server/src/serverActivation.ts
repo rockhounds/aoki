@@ -6,7 +6,7 @@ import type * as Scope from "effect/Scope";
 import * as Tracer from "effect/Tracer";
 
 export class ServerActivation extends Context.Reference<Effect.Effect<void> | undefined>(
-  "t3/serverActivation",
+  "aoki/serverActivation",
   { defaultValue: () => undefined },
 ) {}
 

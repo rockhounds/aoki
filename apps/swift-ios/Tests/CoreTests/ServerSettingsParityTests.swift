@@ -61,7 +61,7 @@ final class ServerSettingsParityTests: XCTestCase {
     func testBranchAndBrowserOverridesPreserveEmptyStringsAndFalse() throws {
         var settings = try JSONValue.object([
             "branchNamingMode": .string("static"),
-            "branchNamePrefix": .string("t3code"),
+            "branchNamePrefix": .string("aoki"),
             "branchNameInstructions": .string("Environment instructions"),
             "enableAgentBrowserAccess": .bool(true),
             "defaultAutoPull": .bool(false),
@@ -82,7 +82,7 @@ final class ServerSettingsParityTests: XCTestCase {
         XCTAssertEqual(effective.branchNameInstructions, "")
         XCTAssertEqual(effective.enableAgentBrowserAccess, false)
         XCTAssertTrue(effective.defaultAutoPull)
-        XCTAssertEqual(settings.resolvingProject(id: "other").branchNamePrefix, "t3code")
+        XCTAssertEqual(settings.resolvingProject(id: "other").branchNamePrefix, "aoki")
         let patch = ServerProjectSettingChange(key: .branchNamingMode, value: nil)
             .patch(projectID: "project", settings: settings).jsonValue
         settings.projectSettingsOverrides["project"] = try XCTUnwrap(patch["projectSettingsOverrides"]?["project"])

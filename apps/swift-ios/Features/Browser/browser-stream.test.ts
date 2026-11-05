@@ -73,12 +73,12 @@ describe("Swift browser shared transport", () => {
     expect(url.searchParams.get("interactive")).toBe("false");
     socket.disconnect(
       4503,
-      JSON.stringify({ need: "libraries", command: "sudo npx t3 browser setup" }),
+      JSON.stringify({ need: "libraries", command: "sudo npx aoki browser setup" }),
     );
     vi.advanceTimersByTime(60_000);
     expect(onHostSetup).toHaveBeenCalledExactlyOnceWith({
       need: "libraries",
-      command: "sudo npx t3 browser setup",
+      command: "sudo npx aoki browser setup",
     });
     expect(BrowserSocket.opened).toHaveLength(1);
     client.stop();

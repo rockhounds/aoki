@@ -43,7 +43,7 @@ const updateWriter = Effect.fn("TaskCache.manageWriter")(function* (
       ),
     );
     const deployed = yield* decodeDeployment(output);
-    endpoint = new URL("/projects/t3code", deployed.url).href;
+    endpoint = new URL("/projects/aoki", deployed.url).href;
   }
   const file = yield* registry.update(name, revoke, endpoint, initialize);
   yield* Console.log(

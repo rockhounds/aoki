@@ -8374,7 +8374,7 @@ final class NativeFeatureClient: FeatureClient, FeatureDeviceManaging,
 
     private static func temporaryWorktreeBranchName(seed: String? = nil) -> String {
         let suffix = seed ?? UUID().uuidString
-        return "t3code/\(suffix.prefix(8).lowercased())"
+        return "aoki/\(suffix.prefix(8).lowercased())"
     }
 
     /// Collapses whitespace runs and caps the result at 160 characters. It stops

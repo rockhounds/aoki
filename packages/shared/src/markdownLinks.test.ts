@@ -93,7 +93,7 @@ describe("inlineCodeFilePathCandidate", () => {
 describe("parseMarkdownFileLink", () => {
   it.each([
     ["C:%5Crepo%5Cimage.png", "C:\\repo\\image.png"],
-    ["</D:/Programme/t3code/ChatMarkdown.tsx:1>", "D:/Programme/t3code/ChatMarkdown.tsx"],
+    ["</D:/Programme/aoki/ChatMarkdown.tsx:1>", "D:/Programme/aoki/ChatMarkdown.tsx"],
     ["file://localhost/home/me/notes.md", "/home/me/notes.md"],
     ["app/routes/posts.$postId.tsx", "app/routes/posts.$postId.tsx"],
     ["src/routes/+page.svelte", "src/routes/+page.svelte"],

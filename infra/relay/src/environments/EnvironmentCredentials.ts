@@ -80,7 +80,7 @@ export class EnvironmentCredentials extends Context.Service<
       readonly environmentPublicKey: string;
     }) => Effect.Effect<boolean, EnvironmentCredentialRevokePersistenceError>;
   }
->()("t3code-relay/environments/EnvironmentCredentials") {}
+>()("aoki-relay/environments/EnvironmentCredentials") {}
 
 const make = Effect.gen(function* () {
   const db = yield* RelayDb.RelayDb;

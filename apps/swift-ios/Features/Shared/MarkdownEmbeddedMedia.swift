@@ -30,7 +30,7 @@ struct MarkdownEmbeddedMedia: Equatable, Sendable {
             return ["http", "https"].contains(url.scheme?.lowercased() ?? "") ? url : nil
         case let .workspaceFile(path):
             var components = URLComponents()
-            components.scheme = "t3code"
+            components.scheme = "aoki"
             components.host = "media-preview"
             components.path = "/open"
             components.queryItems = [

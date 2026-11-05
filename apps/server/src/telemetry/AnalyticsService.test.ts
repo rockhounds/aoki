@@ -119,18 +119,18 @@ const recordTwentyEvents = Effect.gen(function* () {
 });
 
 const testEndpoint = {
-  T3CODE_TELEMETRY_KEY: "phc_test_key",
-  T3CODE_TELEMETRY_HOST: "http://localhost",
+  AOKI_TELEMETRY_KEY: "phc_test_key",
+  AOKI_TELEMETRY_HOST: "http://localhost",
 };
 
 const analyticsLayerWith = (
   client: HttpClient.HttpClient,
   policy?: ManagedPolicyDocument,
-  config: Record<string, unknown> = { ...testEndpoint, T3CODE_TELEMETRY_ENABLED: true },
+  config: Record<string, unknown> = { ...testEndpoint, AOKI_TELEMETRY_ENABLED: true },
 ) =>
   AnalyticsService.layer.pipe(
     Layer.provideMerge(
-      ServerConfig.ServerConfig.layerTest(process.cwd(), { prefix: "t3-telemetry-retry-" }),
+      ServerConfig.ServerConfig.layerTest(process.cwd(), { prefix: "aoki-telemetry-retry-" }),
     ),
     Layer.provide(ConfigProvider.layer(ConfigProvider.fromUnknown(config))),
     Layer.provide(
@@ -186,7 +186,7 @@ const sendFor = (
 it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))("AnalyticsService test", (it) => {
   it.effect("waits for desktop shell consent and honors a late telemetry opt-out", () =>
     Effect.gen(function* () {
-      const env: NodeJS.ProcessEnv = { T3CODE_DESKTOP_SHELL_DISCOVERY_PENDING: "1" };
+      const env: NodeJS.ProcessEnv = { AOKI_DESKTOP_SHELL_DISCOVERY_PENDING: "1" };
       const batches = yield* sendFor(
         0,
         respondWithStatus(204),
@@ -194,11 +194,11 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))("AnalyticsService
           const analytics = yield* AnalyticsService.AnalyticsService;
           yield* analytics.record("test.before-discovery");
           yield* analytics.flush;
-          env.T3CODE_TELEMETRY_ENABLED = "false";
-          delete env.T3CODE_DESKTOP_SHELL_DISCOVERY_PENDING;
+          env.AOKI_TELEMETRY_ENABLED = "false";
+          delete env.AOKI_DESKTOP_SHELL_DISCOVERY_PENDING;
           yield* analytics.record("test.opted-out");
           yield* analytics.flush;
-          env.T3CODE_TELEMETRY_ENABLED = "true";
+          env.AOKI_TELEMETRY_ENABLED = "true";
           yield* analytics.record("test.allowed");
           yield* analytics.flush;
         }),
@@ -331,7 +331,7 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))("AnalyticsService
           ...telemetryEnv,
         }).pipe(Effect.provideService(HostProcess.Environment, { GITHUB_ACTIONS: "true" }));
       assert.deepEqual(yield* onCi({}), []);
-      assert.equal((yield* onCi({ T3CODE_TELEMETRY_ENABLED: true })).length, 1);
+      assert.equal((yield* onCi({ AOKI_TELEMETRY_ENABLED: true })).length, 1);
     }),
   );
 
@@ -367,10 +367,10 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))("AnalyticsService
       const layerTelemetry = AnalyticsService.layer.pipe(Layer.provideMerge(layerServerConfig));
       const layerConfig = ConfigProvider.layer(
         ConfigProvider.fromUnknown({
-          T3CODE_TELEMETRY_ENABLED: true,
-          T3CODE_TELEMETRY_KEY: "phc_test_key",
-          T3CODE_TELEMETRY_HOST: "http://localhost",
-          T3CODE_TELEMETRY_FLUSH_BATCH_SIZE: 20,
+          AOKI_TELEMETRY_ENABLED: true,
+          AOKI_TELEMETRY_KEY: "phc_test_key",
+          AOKI_TELEMETRY_HOST: "http://localhost",
+          AOKI_TELEMETRY_FLUSH_BATCH_SIZE: 20,
           // A name its user chose; only the family may leave the machine.
           WSL_DISTRO_NAME: "Acme-Client-Secret-Ubuntu",
         }),
@@ -474,9 +474,9 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))("AnalyticsService
       const layerTelemetry = AnalyticsService.layer.pipe(Layer.provideMerge(layerServerConfig));
       const layerConfig = ConfigProvider.layer(
         ConfigProvider.fromUnknown({
-          T3CODE_TELEMETRY_ENABLED: false,
-          T3CODE_TELEMETRY_KEY: "phc_test_key",
-          T3CODE_TELEMETRY_HOST: "http://localhost",
+          AOKI_TELEMETRY_ENABLED: false,
+          AOKI_TELEMETRY_KEY: "phc_test_key",
+          AOKI_TELEMETRY_HOST: "http://localhost",
         }),
       );
       const layerBatchServer = HttpServer.serve(
@@ -521,7 +521,7 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))("AnalyticsService
         yield* analytics.record("test.unconfigured", { index: 1 });
         yield* analytics.flush;
       }).pipe(
-        Effect.provide(analyticsLayerWith(client, undefined, { T3CODE_TELEMETRY_ENABLED: true })),
+        Effect.provide(analyticsLayerWith(client, undefined, { AOKI_TELEMETRY_ENABLED: true })),
       );
 
       assert.deepEqual(requestedUrls, []);

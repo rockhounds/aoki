@@ -108,7 +108,7 @@ const runCli = (
         NodeServices.layer,
         NodeCrypto.layer,
         NetService.layer,
-        ConfigProvider.layer(ConfigProvider.fromEnv({ env: { T3CODE_PORT: "3773" } })),
+        ConfigProvider.layer(ConfigProvider.fromEnv({ env: { AOKI_PORT: "3773" } })),
       ),
     ),
   );
@@ -212,7 +212,7 @@ it.effect("signal from an agent's shell answers in the name of the agent's threa
         : delivered;
 
     sessionLabels.length = 0;
-    const fromThread = yield* runCli(answer, read, { T3CODE_THREAD_ID: "thread-7" });
+    const fromThread = yield* runCli(answer, read, { AOKI_THREAD_ID: "thread-7" });
     assert.isUndefined(fromThread.error);
     assert.deepStrictEqual(fromThread.calls.at(0), { threadId: "thread-7", limit: 1, runLimit: 1 });
     assert.strictEqual(sessionLabels.at(-1), "Release reviewer agent");
@@ -220,7 +220,7 @@ it.effect("signal from an agent's shell answers in the name of the agent's threa
     // A thread it cannot read, or no thread at all, answers as the command.
     for (const [env, call] of [
       [
-        { T3CODE_THREAD_ID: "gone" },
+        { AOKI_THREAD_ID: "gone" },
         (tool: string) =>
           tool === "t3_thread_read"
             ? Effect.fail(new McpBridge.AcpMcpBridgeError({ message: "Thread not found." }))

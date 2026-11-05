@@ -10,7 +10,7 @@ struct PlatformPromptLinkTests {
             prompt: .init(text: "Rate me + you", hiddenCharacters: 0),
             repository: .init(owner: "pingdotgg", name: "t3code"), provider: "codex", model: "Small"
         )
-        for base in ["https://app.t3.codes/new", "t3code://new", "t3code-dev://new", "aoki-native-dev://new"] {
+        for base in ["https://app.t3.codes/new", "aoki://new", "aoki-dev://new", "aoki-native-dev://new"] {
             #expect(try PlatformDeepLinkParser.parse(
                 base + "?prompt=Rate+me+%2B+you&repo=https://github.com/pingdotgg/t3code.git&provider=Codex&model=Small"
             ) == .newPrompt(environmentID: nil, projectID: nil, link: expected))
@@ -21,10 +21,10 @@ struct PlatformPromptLinkTests {
 
     @Test
     func duplicatePromptParametersUseTheFirstValueIncludingEmptyValues() throws {
-        let route = try PlatformDeepLinkParser.parse("t3code://new?prompt=first&prompt=second")
+        let route = try PlatformDeepLinkParser.parse("aoki://new?prompt=first&prompt=second")
         guard case let .newPrompt(_, _, link) = route else { Issue.record("Expected linked prompt"); return }
         #expect(link.prompt?.text == "first")
-        #expect(throws: (any Error).self) { try PlatformDeepLinkParser.parse("t3code://new?prompt=&prompt=second") }
+        #expect(throws: (any Error).self) { try PlatformDeepLinkParser.parse("aoki://new?prompt=&prompt=second") }
     }
 
     @Test
@@ -32,9 +32,9 @@ struct PlatformPromptLinkTests {
         let expected = PlatformRoute.threadPrompt(environmentID: "second", threadID: "same",
                                                    prompt: .init(text: "Fix + review", hiddenCharacters: 0))
         #expect(try PlatformDeepLinkParser.parse("https://app.t3.codes/second/same?prompt=Fix+%2B+review") == expected)
-        #expect(try PlatformDeepLinkParser.parse("t3code://threads/second/same?prompt=Fix+%2B+review") == expected)
+        #expect(try PlatformDeepLinkParser.parse("aoki://threads/second/same?prompt=Fix+%2B+review") == expected)
         #expect(try PlatformDeepLinkParser.parse(#require(expected.url)) == expected)
-        #expect(try PlatformDeepLinkParser.parse("t3code://threads/second/same?prompt=+")
+        #expect(try PlatformDeepLinkParser.parse("aoki://threads/second/same?prompt=+")
             == .thread(environmentID: "second", threadID: "same"))
     }
 
@@ -44,7 +44,7 @@ struct PlatformPromptLinkTests {
             "https://evil.example/new?prompt=hello", "https://app.t3.codes.evil.example/new?prompt=hello",
             "https://user@app.t3.codes/new?prompt=hello", "https://app.t3.codes:444/new?prompt=hello",
             "http://app.t3.codes/new?prompt=hello", "https://t3.codes/new?prompt=hello",
-            "t3code://user@new?prompt=hello", "t3code://new:123?prompt=hello",
+            "aoki://user@new?prompt=hello", "aoki://new:123?prompt=hello",
         ] {
             #expect(throws: (any Error).self) { try PlatformDeepLinkParser.parse(value) }
         }
@@ -63,7 +63,7 @@ struct PlatformPromptLinkTests {
 
     @Test
     func persistedPromptRouteKeepsTheHiddenCharacterWarning() throws {
-        let route = try PlatformDeepLinkParser.parse("t3code://new?prompt=hello%E2%80%8B")
+        let route = try PlatformDeepLinkParser.parse("aoki://new?prompt=hello%E2%80%8B")
         let restored = try JSONDecoder().decode(PlatformRoute.self, from: JSONEncoder().encode(route))
         #expect(restored == route)
         guard case let .newPrompt(_, _, link) = restored else { Issue.record("Expected prompt route"); return }
@@ -102,7 +102,7 @@ struct PlatformPromptLinkTests {
         let first = project("first", environment: "a")
         let second = project("second", environment: "b")
         var fork = project("fork", environment: "a")
-        fork.repositoryIdentity?.origin = .init(canonicalKey: "github.com/me/t3code", displayName: nil)
+        fork.repositoryIdentity?.origin = .init(canonicalKey: "github.com/me/aoki", displayName: nil)
         let activity = [thread("old", environment: "a", project: "same", updated: 1),
                         thread("new", environment: "b", project: "same", updated: 2)]
         #expect(PlatformPromptLinkResolver.project(in: [fork, first, second], threads: activity, repository: repository)?.id == second.id)

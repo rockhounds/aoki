@@ -10,7 +10,7 @@ import * as ProcessRunner from "../processRunner.ts";
 import { BOOT_SERVICE_UNIT_FILE } from "./bootService.ts";
 import { RESTORE_OOMD_WATCH_SCRIPT } from "./userManagerOom.ts";
 
-const PROTECT_DROP_IN = "90-t3code-protect.conf";
+const PROTECT_DROP_IN = "90-aoki-protect.conf";
 const SYSTEM_UNIT_DIR = "/etc/systemd/system";
 export const REMOTE_ACCESS_UNITS = ["tailscaled.service", "ssh.service", "sshd.service"];
 
@@ -113,9 +113,9 @@ export function renderPrivilegedScript(plan: ProtectionPlan, mode: "apply" | "un
     for (const { path, contents } of plan.system) {
       lines.push(
         `mkdir -p ${quoteShell(directoryOf(path))}`,
-        `cat >${quoteShell(path)} <<'T3CODE_PROTECT'`,
+        `cat >${quoteShell(path)} <<'AOKI_PROTECT'`,
         contents.trimEnd(),
-        "T3CODE_PROTECT",
+        "AOKI_PROTECT",
       );
     }
   } else {

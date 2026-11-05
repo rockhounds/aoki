@@ -185,7 +185,7 @@ class TerminalProcessSignalError extends Schema.TaggedError<TerminalProcessSigna
 
 export class TerminalCwdRecovery extends Context.Reference<
   (error: TerminalCwdNotFoundError) => Effect.Effect<void, TerminalCwdNotFoundError>
->("t3/terminal/TerminalCwdRecovery", { defaultValue: () => (error) => Effect.fail(error) }) {}
+>("aoki/terminal/TerminalCwdRecovery", { defaultValue: () => (error) => Effect.fail(error) }) {}
 
 export class TerminalManager extends Context.Service<
   TerminalManager,
@@ -266,7 +266,7 @@ export class TerminalManager extends Context.Service<
       listener: (event: TerminalMetadataStreamEvent) => Effect.Effect<void>,
     ) => Effect.Effect<() => void>;
   }
->()("t3/terminal/Manager/TerminalManager") {}
+>()("aoki/terminal/Manager/TerminalManager") {}
 
 interface TerminalSubprocessInspectResult {
   readonly hasRunningSubprocess: boolean;
@@ -1720,7 +1720,7 @@ function toSessionKey(threadId: string, terminalId: string): string {
 
 function shouldExcludeTerminalEnvKey(key: string): boolean {
   const normalizedKey = key.toUpperCase();
-  if (normalizedKey.startsWith("T3CODE_")) {
+  if (normalizedKey.startsWith("AOKI_")) {
     return true;
   }
   if (normalizedKey.startsWith("VITE_")) {
@@ -1748,7 +1748,7 @@ function createTerminalSpawnEnv(
   }
   // The server inherits its launcher's identity (e.g. Apple_Terminal); shells
   // and tools inside the integrated terminal should see T3 Code instead.
-  spawnEnv.TERM_PROGRAM = "t3code";
+  spawnEnv.TERM_PROGRAM = "aoki";
   spawnEnv.TERM_PROGRAM_VERSION = packageJson.version;
   if (runtimeEnv) {
     for (const [key, value] of Object.entries(runtimeEnv)) {
@@ -3026,7 +3026,7 @@ export const makeWithOptions = Effect.fn("TerminalManager.makeWithOptions")(func
               shellResolver,
               platform,
               baseEnv,
-              session.runtimeEnv?.T3CODE_TERMINAL_SHELL ?? baseEnv.T3CODE_TERMINAL_SHELL,
+              session.runtimeEnv?.AOKI_TERMINAL_SHELL ?? baseEnv.AOKI_TERMINAL_SHELL,
             ).pipe(
               Effect.provideService(FileSystem.FileSystem, fileSystem),
               withShellPreparationTimeout,

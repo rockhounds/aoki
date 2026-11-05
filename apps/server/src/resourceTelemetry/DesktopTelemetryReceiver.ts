@@ -210,7 +210,7 @@ export class DesktopTelemetryReceiver extends Context.Service<
       Scope.Scope
     >;
   }
->()("t3/resourceTelemetry/DesktopTelemetryReceiver") {}
+>()("aoki/resourceTelemetry/DesktopTelemetryReceiver") {}
 
 class DesktopShellCertificatesUpdateFailed extends Schema.TaggedError<DesktopShellCertificatesUpdateFailed>()(
   "DesktopShellCertificatesUpdateFailed",
@@ -272,7 +272,7 @@ export function makeApplyDesktopShellEnvironmentSnapshot(
         ),
       );
     }
-    if (message.discovered) delete environment.T3CODE_DESKTOP_SHELL_DISCOVERY_PENDING;
+    if (message.discovered) delete environment.AOKI_DESKTOP_SHELL_DISCOVERY_PENDING;
   });
 }
 

@@ -161,7 +161,7 @@ it.effect("clones a looked-up repository after creating missing parent directori
       prefix: "t3-source-control-clone-parent-",
     });
     const parent = path.join(temporaryDirectory, "missing", "nested");
-    const destinationPath = path.join(parent, "t3code");
+    const destinationPath = path.join(parent, "aoki");
     const cloneCalls: Array<{ cwd: string; args: ReadonlyArray<string> }> = [];
 
     yield* Effect.gen(function* () {
@@ -181,7 +181,7 @@ it.effect("clones a looked-up repository after creating missing parent directori
       assert.deepStrictEqual(cloneCalls, [
         {
           cwd: parent,
-          args: ["clone", "--progress", "--", CLONE_URLS.url, "t3code"],
+          args: ["clone", "--progress", "--", CLONE_URLS.url, "aoki"],
         },
       ]);
     }).pipe(
@@ -311,11 +311,11 @@ it.effect("reports clone progress from git's stderr and keeps its error text on 
     const parent = yield* fs.makeTempDirectoryScoped({
       prefix: "t3-source-control-clone-progress-",
     });
-    const destinationPath = path.join(parent, "t3code");
+    const destinationPath = path.join(parent, "aoki");
     const progress: Array<{ stage: string; percent: number | null; detail: string | null }> = [];
 
     const stderrLines = [
-      "Cloning into 't3code'...",
+      "Cloning into 'aoki'...",
       "remote: Enumerating objects: 10, done.",
       "Receiving objects:  40% (4/10), 1.00 MiB | 2.00 MiB/s",
       "Receiving objects: 100% (10/10), 2.50 MiB | 2.00 MiB/s, done.",
@@ -544,7 +544,7 @@ const cloneInTemporaryDirectory = (
       const service = yield* SourceControlRepositoryService.SourceControlRepositoryService;
       return yield* service.cloneRepository({
         ...input,
-        destinationPath: path.join(parent, "t3code"),
+        destinationPath: path.join(parent, "aoki"),
       });
     }).pipe(Effect.provide(layer({ git }).pipe(Layer.orDie)));
   }).pipe(Effect.provide(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer)));
@@ -673,7 +673,7 @@ it.effect("strips embedded credentials from the remote URL it reports", () =>
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const parent = yield* fs.makeTempDirectoryScoped({ prefix: "t3-source-control-redact-" });
-    const destinationPath = path.join(parent, "t3code");
+    const destinationPath = path.join(parent, "aoki");
     const cloneArgs: Array<ReadonlyArray<string>> = [];
     const result = yield* Effect.gen(function* () {
       const service = yield* SourceControlRepositoryService.SourceControlRepositoryService;
@@ -756,7 +756,7 @@ it.effect("preserves destination probe failures instead of treating them as miss
     _tag: "PermissionDenied",
     module: "FileSystem",
     method: "exists",
-    pathOrDescriptor: "/restricted/t3code",
+    pathOrDescriptor: "/restricted/aoki",
   });
 
   return Effect.gen(function* () {
@@ -764,7 +764,7 @@ it.effect("preserves destination probe failures instead of treating them as miss
     const error = yield* Effect.flip(
       service.cloneRepository({
         remoteUrl: CLONE_URLS.sshUrl,
-        destinationPath: "/restricted/t3code",
+        destinationPath: "/restricted/aoki",
       }),
     );
 

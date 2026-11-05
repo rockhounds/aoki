@@ -38,7 +38,7 @@ export class McpAppModelContext extends Context.Service<
       threadId: ThreadId,
     ) => Effect.Effect<ReadonlyArray<McpAppModelContextEntry>, McpAppModelContextError>;
   }
->()("t3/mcpApps/McpAppModelContext") {}
+>()("aoki/mcpApps/McpAppModelContext") {}
 
 /** The thread's notes as a provider turn or steer sends them; a failed read sends none. */
 export const forProvider = Effect.fn("McpAppModelContext.forProvider")(function* (

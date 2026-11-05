@@ -22,7 +22,7 @@ describe("VcsProjectConfig", () => {
         const root = yield* fileSystem.makeTempDirectoryScoped({
           prefix: "t3-vcs-config-test-",
         });
-        const configDir = path.join(root, ".t3code");
+        const configDir = path.join(root, ".aoki");
         const nested = path.join(root, "packages", "app");
         yield* fileSystem.makeDirectory(configDir, { recursive: true });
         yield* fileSystem.makeDirectory(nested, { recursive: true });
@@ -52,7 +52,7 @@ describe("VcsProjectConfig", () => {
         const root = yield* fileSystem.makeTempDirectoryScoped({
           prefix: "t3-vcs-config-test-",
         });
-        const configDir = path.join(root, ".t3code");
+        const configDir = path.join(root, ".aoki");
         const cwd = path.join(root, "invalid\0child");
         yield* fileSystem.makeDirectory(configDir, { recursive: true });
         yield* fileSystem.writeFileString(
@@ -64,7 +64,7 @@ describe("VcsProjectConfig", () => {
         const kind = yield* config.resolveKind({ cwd });
 
         assert.equal(kind, "jj");
-        const failedCandidate = path.join(cwd, ".t3code", "vcs.json");
+        const failedCandidate = path.join(cwd, ".aoki", "vcs.json");
         const [error] = messages[0] as ReadonlyArray<unknown>;
         assert.instanceOf(error, VcsProjectConfig.VcsProjectConfigError);
         assert.equal(
@@ -94,7 +94,7 @@ describe("VcsProjectConfig", () => {
         const root = yield* fileSystem.makeTempDirectoryScoped({
           prefix: "t3-vcs-config-test-",
         });
-        const configDir = path.join(root, ".t3code");
+        const configDir = path.join(root, ".aoki");
         yield* fileSystem.makeDirectory(configDir, { recursive: true });
         yield* fileSystem.writeFileString(path.join(configDir, "vcs.json"), "{not json");
 

@@ -81,7 +81,7 @@ jobs:
           profile: production
           environment: production
           expo-token: ${{ secrets.EXPO_PRODUCTION_TOKEN }}
-          output: ${{ runner.temp }}/t3code.aab
+          output: ${{ runner.temp }}/aoki.aab
           sourcemaps-r2: ${{ secrets.MOBILE_SOURCEMAPS_R2 }}
 
       - name: Check ABIs
@@ -100,7 +100,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: android-store-aab-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/t3code.aab
+          path: ${{ runner.temp }}/aoki.aab
           retention-days: 14
           if-no-files-found: error
 
@@ -156,7 +156,7 @@ jobs:
           profile: ${{ env.PROFILE }}
           environment: production
           expo-token: ${{ secrets.EXPO_PRODUCTION_TOKEN }}
-          output: ${{ runner.temp }}/t3code.ipa
+          output: ${{ runner.temp }}/aoki.ipa
           sourcemaps-r2: ${{ secrets.MOBILE_SOURCEMAPS_R2 }}
 
       - id: submit

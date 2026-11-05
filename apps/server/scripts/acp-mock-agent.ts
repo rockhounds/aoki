@@ -1447,7 +1447,7 @@ const program = Effect.gen(function* () {
             rawOutput: {
               action: {
                 type: "search",
-                query: "t3 code",
+                query: "aoki code",
                 sources: [
                   { type: "url", url: "https://t3.codes" },
                   { type: "url", url: "https://t3.codes" },

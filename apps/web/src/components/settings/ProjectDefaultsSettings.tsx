@@ -231,7 +231,7 @@ export function ProjectDefaultsSettings({ category }: { category: ProjectSetting
       description={
         isProjectScope
           ? gt("Where new threads in this project start.")
-          : gt("Where new threads start. Projects and their t3.json can override it.")
+          : gt("Where new threads start. Projects and their aoki.json can override it.")
       }
       resetAction={
         !isProjectScope && settings.defaultThreadEnvMode !== null ? (
@@ -588,7 +588,7 @@ export function WorktreeSubmodulesRow() {
         isProjectScope
           ? gt("How new worktrees in this project populate git submodules.")
           : gt(
-              "How new worktrees populate git submodules. Projects and their t3.json can override it.",
+              "How new worktrees populate git submodules. Projects and their aoki.json can override it.",
             )
       }
       resetAction={

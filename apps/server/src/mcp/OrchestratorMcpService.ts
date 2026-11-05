@@ -246,7 +246,7 @@ export interface OrchestratorMcpServiceShape {
 export class OrchestratorMcpService extends Context.Service<
   OrchestratorMcpService,
   OrchestratorMcpServiceShape
->()("t3/mcp/OrchestratorMcpService") {}
+>()("aoki/mcp/OrchestratorMcpService") {}
 
 export const isThreadManagementError = Schema.is(ThreadManagementService.ThreadManagementError);
 

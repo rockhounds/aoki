@@ -480,7 +480,7 @@ export class WorkflowStore extends Context.Service<
     /** Places given to a queued step whose wait is still not woken: a crash lost the wake. */
     readonly placesUnwoken: Effect.Effect<ReadonlyArray<PlaceRow>>;
   }
->()("t3/workflows/WorkflowStore") {}
+>()("aoki/workflows/WorkflowStore") {}
 
 /** A place in a pool as it was given: `state` is what it was before, `queued` or `returning`. */
 export interface PlaceRow {

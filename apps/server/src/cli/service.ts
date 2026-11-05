@@ -126,10 +126,10 @@ export const reconcileService = Effect.fn("cli.service.reconcile")(function* (op
     return { changed: false, status } satisfies ServiceReconcileResult;
   }
   if (status.supported && !status.installed) {
-    // A new service listens on this machine only, until `t3 up` opens the local network.
+    // A new service listens on this machine only, until `aoki up` opens the local network.
     const { entries } = yield* readServiceEnv(baseDir);
-    if (entries.T3CODE_LAN === undefined && entries.T3CODE_HOST === undefined) {
-      yield* writeServiceEnv(baseDir, { T3CODE_LAN: "false" });
+    if (entries.AOKI_LAN === undefined && entries.AOKI_HOST === undefined) {
+      yield* writeServiceEnv(baseDir, { AOKI_LAN: "false" });
     }
   }
   if (
@@ -154,9 +154,9 @@ export function formatServiceChange(
   result: Extract<ServiceReconcileResult, { readonly changed: true }>,
 ): string {
   if (result.plan.handedOff === true) {
-    return `Service update to t3@${packageJson.version} queued. This session will disconnect.\nLog: ${result.plan.logPath}`;
+    return `Service update to aoki@${packageJson.version} queued. This session will disconnect.\nLog: ${result.plan.logPath}`;
   }
-  return `Service ${result.previouslyInstalled ? "updated" : "installed"} · t3@${packageJson.version}\nLog: ${result.plan.logPath}`;
+  return `Service ${result.previouslyInstalled ? "updated" : "installed"} · aoki@${packageJson.version}\nLog: ${result.plan.logPath}`;
 }
 
 const MEMORY_CONTROLLER_DISABLED =
@@ -170,8 +170,8 @@ function formatProtection(
     !protection.memoryControllerAvailable
       ? `  Memory protection: unavailable, ${MEMORY_CONTROLLER_DISABLED}`
       : protection.unprotected === undefined
-        ? `  Memory protection: on${protection.setByProtect ? " (t3 service protect)" : ""}`
-        : `  Memory protection: off, ${protection.unprotected} grants none. Run \`t3 service protect\`.`,
+        ? `  Memory protection: on${protection.setByProtect ? " (aoki service protect)" : ""}`
+        : `  Memory protection: off, ${protection.unprotected} grants none. Run \`aoki service protect\`.`,
     ...(protection.oomScoreAdj === undefined ? [] : [`  OOM score: ${protection.oomScoreAdj}`]),
   ];
 }
@@ -190,8 +190,8 @@ function formatServiceStatus(
   }
   if (status.otherBaseDir !== undefined) {
     return [
-      "T3 Code service",
-      "  Status: installed for another T3 home",
+      "Aoki service",
+      "  Status: installed for another Aoki home",
       `  Base dir: ${status.otherBaseDir}`,
       `  Next: Pass \`${BootService.formatBootServiceBaseDirOption(status.otherBaseDir)}\` to manage it.`,
     ].join("\n");
@@ -207,7 +207,7 @@ function formatServiceStatus(
   ) {
     return [
       "Aoki service",
-      `  Status: installed · t3@${installedVersion} (newer than this t3@${cliVersion} CLI)`,
+      `  Status: installed · aoki@${installedVersion} (newer than this aoki@${cliVersion} CLI)`,
       `  Unit: ${status.unitPath}`,
       `  Logs: ${status.logPath}`,
       ...formatProtection(protection),
@@ -217,7 +217,7 @@ function formatServiceStatus(
   }
   return [
     "Aoki service",
-    `  Status: ${status.current ? `installed · t3@${installedVersion}` : "needs an update or repair"}`,
+    `  Status: ${status.current ? `installed · aoki@${installedVersion}` : "needs an update or repair"}`,
     `  Unit: ${status.unitPath}`,
     `  Logs: ${status.logPath}`,
     ...formatProtection(protection),
@@ -245,7 +245,7 @@ const serviceReconcileFlags = {
 
 const serviceInstallCommand = Command.make("install", serviceReconcileFlags).pipe(
   Command.withDescription(
-    "Install Aoki as a background service for this user. `t3 up` also chooses how your other devices reach it.",
+    "Install Aoki as a background service for this user. `aoki up` also chooses how your other devices reach it.",
   ),
   Command.withHandler((flags) =>
     runServiceCommand(
@@ -254,7 +254,7 @@ const serviceInstallCommand = Command.make("install", serviceReconcileFlags).pip
         const result = yield* reconcileService({ allowDowngrade: flags.allowDowngrade });
         if (!result.changed) {
           yield* Console.log(
-            `Aoki service is already installed with t3@${packageJson.version} (${yield* resolveEntryPath}).`,
+            `Aoki service is already installed with aoki@${packageJson.version} (${yield* resolveEntryPath}).`,
           );
           return;
         }
@@ -269,19 +269,19 @@ const serviceInstallCommand = Command.make("install", serviceReconcileFlags).pip
 );
 
 const serviceUpdateCommand = Command.make("update", serviceReconcileFlags).pipe(
-  Command.withDescription("Deprecated. Run `t3 update` to move to a newer release."),
+  Command.withDescription("Deprecated. Run `aoki update` to move to a newer release."),
   Command.unlisted,
   Command.withHandler((flags) =>
     runServiceCommand(
       flags,
       Effect.gen(function* () {
         yield* Console.log(
-          "`t3 service update` is deprecated: run `t3 update` to move to a newer release, or `t3 service install` to repair the service. Repairing now.",
+          "`aoki service update` is deprecated: run `aoki update` to move to a newer release, or `aoki service install` to repair the service. Repairing now.",
         );
         const result = yield* reconcileService({ allowDowngrade: flags.allowDowngrade });
         if (!result.changed) {
           yield* Console.log(
-            `Aoki service is already using t3@${packageJson.version} (${yield* resolveEntryPath}).`,
+            `Aoki service is already using aoki@${packageJson.version} (${yield* resolveEntryPath}).`,
           );
           return;
         }
@@ -293,7 +293,7 @@ const serviceUpdateCommand = Command.make("update", serviceReconcileFlags).pipe(
 
 const serviceRestartCommand = Command.make("restart", projectLocationFlags).pipe(
   Command.withDescription(
-    "Restart the background service. Picks up a version installed by `t3 update` that was not restarted at the time.",
+    "Restart the background service. Picks up a version installed by `aoki update` that was not restarted at the time.",
   ),
   Command.withHandler((flags) =>
     runServiceCommand(
@@ -303,7 +303,7 @@ const serviceRestartCommand = Command.make("restart", projectLocationFlags).pipe
         const status = yield* service.status;
         const outcome = yield* service.restart;
         const onVersion =
-          status.installedVersion === undefined ? "" : ` on t3@${status.installedVersion}`;
+          status.installedVersion === undefined ? "" : ` on aoki@${status.installedVersion}`;
         yield* Console.log(
           outcome === "restarted"
             ? `Restarted the Aoki service${onVersion}.`
@@ -402,7 +402,7 @@ const serviceProtectCommand = Command.make("protect", {
       // Before resolving config, which creates T3 directories that root would then own.
       if ((yield* HostProcess.UserId) === 0) {
         return yield* Console.log(
-          "Run `t3 service protect` as the user that runs Aoki, without sudo. It asks for sudo when it needs root.",
+          "Run `aoki service protect` as the user that runs Aoki, without sudo. It asks for sudo when it needs root.",
         );
       }
       return yield* runServiceCommand(
@@ -439,7 +439,7 @@ const serviceProtectCommand = Command.make("protect", {
             if (!(yield* confirm(flags.yes, "Remove Aoki service protection?"))) return;
             yield* ServiceProtection.removeProtection(installed);
             return yield* Console.log(
-              "Removed Aoki service protection. The server's OOM score returns to normal after `t3 service restart`.",
+              "Removed Aoki service protection. The server's OOM score returns to normal after `aoki service restart`.",
             );
           }
 
@@ -448,7 +448,7 @@ const serviceProtectCommand = Command.make("protect", {
               "Keeps Aoki running when agents fill this machine's memory:",
               "  - reserves memory for the Aoki server, so the kernel takes memory from agents first",
               "  - makes the out-of-memory killer pick agents before the server",
-              "It adds systemd drop-in files and changes nothing else. Undo with `t3 service protect --undo`.",
+              "It adds systemd drop-in files and changes nothing else. Undo with `aoki service protect --undo`.",
             ].join("\n"),
           );
           const names = remote.map((unit) => unit.replace(/\.service$/, "")).join(" and ");
@@ -479,7 +479,7 @@ const serviceProtectCommand = Command.make("protect", {
           yield* ServiceProtection.applyProtection(plan);
           yield* Console.log(
             memoryController
-              ? "Protected Aoki. Memory protection applies now; the server takes its OOM score after `t3 service restart`. Undo with `t3 service protect --undo`."
+              ? "Protected Aoki. Memory protection applies now; the server takes its OOM score after `aoki service restart`. Undo with `aoki service protect --undo`."
               : "Protected T3 Code's OOM score; the server takes it after `t3 service restart`. Memory protection applies once the kernel's memory controller is enabled. Undo with `t3 service protect --undo`.",
           );
         }).pipe(Effect.provide(ProcessRunner.layer)),

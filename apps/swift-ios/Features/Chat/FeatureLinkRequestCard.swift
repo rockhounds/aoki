@@ -95,7 +95,7 @@ struct FeatureLinkRequestCard: View {
                     Picker("Access", selection: $access) {
                         ForEach(LinkAccess.allCases, id: \.self) { Text($0.label).tag($0) }
                     }
-                    Text("To link or renew with the selected access, paste a fresh pairing code from that machine’s Connections settings or t3 pair.")
+                    Text("To link or renew with the selected access, paste a fresh pairing code from that machine’s Connections settings or aoki pair.")
                     SecureField("Pairing code", text: $controller.code)
                         .textInputAutocapitalization(.never).autocorrectionDisabled().privacySensitive()
                     HStack(spacing: 20) {

@@ -115,7 +115,7 @@ it.effect("points to Labs only when the server hides the feedback tool", () =>
           ),
         stderr: `Could not reach the Aoki server at ${runtimeState.origin}.`,
       },
-      { args: submit, running: false, stderr: "No running T3 Code server uses" },
+      { args: submit, running: false, stderr: "No running Aoki server uses" },
     ];
     for (const { args, running, call, stderr } of cases) {
       yield* running === false
@@ -215,7 +215,7 @@ it.effect("points to Labs only when the server hides the feedback tool", () =>
         NodeServices.layer,
         NodeCrypto.layer,
         NetService.layer,
-        ConfigProvider.layer(ConfigProvider.fromEnv({ env: { T3CODE_PORT: "3773" } })),
+        ConfigProvider.layer(ConfigProvider.fromEnv({ env: { AOKI_PORT: "3773" } })),
       ),
     ),
   ),

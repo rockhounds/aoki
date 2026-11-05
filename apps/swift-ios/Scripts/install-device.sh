@@ -84,9 +84,9 @@ DESTINATION_ID="$(
 )" || die "could not resolve device '${DEVICE_ID}' to an Xcode destination UDID"
 
 for key in \
-  T3CODE_CLERK_PUBLISHABLE_KEY \
-  T3CODE_CLERK_JWT_TEMPLATE \
-  T3CODE_RELAY_URL; do
+  AOKI_CLERK_PUBLISHABLE_KEY \
+  AOKI_CLERK_JWT_TEMPLATE \
+  AOKI_RELAY_URL; do
   value="${!key:-}"
   if [[ -n "${value}" ]]; then
     build_settings+=("${key}=${value}")

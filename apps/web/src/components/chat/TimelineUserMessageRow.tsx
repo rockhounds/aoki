@@ -903,11 +903,8 @@ function UserTimelineRow({ row }: { row: Extract<TimelineRow, { kind: "message" 
       className="group @container flex flex-col items-end gap-1"
       data-user-message-attribution={folded ? "agent" : undefined}
     >
-      {userMessage.attribution === "t3code" ? (
-        <p
-          className="me-1 text-2xs text-muted-foreground/70"
-          data-user-message-attribution="t3code"
-        >
+      {userMessage.attribution === "aoki" ? (
+        <p className="me-1 text-2xs text-muted-foreground/70" data-user-message-attribution="aoki">
           <T>Sent by Aoki</T>
         </p>
       ) : null}

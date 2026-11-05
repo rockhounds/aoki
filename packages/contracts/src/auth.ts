@@ -572,7 +572,7 @@ export type AuthMcpAuthorizationServerMetadata = typeof AuthMcpAuthorizationServ
  * to this one. Its session is then a peer link: the work it starts here stays
  * within that link. Claiming it only ever adds limits.
  */
-export const MCP_PEER_LINK_SOFTWARE_ID = "t3code-peer-link";
+export const MCP_PEER_LINK_SOFTWARE_ID = "aoki-peer-link";
 
 export const AuthMcpClientRegistration = Schema.Struct({
   client_name: Schema.optionalKey(Schema.String),

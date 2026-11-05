@@ -149,7 +149,7 @@ export class EnvironmentConnector extends Context.Service<
       readonly environmentId: string;
     }) => Effect.Effect<RelayEnvironmentStatusResponse, EnvironmentConnectorError>;
   }
->()("t3code-relay/environments/EnvironmentConnector") {}
+>()("aoki-relay/environments/EnvironmentConnector") {}
 
 const isEnvironmentHealthError = Schema.is(
   Schema.Union([

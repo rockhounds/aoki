@@ -1,30 +1,30 @@
-# Installs the T3 Code CLI from a GitHub Release archive on Windows. Needs
+# Installs the Aoki CLI from a GitHub Release archive on Windows. Needs
 # only PowerShell 5.1+; no Node, npm, or compiler.
 #
 #   irm https://raw.githubusercontent.com/rockhounds/aoki/main/scripts/install.ps1 | iex
 #
 # Environment:
-#   T3CODE_CHANNEL           release train to follow: stable, nightly, or preview
+#   AOKI_CHANNEL           release train to follow: stable, nightly, or preview
 #                            (default: stable; preview is a maintainers' test train)
-#   T3CODE_VERSION           exact version to install (overrides T3CODE_CHANNEL)
-#   T3CODE_HOME              T3 home directory (default: ~\.t3)
-#   T3CODE_INSTALL_BIN_DIR   where t3.exe is linked (default: ~\.local\bin)
-#   T3CODE_RELEASE_BASE_URL  mirror for releases/download (default: GitHub)
+#   AOKI_VERSION           exact version to install (overrides AOKI_CHANNEL)
+#   AOKI_HOME              T3 home directory (default: ~\.aoki)
+#   AOKI_INSTALL_BIN_DIR   where aoki.exe is linked (default: ~\.local\bin)
+#   AOKI_RELEASE_BASE_URL  mirror for releases/download (default: GitHub)
 #
-# The archive is unpacked into $T3CODE_HOME\runtime\versions\<version>, the
-# same layout `t3 service install` uses, so the service reuses this download.
+# The archive is unpacked into $AOKI_HOME\runtime\versions\<version>, the
+# same layout `aoki service install` uses, so the service reuses this download.
 $ErrorActionPreference = "Stop"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 $repo = "rockhounds/aoki"
-$baseUrl = if ($env:T3CODE_RELEASE_BASE_URL) { $env:T3CODE_RELEASE_BASE_URL.TrimEnd("/") } else { "https://github.com/$repo/releases/download" }
-$t3Home = if ($env:T3CODE_HOME) { $env:T3CODE_HOME } else { Join-Path $HOME ".t3" }
-$binDir = if ($env:T3CODE_INSTALL_BIN_DIR) { $env:T3CODE_INSTALL_BIN_DIR } else { Join-Path $HOME ".local\bin" }
+$baseUrl = if ($env:AOKI_RELEASE_BASE_URL) { $env:AOKI_RELEASE_BASE_URL.TrimEnd("/") } else { "https://github.com/$repo/releases/download" }
+$t3Home = if ($env:AOKI_HOME) { $env:AOKI_HOME } else { Join-Path $HOME ".aoki" }
+$binDir = if ($env:AOKI_INSTALL_BIN_DIR) { $env:AOKI_INSTALL_BIN_DIR } else { Join-Path $HOME ".local\bin" }
 # Absolute, so PATH never gets a folder that changes with the working directory.
 $binDir = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($binDir)
 
 function Fail([string] $message) {
-  Write-Error "t3 install: $message"
+  Write-Error "aoki install: $message"
   exit 1
 }
 
@@ -129,7 +129,7 @@ if ($interactive) {
   [Console]::Error.WriteLine()
   for ($i = 0; $i -lt $mark.Length; $i++) {
     $row = $mark[$i].Replace('#', [char]0x2588).Replace('^', [char]0x2580).Replace('_', [char]0x2584)
-    $label = if ($i -eq 1) { "     ${bold}T3 Code$reset" } elseif ($i -eq 2) { "     ${muted}CLI installer$reset" } else { "" }
+    $label = if ($i -eq 1) { "     ${bold}Aoki$reset" } elseif ($i -eq 2) { "     ${muted}CLI installer$reset" } else { "" }
     [Console]::Error.WriteLine("  $bold$row$reset$label")
   }
   [Console]::Error.WriteLine()
@@ -144,14 +144,14 @@ $arch = switch ($rawArch) {
   default { Fail "unsupported architecture $rawArch" }
 }
 
-$channel = if ($env:T3CODE_CHANNEL) { $env:T3CODE_CHANNEL } else { "stable" }
-$version = $env:T3CODE_VERSION
+$channel = if ($env:AOKI_CHANNEL) { $env:AOKI_CHANNEL } else { "stable" }
+$version = $env:AOKI_VERSION
 if (-not $version) {
   $tagPattern = switch ($channel) {
     "stable" { '^v\d+\.\d+\.\d+$' }
     "nightly" { '^v\d+\.\d+\.\d+-nightly\.\d+\.\d+$' }
     "preview" { '^v\d+\.\d+\.\d+-preview\.\d+\.\d+$' }
-    default { Fail "T3CODE_CHANNEL must be stable, nightly, or preview" }
+    default { Fail "AOKI_CHANNEL must be stable, nightly, or preview" }
   }
   if ($channel -eq "stable") {
     # release.yml marks only plain stable releases latest. This is a github.com
@@ -166,17 +166,17 @@ if (-not $version) {
       if (-not $releases) { break }
     }
   }
-  if (-not $tag) { Fail "could not find a $channel release; set T3CODE_VERSION" }
+  if (-not $tag) { Fail "could not find a $channel release; set AOKI_VERSION" }
   $version = $tag.Substring(1)
 }
 if ($version -match '-preview\.') {
-  Write-Warning "t3 $version is a preview build. Preview builds are cut by maintainers from unreleased branches to exercise the release pipeline. They can be broken, receive no fixes, and are never offered as updates. Set T3CODE_CHANNEL=stable (the default) for a supported build."
-  if ($channel -ne "preview" -and -not $env:T3CODE_VERSION) {
+  Write-Warning "aoki $version is a preview build. Preview builds are cut by maintainers from unreleased branches to exercise the release pipeline. They can be broken, receive no fixes, and are never offered as updates. Set AOKI_CHANNEL=stable (the default) for a supported build."
+  if ($channel -ne "preview" -and -not $env:AOKI_VERSION) {
     Fail "refusing a preview build that was not explicitly requested"
   }
 }
 
-$stem = "t3-$version-win32-$arch"
+$stem = "aoki-$version-win32-$arch"
 $archive = "$stem.zip"
 $versionsDir = Join-Path $t3Home "runtime\versions"
 $targetDir = Join-Path $versionsDir $version
@@ -190,14 +190,14 @@ if ((Test-Path $marker) -and ((Get-Content $marker -Raw).Trim() -eq $version)) {
   New-Item -ItemType Directory -Path $staging | Out-Null
   try {
     if ($interactive) { [Console]::Error.Write("`r$esc[2K") }
-    [Console]::Error.WriteLine("  ${muted}Installing$reset T3 Code $bold$version$reset`n")
+    [Console]::Error.WriteLine("  ${muted}Installing$reset Aoki $bold$version$reset`n")
     Step "Downloading..."
     try {
       Fetch "$baseUrl/v$version/SHA256SUMS" (Join-Path $staging "SHA256SUMS")
     } catch {
       $status = $_.Exception.Response.StatusCode.value__
       if ($status -eq 404) {
-        Fail "t3 $version has no release archive for win32-$arch; releases before the self-contained CLI can only be installed with 'npm install -g t3@$version'"
+        Fail "aoki $version has no release archive for win32-$arch; releases before the self-contained CLI can only be installed with 'npm install -g aoki@$version'"
       }
       throw
     }
@@ -211,7 +211,7 @@ if ((Test-Path $marker) -and ((Get-Content $marker -Raw).Trim() -eq $version)) {
     $actual = (Get-FileHash -Algorithm SHA256 (Join-Path $staging $archive)).Hash.ToLowerInvariant()
     if ($actual -ne $expected) { Fail "checksum mismatch for $archive" }
 
-    Step "Extracting T3 Code..."
+    Step "Extracting Aoki..."
     # The archive module reads the global preference, not the caller's local scope.
     $savedProgress = $global:ProgressPreference
     try {
@@ -221,7 +221,7 @@ if ((Test-Path $marker) -and ((Get-Content $marker -Raw).Trim() -eq $version)) {
     Get-ChildItem (Join-Path $staging $stem) | Move-Item -Destination $staging
     Remove-Item (Join-Path $staging $stem), (Join-Path $staging $archive), (Join-Path $staging "SHA256SUMS") -Recurse -Force
 
-    & (Join-Path $staging "t3.exe") --version | Out-Null
+    & (Join-Path $staging "aoki.exe") --version | Out-Null
     if ($LASTEXITCODE -ne 0) { Fail "the downloaded executable does not run" }
     Set-Content -Path (Join-Path $staging ".install-complete") -Value $version -NoNewline
 
@@ -233,29 +233,29 @@ if ((Test-Path $marker) -and ((Get-Content $marker -Raw).Trim() -eq $version)) {
   }
 }
 
-Step "Setting up the t3 command..."
+Step "Setting up the aoki command..."
 New-Item -ItemType Directory -Force -Path $binDir | Out-Null
-$shim = Join-Path $binDir "t3.cmd"
-# Replace only a shim that runs a version in this home; never the desktop app's or another t3.
+$shim = Join-Path $binDir "aoki.cmd"
+# Replace only a shim that runs a version in this home; never the desktop app's or another aoki.
 if (Test-Path -LiteralPath $shim) {
   $existingTarget = ""
   # The shim is UTF-8 without a BOM; Windows PowerShell 5.1 reads files as ANSI by default.
-  # Only a shim exactly as written here counts; a user's wrapper that also runs t3.exe does not.
+  # Only a shim exactly as written here counts; a user's wrapper that also runs aoki.exe does not.
   $existing = [System.IO.File]::ReadAllText($shim, [System.Text.Encoding]::UTF8)
   if ($existing -match '^@echo off\r?\n"([^"]+)" %\*\s*$') { $existingTarget = $Matches[1] }
   # Full paths, so a target like versions\..\other cannot pass as ours.
   $ownedPrefix = [System.IO.Path]::GetFullPath($versionsDir).TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
   if ($existingTarget) { $existingTarget = [System.IO.Path]::GetFullPath($existingTarget) }
-  # Exactly <version>\t3.exe, never another program inside a version.
+  # Exactly <version>\aoki.exe, never another program inside a version.
   $owned = $existingTarget.StartsWith($ownedPrefix, [System.StringComparison]::OrdinalIgnoreCase) -and
-    ($existingTarget.Substring($ownedPrefix.Length) -match '^[^\\/]+\\t3\.exe$')
+    ($existingTarget.Substring($ownedPrefix.Length) -match '^[^\\/]+\\aoki\.exe$')
   if (-not $owned) {
-    Fail "another t3 is already at $shim. Remove it and run this again, or run $(Join-Path $targetDir 't3.exe') directly."
+    Fail "another aoki is already at $shim. Remove it and run this again, or run $(Join-Path $targetDir 'aoki.exe') directly."
   }
 }
 # UTF-8 without a BOM: cmd.exe reads the shim as-is, and ASCII would corrupt
 # non-ASCII characters in the user's home path.
-[System.IO.File]::WriteAllText($shim, "@echo off`r`n`"$(Join-Path $targetDir 't3.exe')`" %*", (New-Object System.Text.UTF8Encoding $false))
+[System.IO.File]::WriteAllText($shim, "@echo off`r`n`"$(Join-Path $targetDir 'aoki.exe')`" %*", (New-Object System.Text.UTF8Encoding $false))
 # Pruning keeps what this shim points at; a background service cannot see $binDir otherwise.
 $launchers = Join-Path $t3Home "runtime\launchers"
 $shimPath = (Resolve-Path -LiteralPath $shim).Path
@@ -263,23 +263,23 @@ if (-not ((Test-Path $launchers) -and ((Get-Content $launchers) -contains $shimP
   [System.IO.File]::AppendAllText($launchers, "$shimPath`r`n", (New-Object System.Text.UTF8Encoding $false))
 }
 if ($interactive) { [Console]::Error.Write("`r$esc[2K") }
-[Console]::Error.WriteLine("  ${green}Installed T3 Code $version$reset`n")
+[Console]::Error.WriteLine("  ${green}Installed Aoki $version$reset`n")
 if ($binDir.Contains(";")) {
   # PATH would split the folder at the `;`, so name the command in full instead.
   Write-Host "  Run ${bold}& '$($shim.Replace("'", "''"))'$reset to get started.`n"
 } else {
   # Either side may end in a separator. Trim only here: a drive root keeps its `\` for Join-Path.
   $added = ($env:PATH -split ";" | ForEach-Object { $_.TrimEnd('\', '/') }) -notcontains $binDir.TrimEnd('\', '/')
-  # `irm | iex` runs in the user's own session, so t3 works in this window right away.
-  # Last, so it never shadows another t3.
+  # `irm | iex` runs in the user's own session, so aoki works in this window right away.
+  # Last, so it never shadows another aoki.
   if ($added) { $env:Path = "$env:Path;$binDir" }
-  # A t3 earlier on PATH runs instead, so name this one in full.
-  $first = Get-Command t3 -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+  # A aoki earlier on PATH runs instead, so name this one in full.
+  $first = Get-Command aoki -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
   if ($first -and [System.IO.Path]::GetFullPath($first.Source) -ne [System.IO.Path]::GetFullPath($shimPath)) {
-    Write-Host "  Another t3 at $($first.Source) runs first, so run ${bold}& '$($shim.Replace("'", "''"))'$reset to use this one.`n"
+    Write-Host "  Another aoki at $($first.Source) runs first, so run ${bold}& '$($shim.Replace("'", "''"))'$reset to use this one.`n"
   } elseif ($added) {
-    Write-Host "  Run ${bold}t3$reset to get started. For new windows, add $binDir to your PATH.`n"
+    Write-Host "  Run ${bold}aoki$reset to get started. For new windows, add $binDir to your PATH.`n"
   } else {
-    Write-Host "  Run ${bold}t3$reset to use T3 Code here, or ${bold}t3 up$reset to use it from your other devices.`n"
+    Write-Host "  Run ${bold}aoki$reset to use Aoki here, or ${bold}aoki up$reset to use it from your other devices.`n"
   }
 }

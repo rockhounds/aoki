@@ -49,7 +49,7 @@ export class McpToolExposure extends Context.Service<
       mode?: McpToolExposureMode,
     ) => boolean;
   }
->()("t3/mcp/McpToolExposure") {}
+>()("aoki/mcp/McpToolExposure") {}
 
 const score = (
   tool: Pick<SearchableTool, "name" | "description">,

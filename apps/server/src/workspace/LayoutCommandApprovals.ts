@@ -23,7 +23,7 @@ export class LayoutCommandApprovals extends Context.Service<
       readonly command: string;
     }) => Effect.Effect<boolean, TaskFolderError>;
   }
->()("t3/workspace/LayoutCommandApprovals") {}
+>()("aoki/workspace/LayoutCommandApprovals") {}
 
 export const failed = (cause: unknown) =>
   new TaskFolderError({

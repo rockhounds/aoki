@@ -682,7 +682,7 @@ describe.skipIf(HostProcess.Platform.defaultValue() === "win32")("Claude CLI pro
               Layer.succeed(AgentScope, {
                 ...AgentScope.defaultValue(),
                 wrap: ({ command, args }) =>
-                  Effect.succeed({ command, args, unit: "t3code-claude-test.scope" }),
+                  Effect.succeed({ command, args, unit: "aoki-claude-test.scope" }),
                 stop: (unit) => Deferred.succeed(stopped, unit).pipe(Effect.asVoid),
               }),
             ),
@@ -692,7 +692,7 @@ describe.skipIf(HostProcess.Platform.defaultValue() === "win32")("Claude CLI pro
       yield* Effect.promise(() => leftoverStarted);
       yield* session.close;
       yield* Effect.promise(() => leftoverStopped);
-      assert.strictEqual(yield* Deferred.await(stopped), "t3code-claude-test.scope");
+      assert.strictEqual(yield* Deferred.await(stopped), "aoki-claude-test.scope");
     }),
   );
 

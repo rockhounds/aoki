@@ -25,7 +25,7 @@ const config = RelayConfiguration.RelayConfiguration.of({
     teamId: "team-id",
     keyId: "key-id",
     privateKey: Redacted.make("private-key"),
-    bundleId: "com.t3tools.t3code.dev",
+    bundleId: "io.github.rockhounds.aoki.dev",
   },
   apnsDeliveryJobSigningSecret: Redacted.make("job-secret"),
   clerkSecretKey: Redacted.make("clerk-secret"),
@@ -33,7 +33,7 @@ const config = RelayConfiguration.RelayConfiguration.of({
   clerkJwtAudience: "t3-code-relay",
   cloudMintPrivateKey: Redacted.make("cloud-private-key"),
   cloudMintPublicKey: "cloud-public-key",
-  managedEndpointBaseDomain: "t3code.test",
+  managedEndpointBaseDomain: "aoki.test",
   managedEndpointNamespace: "dev_julius",
 });
 
@@ -430,7 +430,7 @@ function expectedManagedEndpointHash(environmentId: string, userId: string): str
 }
 
 function expectedManagedHostname(environmentId: string, userId = "user_ABC"): string {
-  return `dev-julius-${expectedManagedEndpointHash(environmentId, userId)}.t3code.test`;
+  return `dev-julius-${expectedManagedEndpointHash(environmentId, userId)}.aoki.test`;
 }
 
 function expectedManagedTunnelName(environmentId: string, userId = "user_ABC"): string {
@@ -579,7 +579,7 @@ describe("ManagedEndpointProvider", () => {
       expect(configBody).toMatchObject({
         ingress: [
           {
-            hostname: expect.stringMatching(/^dev-julius-[a-f0-9]{16}\.t3code\.test$/),
+            hostname: expect.stringMatching(/^dev-julius-[a-f0-9]{16}\.aoki\.test$/),
           },
           { service: "http_status:404" },
         ],
@@ -1254,7 +1254,7 @@ describe("ManagedEndpointProvider", () => {
 
       configuration.current = {
         ingress: [
-          { hostname: "*.t3code.test", service: "http://127.0.0.1:4711" },
+          { hostname: "*.aoki.test", service: "http://127.0.0.1:4711" },
           { hostname: expectedManagedHostname("env_ABC"), service: "http://127.0.0.1:3773" },
           { service: "http_status:404" },
         ],
@@ -1301,7 +1301,7 @@ describe("ManagedEndpointProvider", () => {
           origin: { localHttpHost: "127.0.0.1", localHttpPort: 3773 },
           endpoint: {
             ...provisioned.endpoint,
-            httpBaseUrl: "https://different-host.t3code.test/",
+            httpBaseUrl: "https://different-host.aoki.test/",
           },
         }),
       );

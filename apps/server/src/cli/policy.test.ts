@@ -31,7 +31,7 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))((it) => {
       );
       const loaded = (organization: string) =>
         ManagedPolicy.loadedPolicy({
-          path: "/etc/t3code/policy.json",
+          path: "/etc/aoki/policy.json",
           document: { schemaVersion: 1, organization },
         });
       const installed = yield* loaded("Example Corp");
@@ -51,7 +51,7 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))((it) => {
       assert.include(yield* running(installed), "loaded this policy.");
       assert.include(
         yield* running(yield* loaded("Other Corp")),
-        "loaded Other Corp's policy from /etc/t3code/policy.json",
+        "loaded Other Corp's policy from /etc/aoki/policy.json",
       );
       assert.include(yield* running(null), "loaded no policy. Restart Aoki");
       assert.include(yield* running(installed, null), "Restart Aoki to apply");
@@ -90,7 +90,7 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))((it) => {
       );
 
       assert.include(
-        yield* fs.readFileString(path.join(home, "out", "macos", "t3code.mobileconfig")),
+        yield* fs.readFileString(path.join(home, "out", "macos", "aoki.mobileconfig")),
         "Tilde Corp",
       );
     }),

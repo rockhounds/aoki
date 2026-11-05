@@ -55,7 +55,7 @@ describe("resolvePendingDraftBranch", () => {
     expect(resolve({ draft: untouched, defaults: worktreeDefault, branches, projectCwd })).toBe(
       "origin/main",
     );
-    // Until t3.json settles, the environment default may still be replaced.
+    // Until aoki.json settles, the environment default may still be replaced.
     expect(
       resolve({
         draft: untouched,

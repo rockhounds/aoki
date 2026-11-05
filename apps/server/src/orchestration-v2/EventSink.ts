@@ -79,7 +79,7 @@ interface ProviderBatchPublication {
   eventCount: number;
 }
 const CurrentProviderBatch = Context.Reference<ProviderBatchPublication | undefined>(
-  "t3/orchestration-v2/EventSink/CurrentProviderBatch",
+  "aoki/orchestration-v2/EventSink/CurrentProviderBatch",
   { defaultValue: () => undefined },
 );
 // Projecting `provider-thread.updated` also rewrites its app thread's row.
@@ -266,7 +266,7 @@ export interface EventSinkV2Shape {
 }
 
 export class EventSinkV2 extends Context.Service<EventSinkV2, EventSinkV2Shape>()(
-  "t3/orchestration-v2/EventSink/EventSinkV2",
+  "aoki/orchestration-v2/EventSink/EventSinkV2",
 ) {}
 
 const layerBase: Layer.Layer<

@@ -16,7 +16,7 @@ public struct PermissionNoticeEnvironment: Identifiable, Equatable, Sendable {
 /// dismissed, with dismissal retained across launches.
 public struct PermissionUpdateNotice: View {
     public let environments: [PermissionNoticeEnvironment]
-    @AppStorage("t3code.permission-update.v1") private var dismissedData = Data()
+    @AppStorage("aoki.permission-update.v1") private var dismissedData = Data()
 
     public init(environments: [PermissionNoticeEnvironment]) {
         self.environments = environments

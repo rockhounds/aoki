@@ -74,7 +74,7 @@ jobs:
           profile: preview:dev
           environment: preview
           expo-token: ${{ secrets.EXPO_PREVIEW_TOKEN }}
-          output: ${{ runner.temp }}/t3code-preview.apk
+          output: ${{ runner.temp }}/aoki-preview.apk
 
       # `eas upload` hosts the APK on EAS and returns the page testers install from.
       - id: build
@@ -144,7 +144,7 @@ jobs:
           profile: preview:dev
           environment: preview
           expo-token: ${{ secrets.EXPO_PREVIEW_TOKEN }}
-          output: ${{ runner.temp }}/t3code-preview.ipa
+          output: ${{ runner.temp }}/aoki-preview.ipa
 
       # EAS hosts the signed client and returns its install page.
       - id: build

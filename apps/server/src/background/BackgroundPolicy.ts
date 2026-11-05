@@ -39,7 +39,7 @@ export class BackgroundPolicy extends Context.Service<
     /** Host power and lock state only, for server-owned work that no client lease asks for. */
     readonly shouldRunHostWork: Effect.Effect<boolean>;
   }
->()("t3/background/BackgroundPolicy") {}
+>()("aoki/background/BackgroundPolicy") {}
 
 const DEFAULT_LEASE_TTL_MS = 45_000;
 const MAX_LEASE_TTL_MS = 120_000;

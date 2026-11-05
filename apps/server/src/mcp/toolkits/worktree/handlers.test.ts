@@ -209,7 +209,7 @@ const handoffFrom = <A, E>(
         ),
       writeLayout: fileSystem
         .writeFileString(
-          path.join(project, "t3.json"),
+          path.join(project, "aoki.json"),
           JSON.stringify({
             worktreeLayout: {
               create: `touch "${marker}" && git worktree add -q -b "$T3_WORKTREE_BRANCH" "$T3_WORKTREE_PROJECT_PATH"`,

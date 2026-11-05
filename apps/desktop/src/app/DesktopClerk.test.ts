@@ -123,25 +123,25 @@ describe("DesktopClerk", () => {
       name: "packaged macOS",
       isDevelopment: false,
       platform: "darwin" as const,
-      userData: "/tmp/app-data/t3code-v2",
+      userData: "/tmp/app-data/aoki-v2",
     },
     {
       name: "packaged Linux",
       isDevelopment: false,
       platform: "linux" as const,
-      userData: "/tmp/app-data/t3code-v2",
+      userData: "/tmp/app-data/aoki-v2",
     },
     {
       name: "packaged Windows",
       isDevelopment: false,
       platform: "win32" as const,
-      userData: "/tmp/app-data/t3code-v2",
+      userData: "/tmp/app-data/aoki-v2",
     },
     {
       name: "development",
       isDevelopment: true,
       platform: "win32" as const,
-      userData: "/tmp/app-data/t3code-dev",
+      userData: "/tmp/app-data/aoki-dev",
     },
   ])(
     "creates the bridge before startup can yield to the event loop ($name)",
@@ -213,11 +213,11 @@ describe("DesktopClerk", () => {
 
       return Effect.gen(function* () {
         const clerk = yield* DesktopClerk.DesktopClerk;
-        if (entry === "before configure") listeners.get("second-instance")?.({}, ["t3"]);
+        if (entry === "before configure") listeners.get("second-instance")?.({}, ["aoki"]);
         yield* clerk.configure;
 
         assert.equal(quit.mock.calls.length, 0);
-        if (entry === "after configure") listeners.get("second-instance")!({}, ["t3"]);
+        if (entry === "after configure") listeners.get("second-instance")!({}, ["aoki"]);
         assert.strictEqual(yield* Effect.promise(() => revealed.promise), window);
       }).pipe(
         Effect.scoped,
@@ -234,10 +234,10 @@ describe("DesktopClerk", () => {
     createClerkBridgeMock.mockReturnValue({ cleanup: vi.fn(), isPrimaryInstance: true });
     const listeners = new Map<string, (...args: unknown[]) => void>();
     const received: string[] = [];
-    const first = "t3code://new?prompt=first";
-    const second = "t3code://threads/env-1/thread-1";
-    const later = "t3code://new?prompt=later";
-    const launchPair = "t3code://pair?pairingUrl=https%3A%2F%2Fvps.example.com%2F%23token%3Dabc";
+    const first = "aoki://new?prompt=first";
+    const second = "aoki://threads/env-1/thread-1";
+    const later = "aoki://new?prompt=later";
+    const launchPair = "aoki://pair?pairingUrl=https%3A%2F%2Fvps.example.com%2F%23token%3Dabc";
     const delivered = Promise.withResolvers<void>();
     const electronApp = {
       on: (name: string, listener: (...args: unknown[]) => void) =>
@@ -248,13 +248,13 @@ describe("DesktopClerk", () => {
 
     return Effect.gen(function* () {
       const clerk = yield* DesktopClerk.DesktopClerk;
-      listeners.get("second-instance")?.({}, ["t3", first]);
-      listeners.get("second-instance")?.({}, ["t3", second]);
+      listeners.get("second-instance")?.({}, ["aoki", first]);
+      listeners.get("second-instance")?.({}, ["aoki", second]);
       listeners.get("open-url")?.({ preventDefault: () => undefined }, launchPair);
       assert.deepEqual(received, []);
 
       yield* clerk.configure;
-      listeners.get("second-instance")!({}, ["t3", later]);
+      listeners.get("second-instance")!({}, ["aoki", later]);
       yield* Effect.promise(() => delivered.promise);
 
       assert.deepEqual(received, [launchPair, first, second, later]);
@@ -300,7 +300,7 @@ describe("DesktopClerk", () => {
 
         assert.isTrue(Exit.hasInterrupts(exit));
         assert.deepEqual(events, [
-          "setPath:userData:/tmp/app-data/t3code-v2",
+          "setPath:userData:/tmp/app-data/aoki-v2",
           "requestSingleInstanceLock",
           "quit",
         ]);
@@ -333,19 +333,17 @@ it.effect(
       const clerk = yield* DesktopClerk.DesktopClerk;
       yield* clerk.configure;
       const event = { preventDefault: vi.fn() };
-      listeners.get("open-url")!(event, "t3code-dev://app/auth/callback?code=clerk-code");
-      listeners.get("open-url")!(event, "t3code://app/welcome");
+      listeners.get("open-url")!(event, "aoki-dev://app/auth/callback?code=clerk-code");
+      listeners.get("open-url")!(event, "aoki://app/welcome");
       assert.equal(loadURL.mock.calls.length, 0);
       assert.equal(event.preventDefault.mock.calls.length, 0);
       listeners.get("second-instance")!({}, [
-        "t3",
-        "t3code-dev://app/settings/providers?instanceId=work&code=never-forward",
+        "aoki",
+        "aoki-dev://app/settings/providers?instanceId=work&code=never-forward",
       ]);
       yield* Effect.promise(() => revealed.promise);
-      assert.deepEqual(loadURL.mock.calls, [
-        ["t3code-dev://app/settings/providers?instanceId=work"],
-      ]);
-      listeners.get("open-url")!(event, "t3code-dev://app/welcome#agents:machine-id");
+      assert.deepEqual(loadURL.mock.calls, [["aoki-dev://app/settings/providers?instanceId=work"]]);
+      listeners.get("open-url")!(event, "aoki-dev://app/welcome#agents:machine-id");
       assert.equal(event.preventDefault.mock.calls.length, 1);
     }).pipe(
       Effect.scoped,
@@ -417,7 +415,7 @@ it.effect.each(["startup", "open-url", "early-second-instance"] as const)(
       yield* Effect.gen(function* () {
         const clerk = yield* DesktopClerk.DesktopClerk;
         if (entry === "early-second-instance") {
-          listeners.get("second-instance")?.({}, ["t3", link]);
+          listeners.get("second-instance")?.({}, ["aoki", link]);
         }
         yield* clerk.configure;
         if (entry === "open-url") {
@@ -432,7 +430,10 @@ it.effect.each(["startup", "open-url", "early-second-instance"] as const)(
         assert.strictEqual(delivery?.returnUrl, request.returnUrl);
       }).pipe(
         Effect.provide(layerDesktopClerk(true, [], "darwin", undefined, shell, listeners)),
-        Effect.provideService(HostProcess.Arguments, entry === "startup" ? ["t3", link] : ["t3"]),
+        Effect.provideService(
+          HostProcess.Arguments,
+          entry === "startup" ? ["aoki", link] : ["aoki"],
+        ),
         Effect.provideService(ElectronApp.ElectronApp, electronApp),
         Effect.provideService(
           ElectronWindow.ElectronWindow,
@@ -456,7 +457,7 @@ it.effect("hands web and app links to the renderer and leaves other links alone"
         }),
     } as unknown as ElectronApp.ElectronApp["Service"];
     const received: Array<string> = [];
-    const pairLink = "t3code://pair?pairingUrl=https%3A%2F%2Fvps.example.com%2F%23token%3Dabc";
+    const pairLink = "aoki://pair?pairingUrl=https%3A%2F%2Fvps.example.com%2F%23token%3Dabc";
     yield* Effect.gen(function* () {
       const clerk = yield* DesktopClerk.DesktopClerk;
       yield* clerk.configure;
@@ -467,23 +468,23 @@ it.effect("hands web and app links to the renderer and leaves other links alone"
       };
       assert.strictEqual(open("https://example.com/page"), 1);
       assert.strictEqual(open("http://localhost:3000/"), 1);
-      assert.strictEqual(open("t3code://new?prompt=hi"), 1);
-      assert.strictEqual(open("t3code://threads/env-1/thread-1"), 1);
+      assert.strictEqual(open("aoki://new?prompt=hi"), 1);
+      assert.strictEqual(open("aoki://threads/env-1/thread-1"), 1);
       assert.strictEqual(open(pairLink), 1);
-      assert.strictEqual(open("t3code://pair"), 0);
+      assert.strictEqual(open("aoki://pair"), 0);
       assert.strictEqual(open("mailto:hello@example.com"), 0);
-      assert.strictEqual(open("t3code://somewhere-else"), 0);
+      assert.strictEqual(open("aoki://somewhere-else"), 0);
       yield* Effect.yieldNow;
       assert.deepStrictEqual(received, [
         "https://example.com/page",
         "http://localhost:3000/",
-        "t3code://new?prompt=hi",
-        "t3code://threads/env-1/thread-1",
+        "aoki://new?prompt=hi",
+        "aoki://threads/env-1/thread-1",
         pairLink,
       ]);
     }).pipe(
       Effect.provide(layerDesktopClerk(true, [], "darwin", undefined, undefined, listeners)),
-      Effect.provideService(HostProcess.Arguments, ["t3"]),
+      Effect.provideService(HostProcess.Arguments, ["aoki"]),
       Effect.provideService(ElectronApp.ElectronApp, electronApp),
       Effect.provideService(
         ElectronWindow.ElectronWindow,

@@ -55,7 +55,7 @@ struct EnvironmentUpdatesView: View {
 
     var body: some View {
         Form {
-            Section("T3 Code") {
+            Section("Aoki") {
                 if let descriptor { LabeledContent("Installed", value: descriptor.serverVersion) }
                 if busy { Label("Updating status…", systemImage: "arrow.clockwise") }
                 if let targetVersion, supported {
@@ -64,7 +64,7 @@ struct EnvironmentUpdatesView: View {
                 Button("Check for updates") { Task { await check() } }
                 if let descriptor, !supported,
                    (descriptor.orchestrationProtocolVersion ?? 1) <= OrchestrationProtocolVersion.v2.rawValue {
-                    Text("Update T3 Code on this computer.")
+                    Text("Update Aoki on this computer.")
                 }
                 if let notice { Text(notice).font(.footnote) }
             }
@@ -103,7 +103,7 @@ struct EnvironmentUpdatesView: View {
             }
             targetVersion = try await EnvironmentReleaseIndex.findUpdate(for: current.serverVersion)
             if OutdatedHostUpdate.requiresHostUpdate(current) {
-                notice = "Update T3 Code on this host to connect."
+                notice = "Update Aoki on this host to connect."
             } else if targetVersion == nil {
                 notice = "Up to date."
             }

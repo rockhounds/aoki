@@ -84,7 +84,7 @@ private struct CloudWebhookPreferencesSection: View {
             if let state = model.state {
                 if state.linkRevoked == true {
                     Label("Removed from T3 Connect", systemImage: "link.badge.minus")
-                    Text("Run `t3 connect link` on the host to link this environment again.")
+                    Text("Run `aoki connect link` on the host to link this environment again.")
                         .font(.footnote).foregroundStyle(.secondary)
                         .textSelection(.enabled)
                     Button("Check link again") { Task { await model.load() } }

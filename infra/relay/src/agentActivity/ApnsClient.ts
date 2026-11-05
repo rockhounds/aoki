@@ -273,7 +273,7 @@ export class ApnsClient extends Context.Service<
       readonly issuedAtUnixSeconds: number;
     }) => Effect.Effect<ApnsDeliveryResult, ApnsError>;
   }
->()("t3code-relay/agentActivity/ApnsClient") {}
+>()("aoki-relay/agentActivity/ApnsClient") {}
 
 const make = Effect.gen(function* () {
   const httpClient = yield* HttpClient.HttpClient;

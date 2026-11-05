@@ -180,11 +180,11 @@ export class ThemeTargetMissingError extends Schema.TaggedError<ThemeTargetMissi
   {},
 ) {
   override get message(): string {
-    return "Provide a theme id or file, or run `t3 theme clear` to remove the theme.";
+    return "Provide a theme id or file, or run `aoki theme clear` to remove the theme.";
   }
 }
 
-const envT3Home = Config.String("T3CODE_HOME").pipe(Config.option);
+const envT3Home = Config.String("AOKI_HOME").pipe(Config.option);
 const DEV_STATE_PLACEHOLDER_URL = new URL("http://localhost");
 
 const hasLiveServer = (statePath: string) =>

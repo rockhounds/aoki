@@ -128,7 +128,7 @@ const policies = (): ReadonlyArray<Policy> => [
   {
     id: "WorktreeLayoutCommands",
     title: "Allow project worktree layout commands",
-    help: "Disabled stops T3 Code from running the worktreeLayout commands a project's t3.json declares, whether or not a user approved them. Such a project gets no new worktree threads; existing thread folders are restored and removed without the project's commands.",
+    help: "Disabled stops Aoki from running the worktreeLayout commands a project's aoki.json declares, whether or not a user approved them. Such a project gets no new worktree threads; existing thread folders are restored and removed without the project's commands.",
     toggle: "WorktreeLayoutCommands",
   },
   {
@@ -176,7 +176,7 @@ const policies = (): ReadonlyArray<Policy> => [
   {
     id: "Settings",
     title: "Managed settings (JSON)",
-    help: 'Defaults and locks for server settings, as the "settings" object of a T3 Code policy. Each key is a setting path; each value is {"value": ..., "locked": true|false}.\n\nExample: {"enableAgentBrowserAccess": {"value": false, "locked": true}}\n\nRun "t3 policy check" on a policy file with the same object to validate it first.',
+    help: 'Defaults and locks for server settings, as the "settings" object of a T3 Code policy. Each key is a setting path; each value is {"value": ..., "locked": true|false}.\n\nExample: {"enableAgentBrowserAccess": {"value": false, "locked": true}}\n\nRun "aoki policy check" on a policy file with the same object to validate it first.',
     elements: [{ kind: "text", name: "Settings", label: "Settings JSON", json: true }],
   },
   {
@@ -230,7 +230,7 @@ const admxElement = (element: Element) => {
 export function windowsAdmx(): string {
   const body = policies().map((policy) => {
     const head = `<policy name="${policy.id}" class="Machine" displayName="$(string.${policy.id})" explainText="$(string.${policy.id}_Help)" key="${ADMX_KEY}"`;
-    const common = `<parentCategory ref="T3Code" />\n      <supportedOn ref="SUPPORTED_T3Code" />`;
+    const common = `<parentCategory ref="Aoki" />\n      <supportedOn ref="SUPPORTED_Aoki" />`;
     if (policy.toggle !== undefined) {
       return `    ${head} valueName="${policy.toggle}">
       ${common}
@@ -249,16 +249,16 @@ export function windowsAdmx(): string {
   return `<?xml version="1.0" encoding="utf-8"?>
 <policyDefinitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" revision="1.0" schemaVersion="1.0" xmlns="http://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions">
   <policyNamespaces>
-    <target prefix="t3code" namespace="T3Tools.Policies.T3Code" />
+    <target prefix="aoki" namespace="Rockhounds.Policies.Aoki" />
   </policyNamespaces>
   <resources minRequiredRevision="1.0" />
   <supportedOn>
     <definitions>
-      <definition name="SUPPORTED_T3Code" displayName="$(string.SUPPORTED_T3Code)" />
+      <definition name="SUPPORTED_Aoki" displayName="$(string.SUPPORTED_Aoki)" />
     </definitions>
   </supportedOn>
   <categories>
-    <category name="T3Code" displayName="$(string.T3Code)" />
+    <category name="Aoki" displayName="$(string.Aoki)" />
   </categories>
   <policies>
 ${body.join("\n")}
@@ -282,8 +282,8 @@ const presentationElement = (element: Element) => {
 /** The en-US strings and dialog layouts for `windowsAdmx`. */
 export function windowsAdml(): string {
   const strings: Array<readonly [string, string]> = [
-    ["T3Code", "T3 Code"],
-    ["SUPPORTED_T3Code", "T3 Code with managed policy support"],
+    ["Aoki", "T3 Code"],
+    ["SUPPORTED_Aoki", "T3 Code with managed policy support"],
   ];
   const presentations: Array<string> = [];
   for (const policy of policies()) {
@@ -349,7 +349,7 @@ const nullPath = (
   return undefined;
 };
 
-/** A device configuration profile that installs `document` for `com.t3tools.t3code`. */
+/** A device configuration profile that installs `document` for `io.github.rockhounds.aoki`. */
 export function macosProfile(
   document: ManagedPolicyDocument,
   uuids: { readonly profile: string; readonly payload: string },
@@ -370,8 +370,8 @@ export function macosProfile(
     PayloadContent: [
       {
         PayloadDisplayName: "T3 Code policy",
-        PayloadIdentifier: `com.t3tools.t3code.policy.${uuids.payload}`,
-        PayloadType: "com.t3tools.t3code",
+        PayloadIdentifier: `io.github.rockhounds.aoki.policy.${uuids.payload}`,
+        PayloadType: "io.github.rockhounds.aoki",
         PayloadUUID: uuids.payload,
         PayloadVersion: 1,
         ...document,
@@ -379,7 +379,7 @@ export function macosProfile(
     ],
     PayloadDescription: "Configures T3 Code for every user on this Mac.",
     PayloadDisplayName: `T3 Code policy for ${document.organization}`,
-    PayloadIdentifier: `com.t3tools.t3code.policy`,
+    PayloadIdentifier: `io.github.rockhounds.aoki.policy`,
     PayloadOrganization: document.organization,
     PayloadScope: "System",
     PayloadType: "Configuration",

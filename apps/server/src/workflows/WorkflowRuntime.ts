@@ -39,7 +39,7 @@ import * as WorkflowForge from "./WorkflowForge.ts";
 import * as Workflows from "./Workflows.ts";
 
 /** A folder of definition files, or one file, in place of the folder in the T3 home. */
-const definitionsOverride = Config.String("T3CODE_WORKFLOWS").pipe(Config.option);
+const definitionsOverride = Config.String("AOKI_WORKFLOWS").pipe(Config.option);
 
 // An editor saves in several writes, and a save from here is followed by its own file event.
 const RELOAD_SETTLE = "300 millis";
@@ -76,7 +76,7 @@ export class WorkflowDefinitions extends Context.Service<
     /** Take a file away, unless runs still need what it defines. */
     readonly remove: (name: string) => Effect.Effect<WorkflowDefinitionChangeResult>;
   }
->()("t3/workflows/WorkflowRuntime/WorkflowDefinitions") {}
+>()("aoki/workflows/WorkflowRuntime/WorkflowDefinitions") {}
 
 const isDefinition = (value: unknown): value is WorkflowDefinition =>
   typeof value === "object" &&
@@ -949,7 +949,7 @@ export const gate = Effect.fn("WorkflowRuntime.gate")(function* <E, R>(
 
 /**
  * The workflow service for this server, and its definition files: those in the `workflows`
- * folder of the T3 home, or wherever `T3CODE_WORKFLOWS` points instead. A file that does not
+ * folder of the T3 home, or wherever `AOKI_WORKFLOWS` points instead. A file that does not
  * load is reported and never stops the server. Nothing runs until `workflowsEnabled` is on.
  */
 export const layer = Layer.effectContext(

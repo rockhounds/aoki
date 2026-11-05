@@ -107,8 +107,8 @@ function EmptyMobileClients() {
         </EmptyTitle>
         <EmptyDescription>
           <T>
-            Install Aoki on your phone and sign in to T3 Connect to get push notifications and
-            Live Activities.
+            Install Aoki on your phone and sign in to T3 Connect to get push notifications and Live
+            Activities.
           </T>
         </EmptyDescription>
       </EmptyHeader>

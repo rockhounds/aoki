@@ -74,7 +74,7 @@ const make = Effect.gen(function* () {
   const checkLimit = Effect.fn("TaskCache.checkLimit")(function* (operation: string) {
     const allowed = yield* protocol(() =>
       (operation === "store" ? bindings.storeLimit : bindings.readLimit).limit({
-        key: `t3code:${operation.startsWith("blob/") ? "blob" : operation}`,
+        key: `aoki:${operation.startsWith("blob/") ? "blob" : operation}`,
       }),
     );
     if (!allowed.success) return yield* new CacheError({ status: 429, reason: "rate_limit" });
@@ -83,7 +83,7 @@ const make = Effect.gen(function* () {
   const handle = Effect.fn("TaskCache.handle")(
     function* (request: Request, context: Pick<Cloudflare.ExecutionContext, "waitUntil">) {
       const url = new URL(request.url);
-      const route = /^\/projects\/t3code\/(fetch|store|telemetry|blob\/([0-9a-f-]{36}))$/.exec(
+      const route = /^\/projects\/aoki\/(fetch|store|telemetry|blob\/([0-9a-f-]{36}))$/.exec(
         url.pathname,
       );
       const operation = route?.[1] ?? "unknown";
@@ -141,7 +141,7 @@ const make = Effect.gen(function* () {
                 ),
               );
               if (!writing && operation !== "telemetry") yield* checkLimit(operation);
-              const scope = yield* protocol(() => getScope(bindings.INDEX, "t3code", stats));
+              const scope = yield* protocol(() => getScope(bindings.INDEX, "aoki", stats));
               if (operation === "telemetry") {
                 let identity = developer ?? undefined;
                 if (identity === undefined) {
@@ -198,7 +198,7 @@ const make = Effect.gen(function* () {
                 return result.response;
               }
               const selected = yield* protocol(() =>
-                selectBlob(bindings.INDEX, "t3code", route[2]!, stats),
+                selectBlob(bindings.INDEX, "aoki", route[2]!, stats),
               );
               if (!selected) return yield* new CacheError({ status: 404, reason: "blob_missing" });
               stats.r2_operations++;

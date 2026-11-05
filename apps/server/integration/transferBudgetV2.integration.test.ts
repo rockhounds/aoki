@@ -644,11 +644,9 @@ it.live("reports V2 thread HTTP and WebSocket transfer budgets", () =>
     const fs = yield* FileSystem.FileSystem;
     const report = formatTransferBudgetReport(runs);
     const outputPaths = yield* Config.all({
-      report: Config.String("T3CODE_TRANSFER_BUDGET_REPORT_PATH").pipe(Config.withDefault("")),
-      result: Config.String("T3CODE_TRANSFER_BUDGET_RESULT_PATH").pipe(Config.withDefault("")),
-      scenarios: Config.String("T3CODE_TRANSFER_BUDGET_SCENARIOS_PATH").pipe(
-        Config.withDefault(""),
-      ),
+      report: Config.String("AOKI_TRANSFER_BUDGET_REPORT_PATH").pipe(Config.withDefault("")),
+      result: Config.String("AOKI_TRANSFER_BUDGET_RESULT_PATH").pipe(Config.withDefault("")),
+      scenarios: Config.String("AOKI_TRANSFER_BUDGET_SCENARIOS_PATH").pipe(Config.withDefault("")),
     });
     for (const [path, contents] of [
       [outputPaths.report, report],

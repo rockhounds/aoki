@@ -767,7 +767,7 @@ describe("WorkflowRunsView", () => {
     await expect.element(screen.getByRole("article", { name: "Release 1.3" })).toBeVisible();
   });
 
-  const KIND_KEY = "t3code:workflows:question-kind";
+  const KIND_KEY = "aoki:workflows:question-kind";
   const asked = (runId: string, kind?: string): WorkflowQuestion => ({
     ...question,
     runId,

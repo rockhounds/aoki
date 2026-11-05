@@ -369,7 +369,7 @@ it("opens comment timestamps through the link-target setting, not a popup", asyn
   });
   // The dismissed review renders as a collapsed card; show it with the resolved filter on.
   localStorage.setItem(
-    "t3code:pull-request-comment-filter:v1",
+    "aoki:pull-request-comment-filter:v1",
     JSON.stringify({ bots: false, resolved: true }),
   );
   try {
@@ -391,7 +391,7 @@ it("opens comment timestamps through the link-target setting, not a popup", asyn
       expect(state.openLink).toHaveBeenCalledWith(href, { event: expect.anything() });
     }
   } finally {
-    localStorage.removeItem("t3code:pull-request-comment-filter:v1");
+    localStorage.removeItem("aoki:pull-request-comment-filter:v1");
   }
 });
 

@@ -58,11 +58,11 @@ export {
   serviceUnitProgramOf as bootServiceProgramOf,
 } from "./serviceProtocol.ts";
 
-const BOOT_SERVICE_NAME = "t3code";
+const BOOT_SERVICE_NAME = "aoki";
 export const BOOT_SERVICE_UNIT_FILE = `${BOOT_SERVICE_NAME}.service`;
 // `.service` suffix keeps the label distinct from the desktop app's bundle id
-// (com.t3tools.t3code), so launchd and TCC records never collide.
-export const BOOT_SERVICE_LAUNCHD_LABEL = "com.t3tools.t3code.service";
+// (io.github.rockhounds.aoki), so launchd and TCC records never collide.
+export const BOOT_SERVICE_LAUNCHD_LABEL = "io.github.rockhounds.aoki.service";
 export const BOOT_SERVICE_PLIST_FILE = `${BOOT_SERVICE_LAUNCHD_LABEL}.plist`;
 export const BOOT_SERVICE_LOG_FILE = "boot-service.log";
 /** `schtasks /Query /HRESULT` exits with this when the task is not registered. */
@@ -96,7 +96,7 @@ export interface BootServicePlan {
 }
 
 // systemd refuses an executable with a quote, backslash or control character even when
-// quoted. The executable lives under the T3 home, so this also catches a home with a newline.
+// quoted. The executable lives under the Aoki home, so this also catches a home with a newline.
 const systemdUnsafeValue = (plan: BootServicePlan) =>
   /[\x00-\x1f\x7f"'\\]/.test(plan.program[0] ?? "");
 
@@ -108,17 +108,17 @@ export function renderBootServiceUnit(plan: BootServicePlan): string {
   // The user manager has no reliable network-online target; server networking retries itself.
   return [
     "[Unit]",
-    "Description=T3 Code server",
+    "Description=Aoki server",
     "StartLimitIntervalSec=300",
     "StartLimitBurst=5",
     "",
     "[Service]",
     "Type=simple",
     "WorkingDirectory=%h",
-    `Environment=T3CODE_HOME=${quoteSystemdValue(plan.baseDir)}`,
+    `Environment=AOKI_HOME=${quoteSystemdValue(plan.baseDir)}`,
     ...(plan.installBinDir === undefined
       ? []
-      : [`Environment=T3CODE_INSTALL_BIN_DIR=${quoteSystemdValue(plan.installBinDir)}`]),
+      : [`Environment=AOKI_INSTALL_BIN_DIR=${quoteSystemdValue(plan.installBinDir)}`]),
     `Environment=${SERVICE_UNIT_ENV}=${BOOT_SERVICE_UNIT_FILE}`,
     `ExecStart=${plan.program.map(quoteSystemdValue).join(" ")}`,
     // Let the launcher mark an explicit stop before it signals the server.
@@ -135,7 +135,7 @@ export function renderBootServiceUnit(plan: BootServicePlan): string {
     // protection of user.slice and user@.service, which only root can grant.
     "MemoryLow=1536M",
     // A user manager's own score, the lowest it may set: below its other services (200) and agents (800).
-    // `t3 service protect` lowers it further through a drop-in.
+    // `aoki service protect` lowers it further through a drop-in.
     "OOMScoreAdjust=100",
     // systemd-oomd ignores this preference when the watched cgroup is root-owned, as user-1000.slice usually is.
     "ManagedOOMPreference=avoid",
@@ -175,12 +175,12 @@ export function renderBootServicePlist(
     `  <dict>`,
     `    <key>PATH</key>`,
     `    <string>${escapeXmlText(options.environmentPath)}</string>`,
-    `    <key>T3CODE_HOME</key>`,
+    `    <key>AOKI_HOME</key>`,
     `    <string>${escapeXmlText(plan.baseDir)}</string>`,
     ...(plan.installBinDir === undefined
       ? []
       : [
-          `    <key>T3CODE_INSTALL_BIN_DIR</key>`,
+          `    <key>AOKI_INSTALL_BIN_DIR</key>`,
           `    <string>${escapeXmlText(plan.installBinDir)}</string>`,
         ]),
     `    <key>${SERVICE_UNIT_ENV}</key>`,
@@ -234,7 +234,7 @@ export function renderBootServiceTask(
   return [
     `<Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">`,
     `  <RegistrationInfo>`,
-    `    <Description>T3 Code server</Description>`,
+    `    <Description>Aoki server</Description>`,
     `  </RegistrationInfo>`,
     `  <Triggers>`,
     `    <LogonTrigger>`,
@@ -313,7 +313,7 @@ const defaultSystemdUnitDir = (path: Path.Path, homeDir: string, xdgConfigHome: 
   );
 
 const scheduledTaskPath = (path: Path.Path, localAppData: string) =>
-  path.join(localAppData, "t3code", BOOT_SERVICE_TASK_FILE);
+  path.join(localAppData, "aoki", BOOT_SERVICE_TASK_FILE);
 
 const launchdPlistPath = (path: Path.Path, homeDir: string) =>
   path.join(homeDir, "Library", "LaunchAgents", BOOT_SERVICE_PLIST_FILE);
@@ -657,7 +657,7 @@ export class BootServiceInstallError extends Schema.TaggedError<BootServiceInsta
   { cause: Schema.Defect() },
 ) {
   override get message(): string {
-    return "Could not set up the T3 Code background service.";
+    return "Could not set up the Aoki background service.";
   }
 }
 
@@ -674,8 +674,8 @@ type BootServiceProblem = typeof BootServiceProblem.Type;
 export function formatBootServiceProblem(
   problem: BootServiceProblem,
   commands: { readonly install: string; readonly restart: string } = {
-    install: "t3 service install",
-    restart: "t3 service restart",
+    install: "aoki service install",
+    restart: "aoki service restart",
   },
 ): string {
   switch (problem) {
@@ -684,11 +684,11 @@ export function formatBootServiceProblem(
     case "linger-unavailable":
       return 'Cannot check whether this user can run services after logout. Run `loginctl show-user "$(id -un)" --property=Linger` and check that systemd-logind is available.';
     case "linger-disabled":
-      return 'Lingering is disabled. T3 Code will stop when your last login session ends and will not start at boot. Run `sudo loginctl enable-linger "$(id -un)"` on this machine, then retry the service command as your normal user.';
+      return 'Lingering is disabled. Aoki will stop when your last login session ends and will not start at boot. Run `sudo loginctl enable-linger "$(id -un)"` on this machine, then retry the service command as your normal user.';
     case "service-disabled":
       return `The service is not enabled to start automatically. Run \`${commands.install}\` to repair it.`;
     case "service-stopped":
-      return `The service is not running. Check the service log (on Linux, also \`systemctl --user status t3code.service\`), then run \`${commands.install}\`.`;
+      return `The service is not running. Check the service log (on Linux, also \`systemctl --user status aoki.service\`), then run \`${commands.install}\`.`;
     case "restart-pending":
       return `A newer version is installed but the service is still running the previous one. Run \`${commands.restart}\` to switch.`;
   }
@@ -723,7 +723,7 @@ export class BootServiceDowngradeRefusedError extends Schema.TaggedError<BootSer
   },
 ) {
   override get message(): string {
-    return `Refusing to replace t3@${this.installedVersion} with older t3@${this.targetVersion}. Run the command again with --allow-downgrade to continue.`;
+    return `Refusing to replace aoki@${this.installedVersion} with older aoki@${this.targetVersion}. Run the command again with --allow-downgrade to continue.`;
   }
 }
 
@@ -738,7 +738,7 @@ export class BootServiceOtherBaseDirError extends Schema.TaggedError<BootService
   },
 ) {
   override get message(): string {
-    return `The T3 Code service on this machine serves ${this.installedBaseDir}, not ${this.baseDir}. Pass ${formatBootServiceBaseDirOption(this.installedBaseDir)} to manage it, or run \`t3 service uninstall ${formatBootServiceBaseDirOption(this.installedBaseDir)}\` first to move it; both data directories are kept.`;
+    return `The Aoki service on this machine serves ${this.installedBaseDir}, not ${this.baseDir}. Pass ${formatBootServiceBaseDirOption(this.installedBaseDir)} to manage it, or run \`aoki service uninstall ${formatBootServiceBaseDirOption(this.installedBaseDir)}\` first to move it; both data directories are kept.`;
   }
 
   // A refusal the user fixes by rerunning, so the CLI prints the message, not a stack trace.
@@ -752,7 +752,7 @@ export class BootServiceBaseDirUnsupportedError extends Schema.TaggedError<BootS
   { baseDir: Schema.String },
 ) {
   override get message(): string {
-    return `systemd cannot run T3 Code from ${JSON.stringify(this.baseDir)}: the path contains a quote, backslash or control character. Choose another T3 home with --base-dir.`;
+    return `systemd cannot run Aoki from ${JSON.stringify(this.baseDir)}: the path contains a quote, backslash or control character. Choose another Aoki home with --base-dir.`;
   }
 
   override get [CliError.userMessage]() {
@@ -776,7 +776,7 @@ export interface BootServiceStatus {
   readonly current: boolean;
   readonly installedVersion?: string;
   readonly installedBaseDir?: string;
-  /** Set when the installed unit serves a different T3 home than this CLI. */
+  /** Set when the installed unit serves a different Aoki home than this CLI. */
   readonly otherBaseDir?: string;
   readonly problems?: ReadonlyArray<BootServiceProblem>;
   readonly unitPath: string;
@@ -808,7 +808,7 @@ export class BootService extends Context.Service<
     readonly uninstall: Effect.Effect<boolean, BootServiceError>;
     readonly status: Effect.Effect<BootServiceStatus, BootServiceError>;
   }
->()("t3/cloud/bootService") {}
+>()("aoki/cloud/bootService") {}
 
 export interface BootServiceHost {
   readonly execPath: string;
@@ -834,7 +834,7 @@ export const make = Effect.fn("cloud.boot_service.make")(function* (input: {
   const xdgConfigHome = yield* Config.String("XDG_CONFIG_HOME").pipe(Config.withDefault(""));
   const installerPath = yield* Config.String("PATH").pipe(Config.withDefault(""));
   const installBinDir = Option.getOrUndefined(
-    yield* Config.String("T3CODE_INSTALL_BIN_DIR").pipe(Config.option),
+    yield* Config.String("AOKI_INSTALL_BIN_DIR").pipe(Config.option),
   );
   const xdgRuntimeDir = yield* Config.String("XDG_RUNTIME_DIR").pipe(Config.withDefault(""));
   // Root under sudo must not reach or start a separate root service.
@@ -1062,7 +1062,7 @@ export const make = Effect.fn("cloud.boot_service.make")(function* (input: {
     ).pipe(Effect.mapError((cause) => new BootServiceInstallError({ cause })));
   const planForUnit = (unit: string): BootServicePlan => {
     const effectiveInstallBinDir =
-      installBinDir || serviceUnitEnvironmentValueOf(unit, "T3CODE_INSTALL_BIN_DIR");
+      installBinDir || serviceUnitEnvironmentValueOf(unit, "AOKI_INSTALL_BIN_DIR");
     return effectiveInstallBinDir ? { ...plan, installBinDir: effectiveInstallBinDir } : plan;
   };
   const requireManager = Effect.suspend(() =>
@@ -1338,7 +1338,7 @@ export const make = Effect.fn("cloud.boot_service.make")(function* (input: {
             Effect.mapError(
               (cause) =>
                 new PinnedRuntimeInstallError({
-                  step: "verifying the pinned t3 runtime",
+                  step: "verifying the pinned aoki runtime",
                   cause,
                 }),
             ),
@@ -1348,7 +1348,7 @@ export const make = Effect.fn("cloud.boot_service.make")(function* (input: {
                 ? Effect.void
                 : Effect.fail(
                     new PinnedRuntimeInstallError({
-                      step: "verifying the pinned t3 runtime",
+                      step: "verifying the pinned aoki runtime",
                       exitCode: Number(result.code),
                       stdoutLength: result.stdout.length,
                       stderrLength: result.stderr.length,
@@ -1431,7 +1431,7 @@ export const make = Effect.fn("cloud.boot_service.make")(function* (input: {
                       // PowerShell has no inline variable assignment; the launcher takes a flag.
                       recoveryCommand: windows
                         ? `& ${launcher(installedVersion)} __service-launcher --base-dir ${quote(input.baseDir)}`
-                        : `T3CODE_HOME=${quote(input.baseDir)} ${launcher(installedVersion)} __service-launcher`,
+                        : `AOKI_HOME=${quote(input.baseDir)} ${launcher(installedVersion)} __service-launcher`,
                     }
                   : {},
               );

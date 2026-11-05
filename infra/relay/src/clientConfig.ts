@@ -34,13 +34,13 @@ export class RelayUrlUnavailableError extends Schema.TaggedError<RelayUrlUnavail
 
 const relayClientConfigEnv = (config: RelayClientConfig & { readonly url: string }) =>
   ({
-    T3CODE_RELAY_URL: config.url,
-    T3CODE_MOBILE_OTLP_TRACES_URL: config.mobileTracingUrl,
-    T3CODE_MOBILE_OTLP_TRACES_DATASET: config.mobileTracingDataset,
-    T3CODE_MOBILE_OTLP_TRACES_TOKEN: Redacted.value(config.mobileTracingToken),
-    T3CODE_RELAY_CLIENT_OTLP_TRACES_URL: config.clientTracingUrl,
-    T3CODE_RELAY_CLIENT_OTLP_TRACES_DATASET: config.clientTracingDataset,
-    T3CODE_RELAY_CLIENT_OTLP_TRACES_TOKEN: Redacted.value(config.clientTracingToken),
+    AOKI_RELAY_URL: config.url,
+    AOKI_MOBILE_OTLP_TRACES_URL: config.mobileTracingUrl,
+    AOKI_MOBILE_OTLP_TRACES_DATASET: config.mobileTracingDataset,
+    AOKI_MOBILE_OTLP_TRACES_TOKEN: Redacted.value(config.mobileTracingToken),
+    AOKI_RELAY_CLIENT_OTLP_TRACES_URL: config.clientTracingUrl,
+    AOKI_RELAY_CLIENT_OTLP_TRACES_DATASET: config.clientTracingDataset,
+    AOKI_RELAY_CLIENT_OTLP_TRACES_TOKEN: Redacted.value(config.clientTracingToken),
   }) as const;
 
 export class EnvValueNotSingleLineError extends Schema.TaggedError<EnvValueNotSingleLineError>()(
@@ -101,7 +101,7 @@ export const PublishClientConfig = Alchemy.Action(
   Effect.gen(function* () {
     const fs = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const override = yield* Config.String("T3CODE_RELAY_CLIENT_CONFIG_ENV").pipe(Config.option);
+    const override = yield* Config.String("AOKI_RELAY_CLIENT_CONFIG_ENV").pipe(Config.option);
     const repoRootEnv = path.fromFileUrl(new URL("../../../.env", import.meta.url));
     const target = Option.isSome(override) ? override.value : yield* repoRootEnv;
     return Effect.fn(function* (input: RelayClientConfig) {

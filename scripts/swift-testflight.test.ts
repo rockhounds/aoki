@@ -101,7 +101,7 @@ function mockServer(
             id: config.appId,
             attributes: {
               name: "T3 Code SwiftUI",
-              bundleId: options.bundleId ?? "com.t3tools.t3code.swiftui",
+              bundleId: options.bundleId ?? "io.github.rockhounds.aoki.swiftui",
               primaryLocale: "en-US",
             },
           },
@@ -327,7 +327,7 @@ describe("App Store Connect authentication", () => {
 
 describe("SwiftUI TestFlight publication", () => {
   it.each([
-    { bundleId: "com.t3tools.t3code.swiftui.dev" },
+    { bundleId: "io.github.rockhounds.aoki.swiftui.dev" },
     { groupAppId: "other-app" },
     { buildAppId: "other-app" },
   ])("refuses wrong-app targets before any write: %j", async (options) => {
@@ -440,7 +440,7 @@ describe("SwiftUI TestFlight publication", () => {
 
 describe("release command input", () => {
   const info = {
-    CFBundleIdentifier: "com.t3tools.t3code.swiftui",
+    CFBundleIdentifier: "io.github.rockhounds.aoki.swiftui",
     DTPlatformName: "iphoneos",
     CFBundleVersion: "46",
     CFBundleShortVersionString: "0.1.0",
@@ -456,7 +456,7 @@ describe("release command input", () => {
   });
 
   it.each([
-    { ...info, CFBundleIdentifier: "com.t3tools.t3code.swiftui.dev" },
+    { ...info, CFBundleIdentifier: "io.github.rockhounds.aoki.swiftui.dev" },
     { ...info, DTPlatformName: "iphonesimulator" },
   ])("rejects a dev or simulator archive", (metadata) => {
     expect(() => validateUploadMetadata(metadata, exportOptions)).toThrow("Release SwiftUI app");

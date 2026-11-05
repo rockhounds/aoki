@@ -95,7 +95,7 @@ export const serveFakeGitHub = Effect.fn("serverMetrics.serveFakeGitHub")(functi
   const detail = options.detail;
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  const dir = yield* fs.makeTempDirectoryScoped({ prefix: "t3-server-metrics-forge-" });
+  const dir = yield* fs.makeTempDirectoryScoped({ prefix: "aoki-server-metrics-forge-" });
   const keyFile = path.join(dir, "key.pem");
   const certFile = path.join(dir, "cert.pem");
   yield* run("openssl", [

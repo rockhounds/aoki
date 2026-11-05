@@ -495,7 +495,7 @@ const layerTest = (
             platform,
             displayName: "Aoki (Dev)",
             stateDir: "/state",
-            linuxDesktopEntryName: "com.t3tools.T3Code.desktop",
+            linuxDesktopEntryName: "io.github.rockhounds.Aoki.desktop",
             appRoot: "/repo",
             linuxApplicationsDir: "/test-data/applications",
           } as DesktopEnvironment.DesktopEnvironment["Service"]),
@@ -1503,8 +1503,8 @@ it.each([
 );
 
 it.each([
-  { names: ["⠙ t3code"], expected: "Verified text" },
-  { names: ["⠋ t3code", "⠙ t3code"], expected: undefined },
+  { names: ["⠙ aoki"], expected: "Verified text" },
+  { names: ["⠋ aoki", "⠙ aoki"], expected: undefined },
 ])("reads a changing Wayland title only when unambiguous: $names", async ({ names, expected }) => {
   vi.stubEnv("XDG_SESSION_TYPE", "wayland");
   const tree = vi.fn(async () => ({ value: "Verified text", children: [] }));
@@ -1520,12 +1520,12 @@ it.each([
     assert.strictEqual(
       await readAccessibleWindowText(
         {
-          title: "⠋ t3code",
+          title: "⠋ aoki",
           bounds: { x: 479, y: 342, width: 700, height: 520 },
           owner: { processId: 123 },
         },
         "linux",
-        "⠋ t3code",
+        "⠋ aoki",
       ),
       expected,
     );

@@ -209,7 +209,7 @@ describe("Antigravity process environment", () => {
       const deepestMember =
         "google3\\cloud\\developer_experience\\antigravity_extensions\\acp_server\\_private__agy_acp_server_bin.lazy_imports_info.json";
       const directories = yield* resolveAntigravityInstanceDirectories(
-        "C:\\Users\\a-twenty-char-person\\.t3\\userdata",
+        "C:\\Users\\a-twenty-char-person\\.aoki\\userdata",
         ProviderInstanceId.make("antigravity"),
       );
       const extracted = (tempDirectory: string) =>
@@ -582,11 +582,11 @@ it.layer(NodeServices.layer)("Antigravity profile preparation", (it) => {
         profileDirectory: path.join(directory, "profile"),
         baseEnv: { PATH: path.dirname(process.execPath) },
       });
-      expect(profile.browserCommand).not.toContain("/packaged/t3");
+      expect(profile.browserCommand).not.toContain("/packaged/aoki");
       expect(yield* fs.exists(profile.acpDirectory)).toBe(true);
     }).pipe(
       Effect.provideService(HostProcess.IsExecutable, true),
-      Effect.provideService(HostProcess.ExecutablePath, "/packaged/t3"),
+      Effect.provideService(HostProcess.ExecutablePath, "/packaged/aoki"),
     ),
   );
 

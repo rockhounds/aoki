@@ -321,7 +321,7 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer, NetService.layer))
         ]).pipe(
           Effect.provide(
             ConfigProvider.layer(
-              ConfigProvider.fromEnv({ env: { T3CODE_CLOUDFLARED_PATH: relayClientPath } }),
+              ConfigProvider.fromEnv({ env: { AOKI_CLOUDFLARED_PATH: relayClientPath } }),
             ),
           ),
         );

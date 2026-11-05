@@ -71,7 +71,7 @@ struct FeatureServerBrowserTests {
         model.receive(.list(threadID: "wire", value: list([tab("one")])))
         await model.connect()
         let id = try #require(model.connection?.id)
-        model.receive(.hostSetup(.init(need: "sandbox", command: "sudo npx t3 browser setup")), connectionID: id)
+        model.receive(.hostSetup(.init(need: "sandbox", command: "sudo npx aoki browser setup")), connectionID: id)
         model.suspend()
         await model.connect()
         #expect(manager.requestedThreadIDs.count == 1)

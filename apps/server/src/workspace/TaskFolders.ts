@@ -203,12 +203,12 @@ export class TaskFolders extends Context.Service<
       readonly branch: string;
       readonly recreate: (checkout: TaskFolderCheckout) => Effect.Effect<void, E>;
     }) => Effect.Effect<void, TaskFolderError | E>;
-    /** The project's layout commands as its `t3.json` holds them now, and whether each is approved. */
+    /** The project's layout commands as its `aoki.json` holds them now, and whether each is approved. */
     readonly layoutCommands: (
       projectId: ProjectId,
     ) => Effect.Effect<WorkspaceLayoutCommandsResult, TaskFolderError>;
   }
->()("t3/workspace/TaskFolders") {}
+>()("aoki/workspace/TaskFolders") {}
 
 const isTaskFolderError = Schema.is(TaskFolderError);
 
@@ -257,7 +257,7 @@ export const projectCommandsForAgent = (
 };
 
 /** Only `layoutCommand` makes one, so nothing runs that was not checked there. */
-const cleared: unique symbol = Symbol("t3/workspace/TaskFolders/cleared");
+const cleared: unique symbol = Symbol("aoki/workspace/TaskFolders/cleared");
 interface ClearedLayoutCommand {
   readonly [cleared]: true;
   readonly text: string;
@@ -380,7 +380,7 @@ const make = Effect.gen(function* () {
     (cause: unknown): TaskFolderError =>
       new TaskFolderError({ operation, detail: `${prefix}: ${failureDetail(cause)}`, cause });
 
-  // A project that lays its own thread folder out says so in its `t3.json`.
+  // A project that lays its own thread folder out says so in its `aoki.json`.
   const projectFile = (projectRoot: string) =>
     fileSystem.readFileString(path.join(projectRoot, T3_PROJECT_FILE_NAME)).pipe(
       Effect.map(parseT3ProjectFile),

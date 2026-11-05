@@ -10,7 +10,7 @@ Use a separate thread for each task. Choose **New worktree** when a task needs i
 
 ### Start without a project
 
-Threads don't require a project. Pick **No project** (or press `mod+alt+n` on web/desktop) to start a scratch thread in `~/.t3/scratch/<date>-<slug>-<id>`.
+Threads don't require a project. Pick **No project** (or press `mod+alt+n` on web/desktop) to start a scratch thread in `~/.aoki/scratch/<date>-<slug>-<id>`.
 
 - Deleting a scratch thread leaves its folder on disk.
 - Git branch, worktree, and diff controls are hidden (and scratch threads are unavailable if your T3 data directory itself is inside a Git repo).
@@ -55,7 +55,7 @@ Enable **Settings → Labs → Boring sidebar (group by project)** on web/deskto
 - **Per-thread override**: Open a thread's menu → **Auto-settle behavior → Never** to exempt a single thread.
 - **Drag-to-settle** (web/desktop): Press and drag down/up from a thread's **Settle**, **Un-settle**, or **Wake** button to act on a contiguous range (`Esc` cancels).
 - **Offline settle/snooze**: Queues locally (**Pending** / **Waiting to sync**) and syncs on reconnect; remote changes take precedence if the thread changed in the meantime.
-- **Worktree cleanup on settle**: Enable **Run in the thread's worktree when the thread settles** on a project action (or `"runOnSettle": true` in `t3.json`), e.g. `cargo clean`, to reclaim disk space automatically in worktree threads.
+- **Worktree cleanup on settle**: Enable **Run in the thread's worktree when the thread settles** on a project action (or `"runOnSettle": true` in `aoki.json`), e.g. `cargo clean`, to reclaim disk space automatically in worktree threads.
 
 ### Snooze options
 
@@ -68,7 +68,7 @@ The server automatically links open PRs matching an unsettled thread's branch. O
 ## Find and reference work
 
 - **Command palette** (`Cmd/Ctrl+K`): Searches threads across connected environments by title, branch, PR, project, and message contents (use `"exact phrase"` for exact matches). On mobile, use the thread list search (or `Cmd+K` on iPad with a keyboard).
-- **Copy reference**: Copies the linked PR URL if one exists, otherwise a thread link that pastes into any composer as a thread chip. Use **Copy → Thread** (or **Copy thread** on mobile) to force a thread link, or **Thread ID** for scripts and the `t3` CLI.
+- **Copy reference**: Copies the linked PR URL if one exists, otherwise a thread link that pastes into any composer as a thread chip. Use **Copy → Thread** (or **Copy thread** on mobile) to force a thread link, or **Thread ID** for scripts and the `aoki` CLI.
 
 ## Usage limits, subagents, and thread details
 

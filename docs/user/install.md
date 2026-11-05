@@ -8,7 +8,7 @@ You need at least one installed, authenticated coding agent (provider) before st
 
 ## Command line
 
-Install the `t3` command to `~/.local/bin`:
+Install the `aoki` command to `~/.local/bin`:
 
 ```bash
 # macOS / Linux
@@ -20,50 +20,50 @@ curl -fsSL https://t3.codes/install.sh | sh
 irm https://t3.codes/install.ps1 | iex
 ```
 
-Set `T3CODE_CHANNEL=nightly` for nightly builds or `T3CODE_VERSION=<ver>` to pin a version. To try once without installing, run `npx t3@latest` (requires Node.js; always runs the latest stable release).
+Set `AOKI_CHANNEL=nightly` for nightly builds or `AOKI_VERSION=<ver>` to pin a version. To try once without installing, run `npx aoki@latest` (requires Node.js; always runs the latest stable release).
 
 | Task                          | Command                                                                 |
 | ----------------------------- | ----------------------------------------------------------------------- |
-| Start server and open web app | `t3` (or `t3 ./my-project`)                                             |
-| Start server without browser  | `t3 serve`                                                              |
-| Set up remote access          | `t3 up` ([Remote access](./remote-access.md))                           |
-| Run in the background         | `t3 service install` ([Background service](./background-service.md))    |
-| Update                        | `t3 update`                                                             |
-| Reclaim database space        | `t3 doctor` ([Details](./background-service.md#reclaim-database-space)) |
-| Uninstall                     | `t3 uninstall`                                                          |
+| Start server and open web app | `aoki` (or `aoki ./my-project`)                                             |
+| Start server without browser  | `aoki serve`                                                              |
+| Set up remote access          | `aoki up` ([Remote access](./remote-access.md))                           |
+| Run in the background         | `aoki service install` ([Background service](./background-service.md))    |
+| Update                        | `aoki update`                                                             |
+| Reclaim database space        | `aoki doctor` ([Details](./background-service.md#reclaim-database-space)) |
+| Uninstall                     | `aoki uninstall`                                                          |
 
-If `t3` reports a server is already running, connect with `t3 pair` or pass a separate `--base-dir`. Run `t3 --help` for all commands.
+If `aoki` reports a server is already running, connect with `aoki pair` or pass a separate `--base-dir`. Run `aoki --help` for all commands.
 
 ### Intel Macs
 
-There is no standalone `t3` binary for Intel Macs—use the desktop app, or build a server from source with `vp` ([development runbook](../operations/00_development.md#first-checkout)):
+There is no standalone `aoki` binary for Intel Macs—use the desktop app, or build a server from source with `vp` ([development runbook](../operations/00_development.md#first-checkout)):
 
 ```bash
-git clone https://github.com/pingdotgg/t3code
-cd t3code && vp i && vp run build:desktop
+git clone https://github.com/rockhounds/aoki
+cd aoki && vp i && vp run build:desktop
 node apps/server/dist/bin.mjs
 ```
 
 ## Desktop app
 
-Download from [GitHub Releases](https://github.com/pingdotgg/t3code/releases) or install via a package manager:
+Download from [GitHub Releases](https://github.com/rockhounds/aoki/releases) or install via a package manager:
 
 | Platform                | Command                                                          |
 | ----------------------- | ---------------------------------------------------------------- |
 | macOS                   | `brew install --cask t3-code`                                    |
-| Windows                 | `winget install T3Tools.T3Code` or `scoop install extras/t3code` |
-| Debian / Ubuntu         | `sudo apt install ./T3-Code-*.deb`                               |
-| Arch Linux              | `yay -S t3code-bin` (or `yay -S t3code-nightly-bin`)             |
-| Nix (flakes, Nix 2.30+) | `nix profile add github:NixOS/nixpkgs/nixos-unstable#t3code`     |
+| Windows                 | `winget install T3Tools.T3Code` or `scoop install extras/aoki` |
+| Debian / Ubuntu         | `sudo apt install ./Aoki-*.deb`                                |
+| Arch Linux              | `yay -S aoki-bin` (or `yay -S aoki-nightly-bin`)               |
+| Nix (flakes, Nix 2.30+) | `nix profile add github:NixOS/nixpkgs/nixos-unstable#aoki`     |
 
-- **Linux AppImage**: `chmod +x ./T3-Code-*.AppImage && ./T3-Code-*.AppImage` (x86_64 and ARM64). `.deb` self-updates with a password prompt; update AUR packages via your AUR helper (`yay -Syu`).
-- **NixOS / Home Manager**: Add `pkgs.t3code` to `environment.systemPackages` or `home.packages` (`t3code-desktop` launches the app; `t3` is included). Update via Nix rather than the in-app updater.
+- **Linux AppImage**: `chmod +x ./Aoki-*.AppImage && ./Aoki-*.AppImage` (x86_64 and ARM64). `.deb` self-updates with a password prompt; update AUR packages via your AUR helper (`yay -Syu`).
+- **NixOS / Home Manager**: Add `pkgs.aoki` to `environment.systemPackages` or `home.packages` (`aoki-desktop` launches the app; `aoki` is included). Update via Nix rather than the in-app updater.
 
-### The `t3` command
+### The `aoki` command
 
-The desktop app bundles `t3` and sets it up on first launch (manage anytime under **Settings → About → t3 command**). Use **Add to PATH** if needed, then open a new terminal.
+The desktop app bundles `aoki` and sets it up on first launch (manage anytime under **Settings → About → aoki command**). Use **Add to PATH** if needed, then open a new terminal.
 
-- **Open a folder in the running desktop app**: Run `t3 app` (or `t3 app ../my-project`) from a terminal, or drag folders from your file manager onto the desktop sidebar.
+- **Open a folder in the running desktop app**: Run `aoki app` (or `aoki app ../my-project`) from a terminal, or drag folders from your file manager onto the desktop sidebar.
 
 ### Windows Subsystem for Linux
 
@@ -71,9 +71,9 @@ Select a WSL distro in **Settings → Sharing & access** to run agents and proje
 
 ## Mobile app
 
-Install from the [App Store](https://apps.apple.com/us/app/t3-code-remote-claude-more/id6787819824) or [Google Play](https://play.google.com/store/apps/details?id=com.t3tools.t3code) (QR codes are also in **Settings → About → Mobile app**). The mobile app connects to a server on another machine via [remote access](./remote-access.md).
+Install from the [App Store](https://apps.apple.com/us/app/t3-code-remote-claude-more/id6787819824) or [Google Play](https://play.google.com/store/apps/details?id=io.github.rockhounds.aoki) (QR codes are also in **Settings → About → Mobile app**). The mobile app connects to a server on another machine via [remote access](./remote-access.md).
 
-- Store builds work with both Stable and Nightly servers. Optional Android beta APKs are under [Android beta releases](https://github.com/pingdotgg/t3code/releases?q=android-beta-).
+- Store builds work with both Stable and Nightly servers. Optional Android beta APKs are under [Android beta releases](https://github.com/rockhounds/aoki/releases?q=android-beta-).
 - If the mobile app crashes on launch, open **Settings → Diagnostics** on the next launch to copy recent startup crash reports.
 
 ## Providers
@@ -103,22 +103,22 @@ Open **Settings → Providers** (web or desktop), select the environment, and en
 If a working CLI times out during T3 Code's readiness check, increase its probe deadline (in milliseconds) in the server's environment (or systemd override / `service.env`) and restart:
 
 ```bash
-T3CODE_CODEX_PROBE_TIMEOUT_MS=60000 T3CODE_CLAUDE_PROBE_TIMEOUT_MS=60000 t3 serve
+AOKI_CODEX_PROBE_TIMEOUT_MS=60000 AOKI_CLAUDE_PROBE_TIMEOUT_MS=60000 aoki serve
 ```
 
 | Provider     | Environment variable                   |
 | ------------ | -------------------------------------- |
-| Codex        | `T3CODE_CODEX_PROBE_TIMEOUT_MS`        |
-| Claude       | `T3CODE_CLAUDE_PROBE_TIMEOUT_MS`       |
-| Cursor       | `T3CODE_CURSOR_PROBE_TIMEOUT_MS`       |
-| Antigravity  | `T3CODE_ANTIGRAVITY_PROBE_TIMEOUT_MS`  |
-| Grok         | `T3CODE_GROK_PROBE_TIMEOUT_MS`         |
-| Kiro         | `T3CODE_KIRO_PROBE_TIMEOUT_MS`         |
-| fx           | `T3CODE_FX_PROBE_TIMEOUT_MS`           |
-| Pi           | `T3CODE_PI_PROBE_TIMEOUT_MS`           |
-| Muse Code    | `T3CODE_MUSE_PROBE_TIMEOUT_MS`         |
-| OpenCode     | `T3CODE_OPENCODE_PROBE_TIMEOUT_MS`     |
-| ACP Registry | `T3CODE_ACP_REGISTRY_PROBE_TIMEOUT_MS` |
+| Codex        | `AOKI_CODEX_PROBE_TIMEOUT_MS`        |
+| Claude       | `AOKI_CLAUDE_PROBE_TIMEOUT_MS`       |
+| Cursor       | `AOKI_CURSOR_PROBE_TIMEOUT_MS`       |
+| Antigravity  | `AOKI_ANTIGRAVITY_PROBE_TIMEOUT_MS`  |
+| Grok         | `AOKI_GROK_PROBE_TIMEOUT_MS`         |
+| Kiro         | `AOKI_KIRO_PROBE_TIMEOUT_MS`         |
+| fx           | `AOKI_FX_PROBE_TIMEOUT_MS`           |
+| Pi           | `AOKI_PI_PROBE_TIMEOUT_MS`           |
+| Muse Code    | `AOKI_MUSE_PROBE_TIMEOUT_MS`         |
+| OpenCode     | `AOKI_OPENCODE_PROBE_TIMEOUT_MS`     |
+| ACP Registry | `AOKI_ACP_REGISTRY_PROBE_TIMEOUT_MS` |
 
 ## Next steps
 

@@ -11,10 +11,10 @@ struct PlatformNestedDeepLinkTests {
             destination: .files(path: "src/my file.swift", line: 42)
         )
         for link in [
-            "t3code://threads/env/thread/files/src/my%20file.swift?line=42",
+            "aoki://threads/env/thread/files/src/my%20file.swift?line=42",
             "https://app.t3.codes/env/thread/files/src/my%20file.swift?line=42",
             "https://app.t3.codes/threads/env/thread/files/src/my%20file.swift?line=42",
-            "t3code://threads/thread/files/src/my%20file.swift?environment=env&line=42",
+            "aoki://threads/thread/files/src/my%20file.swift?environment=env&line=42",
         ] {
             #expect(try PlatformDeepLinkParser.parse(link) == expected)
         }
@@ -50,7 +50,7 @@ struct PlatformNestedDeepLinkTests {
             "terminal/extra", "git/delete", "unknown",
         ] {
             #expect(throws: (any Error).self) {
-                try PlatformDeepLinkParser.parse("t3code://threads/env/thread/\(suffix)")
+                try PlatformDeepLinkParser.parse("aoki://threads/env/thread/\(suffix)")
             }
             #expect(throws: (any Error).self) {
                 try PlatformDeepLinkParser.parse("https://app.t3.codes/threads/env/thread/\(suffix)")
@@ -60,7 +60,7 @@ struct PlatformNestedDeepLinkTests {
 
     @Test
     func terminalSessionQueryIsCarried() throws {
-        #expect(try PlatformDeepLinkParser.parse("t3://threads/env/thread/terminal?terminalId=shell-2")
+        #expect(try PlatformDeepLinkParser.parse("aoki://threads/env/thread/terminal?terminalId=shell-2")
                 == .threadDestination(environmentID: "env", threadID: "thread",
                                       destination: .terminal(sessionID: "shell-2")))
     }

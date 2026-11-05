@@ -108,7 +108,7 @@ jobs:
         run: vp run --filter @t3tools/source-control-github generate --check
 
       - name: Check generated Expo GraphQL operations
-        run: vp run --filter t3 generate --check
+        run: vp run --filter aoki generate --check
 
       - name: Check generated Linear GraphQL operations
         run: vp run --filter @t3tools/issue-tracker-linear generate --check
@@ -275,7 +275,7 @@ jobs:
           cat "$RUNNER_TEMP/typecheck.log"
           exit "$(cat "$RUNNER_TEMP/typecheck-status")"
 
-  # Everything except `t3` (apps/server) and the web app, which has its own job
+  # Everything except `aoki` (apps/server) and the web app, which has its own job
   # below. `--parallel` drops the package dependency ordering that `vp run`
   # applies by default: these `test` tasks declare no `dependsOn` and resolve
   # workspace deps from source, so ordering only bought us idle runners between
@@ -354,7 +354,7 @@ jobs:
           TEST_PACKAGES: ${{ needs.changes.outputs.test_packages }}
         run: |
           set -o pipefail
-          filters=(--filter '!t3' --filter '!@t3tools/monorepo' --filter '!@t3tools/web')
+          filters=(--filter '!aoki' --filter '!@t3tools/monorepo' --filter '!@t3tools/web')
           if [[ -n "$TEST_PACKAGES" ]]; then
             filters=()
             for package in $TEST_PACKAGES; do filters+=(--filter "$package"); done
@@ -470,7 +470,7 @@ jobs:
         with:
           task-cache-read-token: ${{ secrets.T3_TASK_CACHE_READ_TOKEN }}
 
-      # No Electron setup here: `t3` (apps/server) has no Electron dependency
+      # No Electron setup here: `aoki` (apps/server) has no Electron dependency
       # and none of its tests touch the runtime. Only the non-server `test`
       # job, which covers @t3tools/desktop, needs the download.
       # Cache the pinned browser and skip apt unless shared libraries are missing.
@@ -514,9 +514,9 @@ jobs:
       - name: Test
         if: steps.changes.outputs.test_server != 'false'
         env:
-          T3CODE_TRANSFER_BUDGET_REPORT_PATH: ${{ runner.temp }}/t3code-transfer-budget.md
-          T3CODE_TRANSFER_BUDGET_RESULT_PATH: ${{ runner.temp }}/thread-transfer-result.json
-          T3CODE_TRANSFER_BUDGET_SCENARIOS_PATH: ${{ runner.temp }}/thread-transfer-scenarios.json
+          AOKI_TRANSFER_BUDGET_REPORT_PATH: ${{ runner.temp }}/aoki-transfer-budget.md
+          AOKI_TRANSFER_BUDGET_RESULT_PATH: ${{ runner.temp }}/thread-transfer-result.json
+          AOKI_TRANSFER_BUDGET_SCENARIOS_PATH: ${{ runner.temp }}/thread-transfer-scenarios.json
         # One process per file spends ~2s starting before its tests run; one file per vCPU overlaps that.
         run: >-
           vp run test:cached -- --shard ${{ matrix.shard }}/${{ strategy.job-total }} --concurrency 4
@@ -547,8 +547,8 @@ jobs:
       - name: Publish transfer budget report
         if: always() && steps.transfer_budget.outputs.present == 'true'
         run: |
-          if test -f "${{ runner.temp }}/t3code-transfer-budget.md"; then
-            tee -a "$GITHUB_STEP_SUMMARY" < "${{ runner.temp }}/t3code-transfer-budget.md"
+          if test -f "${{ runner.temp }}/aoki-transfer-budget.md"; then
+            tee -a "$GITHUB_STEP_SUMMARY" < "${{ runner.temp }}/aoki-transfer-budget.md"
           else
             echo "Transfer budget report was not produced." >> "$GITHUB_STEP_SUMMARY"
           fi

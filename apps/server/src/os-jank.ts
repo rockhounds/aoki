@@ -37,7 +37,7 @@ const LOGIN_SHELL_ENV_NAMES = [
   "__MISE_DIFF",
   "FNM_MULTISHELL_PATH",
   "JAVA_HOME",
-  "T3CODE_FEATURE_FLAGS",
+  "AOKI_FEATURE_FLAGS",
 ] as const;
 const LOGIN_SHELL_TIMEOUT = Duration.seconds(5);
 const SLOW_LOGIN_SHELL_TIMEOUT_MS = 20_000;
@@ -89,8 +89,8 @@ function applyLoginShellEnvironment(
     env.JAVA_HOME = shellEnvironment.JAVA_HOME;
   }
   // A headless server (systemd, launchd) reads no profile, yet flags belong where users export them.
-  if (env.T3CODE_FEATURE_FLAGS === undefined && shellEnvironment.T3CODE_FEATURE_FLAGS) {
-    env.T3CODE_FEATURE_FLAGS = shellEnvironment.T3CODE_FEATURE_FLAGS;
+  if (env.AOKI_FEATURE_FLAGS === undefined && shellEnvironment.AOKI_FEATURE_FLAGS) {
+    env.AOKI_FEATURE_FLAGS = shellEnvironment.AOKI_FEATURE_FLAGS;
   }
 }
 

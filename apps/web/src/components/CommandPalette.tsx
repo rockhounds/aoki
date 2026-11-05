@@ -1445,7 +1445,7 @@ function OpenCommandPaletteDialog(props: {
       value: "action:triage",
       searchTerms: ["triage", "bug", "issue", "report", "broken", "debug", "help", "support"],
       title: gt("Triage an issue"),
-      description: gt("An agent investigates a Aoki problem and helps file an issue"),
+      description: gt("An agent investigates an Aoki problem and helps file an issue"),
       icon: <BugIcon className={ITEM_ICON_CLASS} />,
       run: () => startTriage(triageEnvironmentId),
     });
@@ -1891,7 +1891,7 @@ function OpenCommandPaletteDialog(props: {
         "grouping",
         "checkout",
         "remove",
-        "t3.json",
+        "aoki.json",
       ],
       title: gt("Project settings"),
       description: contextualProjectGroup.displayName,

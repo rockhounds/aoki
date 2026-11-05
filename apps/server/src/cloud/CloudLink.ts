@@ -186,7 +186,7 @@ export class CloudLinkAuthorizationMissingError extends Schema.TaggedError<Cloud
   {},
 ) {
   override get message(): string {
-    return "Run `t3 connect link` to authorize this environment.";
+    return "Run `aoki connect link` to authorize this environment.";
   }
 }
 
@@ -234,8 +234,7 @@ export class CloudLinkEndpointUnavailableError extends Schema.TaggedError<CloudL
 }
 
 const INTERNAL_OPERATION_MESSAGES = {
-  "relay-url-unconfigured":
-    "T3CODE_RELAY_URL must be configured as a secure absolute HTTPS origin.",
+  "relay-url-unconfigured": "AOKI_RELAY_URL must be configured as a secure absolute HTTPS origin.",
   "generate-link-proof": "Could not generate environment link proof.",
   "persist-relay-config": "Could not persist environment relay configuration.",
   "register-endpoint-origin": "Could not register the managed endpoint origin.",
@@ -508,7 +507,7 @@ export class CloudLink extends Context.Service<
       | HttpClientError.HttpClientError
     >;
   }
->()("t3/cloud/CloudLink") {}
+>()("aoki/cloud/CloudLink") {}
 
 const make = Effect.gen(function* () {
   const secrets = yield* ServerSecretStore.ServerSecretStore;

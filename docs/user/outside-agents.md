@@ -14,19 +14,19 @@ Open the command palette (`Cmd/Ctrl+K`) and run **Use T3 Code in another app (MC
 
 - **Claude Code**:
   ```sh
-  claude mcp add --transport http t3 https://<environment-address>/mcp
-  claude mcp login t3   # add --no-browser on headless hosts
+  claude mcp add --transport http aoki https://<environment-address>/mcp
+  claude mcp login aoki   # add --no-browser on headless hosts
   ```
 - **Codex**:
   ```sh
-  codex mcp add t3 --url https://<environment-address>/mcp
-  codex mcp login t3    # add --no-browser on headless hosts
+  codex mcp add aoki --url https://<environment-address>/mcp
+  codex mcp login aoki    # add --no-browser on headless hosts
   ```
 - **ChatGPT / other OAuth MCP clients**: Add a custom remote MCP server pointing to `https://<environment-address>/mcp` with **OAuth** authentication (no client ID or secret needed).
 
 ## Approve access and permissions
 
-The first time an outside agent connects, approve its sign-in page (via your T3 Connect account, an already-authorized browser, or a one-time pairing code from **Settings → Sharing & access** / `t3 auth pairing create`).
+The first time an outside agent connects, approve its sign-in page (via your T3 Connect account, an already-authorized browser, or a one-time pairing code from **Settings → Sharing & access** / `aoki auth pairing create`).
 
 - **Read only**: Inspect projects, threads, providers, and models.
 - **Supervised → Full access**: Also launch, message, and stop threads up to the granted permission mode. Managing [workflow runs](./workflows.md) or using approval-skipping agent modes requires **Full access** (or your policy's maximum mode).
@@ -38,17 +38,17 @@ Tools that act as a running T3 thread (`delegate_task`, `create_threads`, `reque
 
 - Use `t3_thread_launch` + `t3_thread_wait` / `t3_thread_read` to run and follow work.
 - Pass `projectId` or `threadId` explicitly (or `allProjects: true` on `t3_thread_list`).
-- **MCP Events (`io.modelcontextprotocol/events`)**: Bots can poll, stream, or subscribe via HTTPS webhooks (up to 1-hour leases; latest 1,000 milestones buffered in memory) for turn, approval, guest, PR watch, and workflow events. For local webhook testing, set `T3CODE_MCP_WEBHOOK_ALLOWED_HOSTS=localhost,127.0.0.1` on the server.
+- **MCP Events (`io.modelcontextprotocol/events`)**: Bots can poll, stream, or subscribe via HTTPS webhooks (up to 1-hour leases; latest 1,000 milestones buffered in memory) for turn, approval, guest, PR watch, and workflow events. For local webhook testing, set `AOKI_MCP_WEBHOOK_ALLOWED_HOSTS=localhost,127.0.0.1` on the server.
 
-## Host scripts (`t3 thread`)
+## Host scripts (`aoki thread`)
 
 On the server machine itself, drive threads directly without OAuth:
 
 ```sh
-id=$(t3 thread start . "Find why the tests are slow")
-t3 thread send "$id" "Now fix it" --wait
-t3 thread show "$id"
-t3 thread list
+id=$(aoki thread start . "Find why the tests are slow")
+aoki thread send "$id" "Now fix it" --wait
+aoki thread show "$id"
+aoki thread list
 ```
 
 - Pass `--worktree <base-branch>`, `--title` / `--generate-title`, `--provider <id> --model <slug>`, `--option id=value` (e.g. `reasoningEffort=high` for Codex, `effort=high` for Claude), or `-` to read the prompt from stdin.

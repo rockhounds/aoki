@@ -212,7 +212,7 @@ const makeThreadTools = (session: McpToolSession, origin: string) => {
   const unexpected = (tool: string) =>
     new ThreadToolFailedError({
       tool,
-      detail: `The server sent an unexpected ${tool} result. Update the t3 CLI to match the server.`,
+      detail: `The server sent an unexpected ${tool} result. Update the aoki CLI to match the server.`,
     });
   return {
     call: Effect.fn("cli.thread.callTool")(function* <S extends Schema.Decoder<unknown>>(
@@ -270,7 +270,7 @@ export const withThreadTools = Effect.fn("cli.thread.withThreadTools")(function*
     const environmentAuth = yield* EnvironmentAuth.EnvironmentAuth;
     const issued = yield* Effect.acquireRelease(
       environmentAuth.issueMcpClientSession({
-        label: flags.clientLabel ?? "t3 thread cli",
+        label: flags.clientLabel ?? "aoki thread cli",
         // The CLI runs as the machine's owner. New threads still start at
         // the project's default mode, never at this ceiling by default.
         access: "full-access",
@@ -283,7 +283,7 @@ export const withThreadTools = Effect.fn("cli.thread.withThreadTools")(function*
     const session = yield* mcpToolSession({
       endpoint: new URL("/mcp", origin).href,
       authorization: `Bearer ${issued.token}`,
-      clientName: "t3-thread-cli",
+      clientName: "aoki-thread-cli",
     }).pipe(Effect.mapError((cause) => new ThreadServerUnreachableError({ origin, cause })));
     return yield* run(makeThreadTools(session, origin));
   }).pipe(

@@ -33,7 +33,7 @@ if (!executable)
 const artifactsDir = NodePath.resolve(values["artifacts-dir"] ?? "desktop-launch-check");
 
 const home = NodeFS.mkdtempSync(NodePath.join(NodeOS.tmpdir(), "t3-desktop-launch-"));
-const t3Home = NodePath.join(home, "t3");
+const t3Home = NodePath.join(home, "aoki");
 NodeFS.mkdirSync(NodePath.join(t3Home, "userdata"), { recursive: true });
 NodeFS.copyFileSync(FIXTURE_DB, NodePath.join(t3Home, "userdata/statev2.sqlite"));
 
@@ -84,9 +84,9 @@ try {
         ...process.env,
         XDG_CONFIG_HOME: NodePath.join(home, ".config"),
         XDG_DATA_HOME: NodePath.join(home, ".local/share"),
-        T3CODE_HOME: t3Home,
-        T3CODE_TELEMETRY_ENABLED: "false",
-        T3CODE_DISABLE_AUTO_UPDATE: "true",
+        AOKI_HOME: t3Home,
+        AOKI_TELEMETRY_ENABLED: "false",
+        AOKI_DISABLE_AUTO_UPDATE: "true",
       },
     },
   );

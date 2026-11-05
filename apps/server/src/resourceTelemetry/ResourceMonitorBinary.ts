@@ -56,7 +56,7 @@ export class ResourceMonitorBinary extends Context.Service<
   {
     readonly resolve: Effect.Effect<string, ResourceMonitorBinaryError>;
   }
->()("t3/resourceTelemetry/ResourceMonitorBinary") {}
+>()("aoki/resourceTelemetry/ResourceMonitorBinary") {}
 
 function binaryName(platform: NodeJS.Platform): string {
   return platform === "win32" ? "t3-resource-monitor.exe" : "t3-resource-monitor";
@@ -119,7 +119,7 @@ export const make = Effect.fn("resourceTelemetry.resourceMonitorBinary.make")(fu
   const platformKey = resourceMonitorPlatformKey(platform, architecture);
   const rustTarget = resourceMonitorRustTarget(platform, architecture, linuxLibc);
   const overrideCandidates = [
-    environment.T3CODE_RESOURCE_MONITOR_PATH,
+    environment.AOKI_RESOURCE_MONITOR_PATH,
     config.resourceMonitorPath,
   ].filter((candidate): candidate is string => Boolean(candidate));
   const cargoOutputDirectories =

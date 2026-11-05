@@ -9,11 +9,11 @@ public enum OutdatedHostUpdateError: LocalizedError, Equatable, Sendable {
 
     public var errorDescription: String? {
         switch self {
-        case .manualUpdateRequired: "Update T3 Code on this computer manually."
+        case .manualUpdateRequired: "Update Aoki on this computer manually."
         case .hostAlreadyCompatible: "This host now supports this app. Reconnect and check for updates again."
         case .incompleteProgress: "The host did not confirm that the update finished. Check its installed version before retrying."
-        case .recoveryTimedOut: "The host did not return on a compatible T3 Code version. Check the host before retrying."
-        case .invalidTargetVersion: "Choose an exact T3 Code release version."
+        case .recoveryTimedOut: "The host did not return on a compatible Aoki version. Check the host before retrying."
+        case .invalidTargetVersion: "Choose an exact Aoki release version."
         }
     }
 }

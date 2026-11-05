@@ -37,7 +37,7 @@ struct PlatformFeedbackTests {
     @Test
     func notificationPayloadSupportsURLAndServerFields() {
         let routeFromURL = PlatformNotificationPayload.route(from: [
-            "deep_link": "t3code://threads/environment/thread",
+            "deep_link": "aoki://threads/environment/thread",
         ])
         let routeFromFields = PlatformNotificationPayload.route(from: [
             "environmentId": "environment",

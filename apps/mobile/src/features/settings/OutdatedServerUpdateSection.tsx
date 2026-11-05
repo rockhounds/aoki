@@ -80,7 +80,7 @@ export function OutdatedServerUpdateSection({
   }
 
   return (
-    <SettingsSection title="Aoki">
+    <SettingsSection title={gt("Aoki")}>
       <View className="gap-1 p-4">
         <Text className="text-base text-foreground">
           {release

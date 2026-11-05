@@ -14,7 +14,7 @@ final class ThreadCopyActionsTests: XCTestCase {
 
         let actions = ThreadCopyModel.actions(
             for: thread,
-            context: context(projectWorkspaceRoot: "/work/t3code")
+            context: context(projectWorkspaceRoot: "/work/aoki")
         )
         XCTAssertEqual(
             actions,
@@ -43,7 +43,7 @@ final class ThreadCopyActionsTests: XCTestCase {
                 for: thread,
                 context: context(
                     projectName: "pingdotgg/t3code",
-                    projectWorkspaceRoot: "/work/t3code",
+                    projectWorkspaceRoot: "/work/aoki",
                     environmentName: "Studio Mac",
                     environmentID: "environment-1"
                 )
@@ -62,10 +62,10 @@ final class ThreadCopyActionsTests: XCTestCase {
         XCTAssertEqual(
             ThreadCopyModel.actions(
                 for: thread,
-                context: context(projectWorkspaceRoot: "/work/t3code")
+                context: context(projectWorkspaceRoot: "/work/aoki")
             ),
             [
-                ThreadCopyAction(kind: .path, value: "/work/t3code"),
+                ThreadCopyAction(kind: .path, value: "/work/aoki"),
                 ThreadCopyAction(kind: .threadID, value: "thread-1"),
             ]
         )
@@ -82,9 +82,9 @@ final class ThreadCopyActionsTests: XCTestCase {
         XCTAssertEqual(
             ThreadCopyModel.actions(
                 for: thread,
-                context: context(projectWorkspaceRoot: "/work/t3code")
+                context: context(projectWorkspaceRoot: "/work/aoki")
             ).first,
-            ThreadCopyAction(kind: .path, value: "/work/t3code")
+            ThreadCopyAction(kind: .path, value: "/work/aoki")
         )
     }
 
@@ -119,7 +119,7 @@ final class ThreadCopyActionsTests: XCTestCase {
         XCTAssertEqual(
             ThreadCopyModel.actions(
                 for: thread,
-                context: context(projectWorkspaceRoot: "/work/t3code")
+                context: context(projectWorkspaceRoot: "/work/aoki")
             ).first,
             ThreadCopyAction(kind: .path, value: "/worktrees/feature")
         )
@@ -167,7 +167,7 @@ final class ThreadCopyActionsTests: XCTestCase {
             "Path unavailable"
         )
         XCTAssertEqual(
-            ThreadCopyAction(kind: .path, value: "/work/t3code").announcement,
+            ThreadCopyAction(kind: .path, value: "/work/aoki").announcement,
             "Path copied"
         )
     }
@@ -187,7 +187,7 @@ final class ThreadCopyActionsTests: XCTestCase {
             for: thread,
             context: context(
                 projectName: "pingdotgg/t3code",
-                projectWorkspaceRoot: "/work/t3code",
+                projectWorkspaceRoot: "/work/aoki",
                 environmentName: "Studio Mac",
                 environmentID: "fallback-environment"
             )

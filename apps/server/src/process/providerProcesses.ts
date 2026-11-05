@@ -40,7 +40,7 @@ const readRecord = (recordPath: string) => {
 export const ProviderProcesses = Context.Reference<{
   readonly register?: (pid: number) => () => void;
   readonly hasOtherLiveOwner: boolean;
-}>("t3/process/ProviderProcesses", { defaultValue: () => ({ hasOtherLiveOwner: false }) });
+}>("aoki/process/ProviderProcesses", { defaultValue: () => ({ hasOtherLiveOwner: false }) });
 
 const make = Effect.gen(function* () {
   const platform = yield* HostProcess.Platform;

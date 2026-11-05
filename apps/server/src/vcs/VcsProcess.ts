@@ -60,7 +60,7 @@ export class VcsProcess extends Context.Service<
   {
     readonly run: (input: VcsProcessInput) => Effect.Effect<VcsProcessOutput, VcsError>;
   }
->()("t3/vcs/VcsProcess") {}
+>()("aoki/vcs/VcsProcess") {}
 
 const DEFAULT_TIMEOUT_MS = 30_000;
 const DEFAULT_MAX_OUTPUT_BYTES = 1_000_000;
@@ -70,7 +70,7 @@ const VCS_PROCESS_CONCURRENCY = 8;
 const NON_GIT_PROCESS_CONCURRENCY = VCS_PROCESS_CONCURRENCY / 2;
 
 /** Background non-git calls, such as the pull request sync sweep's, leave one slot for the rest. */
-export const Background = Context.Reference<boolean>("t3/vcs/VcsProcess/Background", {
+export const Background = Context.Reference<boolean>("aoki/vcs/VcsProcess/Background", {
   defaultValue: () => false,
 });
 

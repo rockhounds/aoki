@@ -282,7 +282,7 @@ export interface CheckpointServiceV2Shape {
 export class CheckpointServiceV2 extends Context.Service<
   CheckpointServiceV2,
   CheckpointServiceV2Shape
->()("t3/orchestration-v2/CheckpointService/CheckpointServiceV2") {}
+>()("aoki/orchestration-v2/CheckpointService/CheckpointServiceV2") {}
 
 const scopeRef = Effect.fnUntraced(function* (scopeId: CheckpointScopeId, name: string) {
   const crypto = yield* Digest.Digest;

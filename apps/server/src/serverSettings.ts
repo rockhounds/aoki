@@ -298,7 +298,7 @@ export class ServerSettingsService extends Context.Service<
     /** Subscribe before reading a snapshot to retain changes before lazy stream startup. */
     readonly subscribeChanges: Effect.Effect<Stream.Stream<ServerSettings>, never, Scope.Scope>;
   }
->()("t3/serverSettings/ServerSettingsService") {
+>()("aoki/serverSettings/ServerSettingsService") {
   static readonly layerTest = (
     overrides: DeepPartial<ServerSettings> = {},
     managedPolicy?: ManagedPolicySummary,

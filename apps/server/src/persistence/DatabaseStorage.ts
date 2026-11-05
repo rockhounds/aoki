@@ -33,11 +33,11 @@ export class DatabaseStorage extends Context.Service<
     /** Checks free space, then stops the server; its shutdown runs the offline repair. */
     readonly requestReclaim: Effect.Effect<void, DatabaseReclaimError>;
   }
->()("t3/persistence/DatabaseStorage") {}
+>()("aoki/persistence/DatabaseStorage") {}
 
 /** Stops this server so its desktop app or background service starts it again; null when run by hand. */
 export const ServerRestart = Context.Reference<Effect.Effect<void> | null>(
-  "t3/persistence/DatabaseStorage/ServerRestart",
+  "aoki/persistence/DatabaseStorage/ServerRestart",
   { defaultValue: () => null },
 );
 
@@ -56,7 +56,7 @@ const make = Effect.gen(function* () {
     yield* fs.readFileString(reclaimFiles.failure).pipe(Effect.option),
   );
 
-  // The notice shows host-shell quoting verbatim; desktop needs its launcher because t3 is absent from PATH.
+  // The notice shows host-shell quoting verbatim; desktop needs its launcher because aoki is absent from PATH.
   const { command: compactCommand } = yield* resolveHostCliCommand("doctor", [
     "--base-dir",
     config.baseDir,

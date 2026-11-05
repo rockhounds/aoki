@@ -64,7 +64,7 @@ export const runDefaultServerCommand = Effect.fnUntraced(function* (flags: CliSe
     if (!explicitPath && (!(yield* fs.exists(cwd)) || (yield* fs.stat(cwd)).type !== "Directory")) {
       return yield* new CliError.UserError({
         cause: cwd,
-        userMessage: `Unknown command ${yield* encodeCommand(cwd)}. Use "t3 --help" for commands or an explicit path such as "t3 ./my-project" for a new directory.`,
+        userMessage: `Unknown command ${yield* encodeCommand(cwd)}. Use "aoki --help" for commands or an explicit path such as "aoki ./my-project" for a new directory.`,
       });
     }
   }
@@ -72,7 +72,7 @@ export const runDefaultServerCommand = Effect.fnUntraced(function* (flags: CliSe
 });
 
 export const startCommand = Command.make("start", { ...sharedServerCommandFlags }).pipe(
-  Command.withDescription("Same as `t3`."),
+  Command.withDescription("Same as `aoki`."),
   Command.unlisted,
   Command.withHandler((flags) => runServerCommand(flags, { rejectRunningServer: true })),
 );
@@ -83,7 +83,7 @@ const { autoBootstrapProjectFromCwd: _, ...serveCommandFlags } = sharedServerCom
 export const serveCommand = Command.make("serve", serveCommandFlags).pipe(
   Command.withShortDescription("Run Aoki in this terminal, with no browser."),
   Command.withDescription(
-    "Run Aoki in this terminal without opening a browser, and print pairing details. The background service runs this too, without printing them: pair with `t3 pair`. To set up access from your other devices, run `t3 up`.",
+    "Run Aoki in this terminal without opening a browser, and print pairing details. The background service runs this too, without printing them: pair with `aoki pair`. To set up access from your other devices, run `aoki up`.",
   ),
   Command.withHandler((flags) =>
     runServerCommand(

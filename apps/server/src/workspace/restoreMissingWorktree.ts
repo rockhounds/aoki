@@ -266,7 +266,7 @@ export class ThreadWorktreeRestore extends Context.Service<
     /** A checkout this service recreated for the thread whose setup has not run yet. */
     readonly takeRecreated: (threadId: ThreadId) => Effect.Effect<RecreatedWorktree | undefined>;
   }
->()("t3/workspace/restoreMissingWorktree/ThreadWorktreeRestore") {}
+>()("aoki/workspace/restoreMissingWorktree/ThreadWorktreeRestore") {}
 
 // Turn start restores under the same lease, so concurrent restores see each other's worktree.
 export const layerThreadWorktreeRestore = Layer.effect(

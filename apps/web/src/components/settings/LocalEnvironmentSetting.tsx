@@ -51,9 +51,7 @@ export function LocalEnvironmentSetting() {
         {...searchableSetting("local-environment")}
         description={
           enabled
-            ? gt(
-                "Run agents on this computer. Turn off to use Aoki only with remote environments.",
-              )
+            ? gt("Run agents on this computer. Turn off to use Aoki only with remote environments.")
             : gt("Turned off. Agents only run in remote environments.")
         }
         control={

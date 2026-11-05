@@ -246,7 +246,7 @@ it.layer(NodeServices.layer)("RepositoryIdentityResolverLive", (it) => {
         "remote",
         "add",
         "origin",
-        "https://me:origin-secret@github.com/me/t3code.git",
+        "https://me:origin-secret@github.com/me/aoki.git",
       ]);
       yield* git(cwd, [
         "remote",
@@ -258,7 +258,7 @@ it.layer(NodeServices.layer)("RepositoryIdentityResolverLive", (it) => {
       const resolver = yield* RepositoryIdentityResolver.RepositoryIdentityResolver;
       const identity = yield* resolver.resolve(cwd);
       expect(identity?.locator.remoteUrl).toBe("https://github.com/T3Tools/t3code.git");
-      expect(identity?.origin?.remoteUrl).toBe("https://github.com/me/t3code.git");
+      expect(identity?.origin?.remoteUrl).toBe("https://github.com/me/aoki.git");
       expect(JSON.stringify(identity)).not.toContain("secret");
     }).pipe(Effect.provide(RepositoryIdentityResolver.layer)),
   );
@@ -574,16 +574,16 @@ it.layer(NodeServices.layer)("RepositoryIdentityResolverLive", (it) => {
       });
 
       yield* git(cwd, ["init"]);
-      yield* git(cwd, ["remote", "add", "origin", "git@gitlab.com:T3Tools/platform/t3code.git"]);
+      yield* git(cwd, ["remote", "add", "origin", "git@gitlab.com:T3Tools/platform/aoki.git"]);
 
       const resolver = yield* RepositoryIdentityResolver.RepositoryIdentityResolver;
       const identity = yield* resolver.resolve(cwd);
 
       expect(identity).not.toBeNull();
-      expect(identity?.canonicalKey).toBe("gitlab.com/t3tools/platform/t3code");
-      expect(identity?.displayName).toBe("T3Tools/platform/t3code");
+      expect(identity?.canonicalKey).toBe("gitlab.com/t3tools/platform/aoki");
+      expect(identity?.displayName).toBe("T3Tools/platform/aoki");
       expect(identity?.owner).toBe("T3Tools");
-      expect(identity?.name).toBe("t3code");
+      expect(identity?.name).toBe("aoki");
     }).pipe(Effect.provide(RepositoryIdentityResolver.layer)),
   );
 });

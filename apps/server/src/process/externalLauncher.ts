@@ -525,7 +525,7 @@ export class ExternalLauncher extends Context.Service<
     readonly launchBrowser: (target: string) => Effect.Effect<void, ExternalLauncherError>;
     readonly launchEditor: (input: LaunchEditorInput) => Effect.Effect<void, ExternalLauncherError>;
   }
->()("t3/process/externalLauncher") {}
+>()("aoki/process/externalLauncher") {}
 
 const resolveEditorLaunch = Effect.fn("resolveEditorLaunch")(function* (
   input: LaunchEditorInput,

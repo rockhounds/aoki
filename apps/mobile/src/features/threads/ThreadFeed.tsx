@@ -2402,7 +2402,7 @@ function renderFeedEntry(
           className={cn("items-end", props.userMessageGrouping.groupedWithNext ? "mb-1" : "mb-2")}
           {...(enterAnimated ? { entering: FadeInDown.duration(220) } : {})}
         >
-          {presentation.attribution === "t3code" ? (
+          {presentation.attribution === "aoki" ? (
             <Text className="mb-1 pr-1 font-t3-medium text-2xs text-foreground-muted opacity-60">
               {m(msg("Sent by T3 Code"))}
             </Text>

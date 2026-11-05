@@ -587,8 +587,8 @@ it.effect("brings a repository to a linked environment, only through full access
       const seen = yield* Ref.make<Seen>(nothingSeen);
       const b = yield* serveBox(seen, yield* Ref.make(""));
       const a = yield* makeLaptop;
-      const clone = { repository: "pingdotgg/t3code", destinationPath: "/home/box/t3code" };
-      const register = { title: "t3code", workspaceRoot: "/home/box/t3code" };
+      const clone = { repository: "pingdotgg/t3code", destinationPath: "/home/box/aoki" };
+      const register = { title: "aoki", workspaceRoot: "/home/box/aoki" };
 
       yield* linkTo(a.links, b, "full-access");
       const cloned = yield* a.call("thread:laptop-full", "t3_project_clone", {

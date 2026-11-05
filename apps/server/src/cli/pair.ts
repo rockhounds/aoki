@@ -166,7 +166,7 @@ export class ServePortOccupiedError extends Schema.TaggedError<ServePortOccupied
   { servePort: Schema.Number },
 ) {
   override get message(): string {
-    return `HTTPS port ${String(this.servePort)} on the tailnet already serves something that is not a Aoki server. Pass --tailscale-serve-port to publish this one on another port.`;
+    return `HTTPS port ${String(this.servePort)} on the tailnet already serves something that is not an Aoki server. Pass --tailscale-serve-port to publish this one on another port.`;
   }
 }
 
@@ -279,7 +279,7 @@ const discoverPairTarget = Effect.fn("pair.discoverPairTarget")(function* (
     bases.push(yield* resolveBaseDir(explicitBaseDir));
   } else {
     // Same precedence as dev-runner: inside a linked worktree only its own
-    // `.t3` counts. Minting opens the target database with this checkout's
+    // `.aoki` counts. Minting opens the target database with this checkout's
     // migrations, so falling back to the shared home could migrate the live
     // install with unreleased schema.
     const worktreeHome = yield* resolveWorktreeT3Home(yield* HostProcess.WorkingDirectory);
@@ -287,7 +287,7 @@ const discoverPairTarget = Effect.fn("pair.discoverPairTarget")(function* (
       bases.push(worktreeHome);
       inLinkedWorktree = true;
     } else {
-      const envHome = yield* Config.String("T3CODE_HOME").pipe(Config.option);
+      const envHome = yield* Config.String("AOKI_HOME").pipe(Config.option);
       bases.push(yield* resolveBaseDir(Option.getOrUndefined(envHome)));
     }
   }
@@ -489,7 +489,7 @@ const mintPairingLink = Effect.fn("pair.mintPairingLink")(function* (input: {
     return yield* environmentAuth.createPairingLink({
       scopes: input.scopes,
       subject: "one-time-token",
-      label: Option.getOrElse(input.label, () => "t3 pair"),
+      label: Option.getOrElse(input.label, () => "aoki pair"),
       ...(Option.isSome(input.ttl) ? { ttl: input.ttl.value } : {}),
     });
   }).pipe(
@@ -559,7 +559,7 @@ export const pairCommand = Command.make("pair", {
         return yield* new IncompatibleServerProtocolError({
           serverVersion: target.descriptor.serverVersion,
           serverProtocolVersion,
-          pairCommand: `npx t3@${target.descriptor.serverVersion} pair${baseDirArgs}`,
+          pairCommand: `npx aoki@${target.descriptor.serverVersion} pair${baseDirArgs}`,
         });
       }
 
@@ -584,7 +584,7 @@ export const pairCommand = Command.make("pair", {
         pairingBaseUrl = resolveDirectPairingBaseUrl(target.state, yield* HostProcess.Platform);
         if (isLoopbackHost(new URL(pairingBaseUrl).hostname)) {
           notes.push(
-            "This URL is only reachable from this machine. To reach it from your other devices, run `t3 up`, or re-run with --tailscale.",
+            "This URL is only reachable from this machine. To reach it from your other devices, run `aoki up`, or re-run with --tailscale.",
           );
         } else if (target.state.privateNetworkOnly) {
           notes.push(

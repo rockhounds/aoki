@@ -69,11 +69,11 @@ function retryDelayMs(failures: number, random: number): number {
 
 // Aoki ships no analytics endpoint; events go out only when an operator configures one.
 const TelemetryEnvConfig = Config.all({
-  ingestKey: Config.String("T3CODE_TELEMETRY_KEY").pipe(Config.withDefault("")),
-  ingestHost: Config.String("T3CODE_TELEMETRY_HOST").pipe(Config.withDefault("")),
-  enabled: Config.Boolean("T3CODE_TELEMETRY_ENABLED").pipe(Config.option),
-  flushBatchSize: Config.Number("T3CODE_TELEMETRY_FLUSH_BATCH_SIZE").pipe(Config.withDefault(20)),
-  maxBufferedEvents: Config.Number("T3CODE_TELEMETRY_MAX_BUFFERED_EVENTS").pipe(
+  ingestKey: Config.String("AOKI_TELEMETRY_KEY").pipe(Config.withDefault("")),
+  ingestHost: Config.String("AOKI_TELEMETRY_HOST").pipe(Config.withDefault("")),
+  enabled: Config.Boolean("AOKI_TELEMETRY_ENABLED").pipe(Config.option),
+  flushBatchSize: Config.Number("AOKI_TELEMETRY_FLUSH_BATCH_SIZE").pipe(Config.withDefault(20)),
+  maxBufferedEvents: Config.Number("AOKI_TELEMETRY_MAX_BUFFERED_EVENTS").pipe(
     Config.withDefault(1_000),
   ),
   wslDistroName: Config.String("WSL_DISTRO_NAME").pipe(Config.option),
@@ -126,7 +126,7 @@ export class AnalyticsService extends Context.Service<
       observedBy: "server" | "client",
     ) => Effect.Effect<void>;
   }
->()("t3/telemetry/AnalyticsService") {}
+>()("aoki/telemetry/AnalyticsService") {}
 
 function serverOsFromNodePlatform(platform: string): ClientOs {
   switch (platform) {
@@ -148,7 +148,7 @@ function serverOsFromNodePlatform(platform: string): ClientOs {
 export const make = Effect.gen(function* () {
   const telemetryConfig = yield* TelemetryEnvConfig;
   const hostEnvironment = yield* HostProcess.Environment;
-  const awaitingShellConsent = hostEnvironment.T3CODE_DESKTOP_SHELL_DISCOVERY_PENDING === "1";
+  const awaitingShellConsent = hostEnvironment.AOKI_DESKTOP_SHELL_DISCOVERY_PENDING === "1";
   const enabledByDefault = !isCiEnvironment(hostEnvironment);
   const enabledAtStartup = Option.getOrElse(telemetryConfig.enabled, () => enabledByDefault);
   // A managed policy can switch analytics off over the environment, never on.
@@ -167,15 +167,15 @@ export const make = Effect.gen(function* () {
       return Effect.succeed(false);
     }
     if (!awaitingShellConsent) return Effect.succeed(true);
-    if (hostEnvironment.T3CODE_DESKTOP_SHELL_DISCOVERY_PENDING === "1")
+    if (hostEnvironment.AOKI_DESKTOP_SHELL_DISCOVERY_PENDING === "1")
       return Effect.succeed(false);
-    const preference = hostEnvironment.T3CODE_TELEMETRY_ENABLED;
-    return Config.Boolean("T3CODE_TELEMETRY_ENABLED").pipe(
+    const preference = hostEnvironment.AOKI_TELEMETRY_ENABLED;
+    return Config.Boolean("AOKI_TELEMETRY_ENABLED").pipe(
       Config.withDefault(enabledByDefault),
       Effect.provideService(
         ConfigProvider.ConfigProvider,
         ConfigProvider.fromEnv({
-          env: preference === undefined ? {} : { T3CODE_TELEMETRY_ENABLED: preference },
+          env: preference === undefined ? {} : { AOKI_TELEMETRY_ENABLED: preference },
         }),
       ),
       Effect.orElseSucceed(() => false),

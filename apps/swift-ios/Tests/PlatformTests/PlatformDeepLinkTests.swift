@@ -14,7 +14,7 @@ struct PlatformDeepLinkTests {
     @Test
     func parsesWidgetThreadRoute() throws {
         let route = try PlatformDeepLinkParser.parse(
-            "t3code://threads/environment-1/thread-7"
+            "aoki://threads/environment-1/thread-7"
         )
 
         #expect(route == .thread(environmentID: "environment-1", threadID: "thread-7"))
@@ -23,15 +23,15 @@ struct PlatformDeepLinkTests {
     @Test
     func parsesProjectAndEnvironmentQueryRoutes() throws {
         #expect(
-            try PlatformDeepLinkParser.parse("t3code://projects/project-7?environment=environment-1")
+            try PlatformDeepLinkParser.parse("aoki://projects/project-7?environment=environment-1")
                 == .project(environmentID: "environment-1", projectID: "project-7")
         )
         #expect(
-            try PlatformDeepLinkParser.parse("t3code://environments/environment-2")
+            try PlatformDeepLinkParser.parse("aoki://environments/environment-2")
                 == .environment(id: "environment-2")
         )
         #expect(
-            try PlatformDeepLinkParser.parse("t3code://new-task?environment=environment-2&project=project-8")
+            try PlatformDeepLinkParser.parse("aoki://new-task?environment=environment-2&project=project-8")
                 == .newTask(environmentID: "environment-2", projectID: "project-8")
         )
     }
@@ -39,7 +39,7 @@ struct PlatformDeepLinkTests {
     @Test
     func unwrapsPairingURL() throws {
         let route = try PlatformDeepLinkParser.parse(
-            "t3code://pair?pairingUrl=https%3A%2F%2Fremote.example.com%2Fpair%23token%3DPAIR"
+            "aoki://pair?pairingUrl=https%3A%2F%2Fremote.example.com%2Fpair%23token%3DPAIR"
         )
 
         #expect(route == .connection(endpoint: "https://remote.example.com", token: "PAIR"))
@@ -100,11 +100,7 @@ struct PlatformDeepLinkTests {
                 == .thread(environmentID: "environment", threadID: "thread")
         )
         #expect(
-            try PlatformDeepLinkParser.parse("t3code://threads/environment/thread")
-                == .thread(environmentID: "environment", threadID: "thread")
-        )
-        #expect(
-            try PlatformDeepLinkParser.parse("t3://threads/environment/thread")
+            try PlatformDeepLinkParser.parse("aoki://threads/environment/thread")
                 == .thread(environmentID: "environment", threadID: "thread")
         )
     }
@@ -139,8 +135,7 @@ struct PlatformDeepLinkTests {
 
         for link in [
             "\(PlatformRoute.nativeScheme)://threads/environment-1/thread-7",
-            "t3code://threads/environment-1/thread-7",
-            "t3://threads/environment-1/thread-7",
+            "aoki://threads/environment-1/thread-7",
             "https://app.t3.codes/environment-1/thread-7",
             "https://app.t3.codes/threads/thread-7?environment=environment-1",
         ] {
@@ -155,7 +150,7 @@ struct PlatformDeepLinkTests {
     @Test
     func opensThreadLinksByWireIdentifierWithoutAnEnvironment() throws {
         let snapshot = Self.linkedSnapshot()
-        let url = try #require(URL(string: "t3code://threads/wire-thread-7"))
+        let url = try #require(URL(string: "aoki://threads/wire-thread-7"))
 
         #expect(
             PlatformInAppLinkRouter.route(for: url, in: snapshot)
@@ -169,11 +164,11 @@ struct PlatformDeepLinkTests {
 
         for link in [
             // Nothing on this device matches the destination.
-            "t3code://threads/environment-1/thread-missing",
-            "t3code://threads/environment-missing/thread-7",
-            "t3code://projects/environment-1/project-missing",
-            "t3code://environments/environment-missing",
-            "t3code://new-task?environment=environment-1&project=project-missing",
+            "aoki://threads/environment-1/thread-missing",
+            "aoki://threads/environment-missing/thread-7",
+            "aoki://projects/environment-1/project-missing",
+            "aoki://environments/environment-missing",
+            "aoki://new-task?environment=environment-1&project=project-missing",
             // Trusted web pages that are not thread destinations.
             "https://app.t3.codes/docs/getting-started",
             "https://app.t3.codes/settings",
@@ -193,7 +188,7 @@ struct PlatformDeepLinkTests {
     func leavesPairingLinksToOnboarding() throws {
         let snapshot = Self.linkedSnapshot()
         let url = try #require(
-            URL(string: "t3code://pair?pairingUrl=https%3A%2F%2Fremote.example.com%2Fpair%23token%3DPAIR")
+            URL(string: "aoki://pair?pairingUrl=https%3A%2F%2Fremote.example.com%2Fpair%23token%3DPAIR")
         )
 
         #expect(PlatformInAppLinkRouter.route(for: url, in: snapshot) == nil)
@@ -203,20 +198,20 @@ struct PlatformDeepLinkTests {
     func opensProjectEnvironmentAndNewTaskLinksInsideTheApp() throws {
         let snapshot = Self.linkedSnapshot()
 
-        let project = try #require(URL(string: "t3code://projects/environment-1/project-3"))
+        let project = try #require(URL(string: "aoki://projects/environment-1/project-3"))
         #expect(
             PlatformInAppLinkRouter.route(for: project, in: snapshot)
                 == .project(environmentID: "environment-1", projectID: "project-3")
         )
 
-        let environment = try #require(URL(string: "t3code://environments/environment-1"))
+        let environment = try #require(URL(string: "aoki://environments/environment-1"))
         #expect(
             PlatformInAppLinkRouter.route(for: environment, in: snapshot)
                 == .environment(id: "environment-1")
         )
 
         let newTask = try #require(
-            URL(string: "t3code://new-task?environment=environment-1&project=project-3")
+            URL(string: "aoki://new-task?environment=environment-1&project=project-3")
         )
         #expect(
             PlatformInAppLinkRouter.route(for: newTask, in: snapshot)

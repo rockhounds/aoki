@@ -771,7 +771,7 @@ final class TransportReliabilityTests: XCTestCase {
         XCTAssertEqual(loose.pairingCode, "N735KQXJ5SJW")
 
         let wrapped = try PairingURL.parseFields(
-            "t3code://pair?pairingUrl=https%3A%2F%2Fstudio.example"
+            "aoki://pair?pairingUrl=https%3A%2F%2Fstudio.example"
                 + "%2Fpair%23token%3DQR-CODE"
         )
         XCTAssertEqual(wrapped.host, "https://studio.example")

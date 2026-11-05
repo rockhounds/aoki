@@ -3059,7 +3059,7 @@ const withLayoutProject = <A, E>(
       yield* git.execute({ operation: "launch-test", cwd: shop, args });
     }
     yield* fileSystem.writeFileString(
-      path.join(shop, "t3.json"),
+      path.join(shop, "aoki.json"),
       JSON.stringify({
         worktreeLayout: {
           create: `echo create >> "${ran}" && git worktree add -q -b "$T3_WORKTREE_BRANCH" "$T3_WORKTREE_PROJECT_PATH"`,

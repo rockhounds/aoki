@@ -264,7 +264,7 @@ describe("ApnsClient", () => {
       teamId: "team-jwt-cache",
       keyId: "key-jwt-cache",
       privateKey: Redacted.make(privateKey),
-      bundleId: "com.t3tools.test",
+      bundleId: "io.github.rockhounds.aoki.test",
       environment: "sandbox",
     } satisfies ApnsCredentials;
     const authorizations: Array<string> = [];
@@ -320,7 +320,7 @@ describe("ApnsClient", () => {
       teamId: "team-spans",
       keyId: "key-spans",
       privateKey: Redacted.make(privateKey),
-      bundleId: "com.t3tools.test",
+      bundleId: "io.github.rockhounds.aoki.test",
       environment: "sandbox",
     } satisfies ApnsCredentials;
     const spans: Array<Tracer.NativeSpan> = [];

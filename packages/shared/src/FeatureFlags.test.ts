@@ -4,7 +4,7 @@ import * as Option from "effect/Option";
 
 import * as FeatureFlags from "./FeatureFlags.ts";
 
-it.effect("resolves T3CODE_FEATURE_FLAGS lists", () =>
+it.effect("resolves AOKI_FEATURE_FLAGS lists", () =>
   Effect.gen(function* () {
     const cases: ReadonlyArray<
       readonly [string | undefined, Partial<FeatureFlags.FeatureFlagValues>]

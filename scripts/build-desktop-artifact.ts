@@ -63,7 +63,7 @@ import { Command, Flag } from "effect/cli";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
 const LINUX_ICON_SIZES = [16, 22, 24, 32, 48, 64, 128, 256, 512] as const;
-const DESKTOP_APP_ID = "com.t3tools.t3code";
+const DESKTOP_APP_ID = "io.github.rockhounds.aoki";
 const APPLE_TEAM_ID_PATTERN = /^[A-Z0-9]{10}$/u;
 
 const BuildPlatform = Schema.Literals(["mac", "linux", "win"]);
@@ -1165,7 +1165,7 @@ export class InvalidAppleTeamIdError extends Schema.TaggedError<InvalidAppleTeam
   },
 ) {
   override get message(): string {
-    return `T3CODE_APPLE_TEAM_ID '${this.teamId}' must be a 10-character Apple Developer Team ID.`;
+    return `AOKI_APPLE_TEAM_ID '${this.teamId}' must be a 10-character Apple Developer Team ID.`;
   }
 }
 
@@ -1174,7 +1174,7 @@ export class MissingMacPasskeyProvisioningProfileError extends Schema.TaggedErro
   {},
 ) {
   override get message(): string {
-    return "T3CODE_MACOS_PROVISIONING_PROFILE must point to an Associated Domains provisioning profile.";
+    return "AOKI_MACOS_PROVISIONING_PROFILE must point to an Associated Domains provisioning profile.";
   }
 }
 
@@ -1183,7 +1183,7 @@ export class MissingMacPasskeyDomainConfigurationError extends Schema.TaggedErro
   {},
 ) {
   override get message(): string {
-    return "T3CODE_CLERK_PUBLISHABLE_KEY or T3CODE_CLERK_PASSKEY_RP_DOMAINS is required for signed macOS passkey builds.";
+    return "AOKI_CLERK_PUBLISHABLE_KEY or AOKI_CLERK_PASSKEY_RP_DOMAINS is required for signed macOS passkey builds.";
   }
 }
 
@@ -1194,7 +1194,7 @@ export class InvalidMacPasskeyPublishableKeyError extends Schema.TaggedError<Inv
   },
 ) {
   override get message(): string {
-    return "T3CODE_CLERK_PUBLISHABLE_KEY is invalid.";
+    return "AOKI_CLERK_PUBLISHABLE_KEY is invalid.";
   }
 }
 
@@ -1262,22 +1262,22 @@ function normalizePasskeyRpDomain(value: string): string {
 export function resolveMacPasskeySigningConfiguration(
   env: Readonly<Record<string, string | undefined>>,
 ): MacPasskeySigningConfiguration {
-  const teamId = env.T3CODE_APPLE_TEAM_ID?.trim().toUpperCase() ?? "";
+  const teamId = env.AOKI_APPLE_TEAM_ID?.trim().toUpperCase() ?? "";
   if (!APPLE_TEAM_ID_PATTERN.test(teamId)) {
     throw new InvalidAppleTeamIdError({ teamId });
   }
 
-  const provisioningProfilePath = env.T3CODE_MACOS_PROVISIONING_PROFILE?.trim() ?? "";
+  const provisioningProfilePath = env.AOKI_MACOS_PROVISIONING_PROFILE?.trim() ?? "";
   if (provisioningProfilePath.length === 0) {
     throw new MissingMacPasskeyProvisioningProfileError();
   }
 
-  const configuredRpDomains = env.T3CODE_CLERK_PASSKEY_RP_DOMAINS?.trim();
+  const configuredRpDomains = env.AOKI_CLERK_PASSKEY_RP_DOMAINS?.trim();
   let rpDomains: readonly string[];
   if (configuredRpDomains) {
     rpDomains = configuredRpDomains.split(",").map(normalizePasskeyRpDomain);
   } else {
-    const publishableKey = env.T3CODE_CLERK_PUBLISHABLE_KEY?.trim();
+    const publishableKey = env.AOKI_CLERK_PUBLISHABLE_KEY?.trim();
     if (!publishableKey) {
       throw new MissingMacPasskeyDomainConfigurationError();
     }
@@ -1649,18 +1649,18 @@ const AzureTrustedSigningOptionsConfig = Config.all({
 });
 
 const BuildEnvConfig = Config.all({
-  platform: Config.schema(BuildPlatform, "T3CODE_DESKTOP_PLATFORM").pipe(Config.option),
-  target: Config.String("T3CODE_DESKTOP_TARGET").pipe(Config.option),
-  arch: Config.schema(BuildArch, "T3CODE_DESKTOP_ARCH").pipe(Config.option),
-  version: Config.String("T3CODE_DESKTOP_VERSION").pipe(Config.option),
-  outputDir: Config.String("T3CODE_DESKTOP_OUTPUT_DIR").pipe(Config.option),
-  skipBuild: Config.Boolean("T3CODE_DESKTOP_SKIP_BUILD").pipe(Config.withDefault(false)),
-  keepStage: Config.Boolean("T3CODE_DESKTOP_KEEP_STAGE").pipe(Config.withDefault(false)),
-  signed: Config.Boolean("T3CODE_DESKTOP_SIGNED").pipe(Config.withDefault(false)),
-  verbose: Config.Boolean("T3CODE_DESKTOP_VERBOSE").pipe(Config.withDefault(false)),
-  mockUpdates: Config.Boolean("T3CODE_DESKTOP_MOCK_UPDATES").pipe(Config.withDefault(false)),
-  mockUpdateServerPort: Config.String("T3CODE_DESKTOP_MOCK_UPDATE_SERVER_PORT").pipe(Config.option),
-  wslRuntime: Config.String("T3CODE_DESKTOP_WSL_RUNTIME").pipe(Config.option),
+  platform: Config.schema(BuildPlatform, "AOKI_DESKTOP_PLATFORM").pipe(Config.option),
+  target: Config.String("AOKI_DESKTOP_TARGET").pipe(Config.option),
+  arch: Config.schema(BuildArch, "AOKI_DESKTOP_ARCH").pipe(Config.option),
+  version: Config.String("AOKI_DESKTOP_VERSION").pipe(Config.option),
+  outputDir: Config.String("AOKI_DESKTOP_OUTPUT_DIR").pipe(Config.option),
+  skipBuild: Config.Boolean("AOKI_DESKTOP_SKIP_BUILD").pipe(Config.withDefault(false)),
+  keepStage: Config.Boolean("AOKI_DESKTOP_KEEP_STAGE").pipe(Config.withDefault(false)),
+  signed: Config.Boolean("AOKI_DESKTOP_SIGNED").pipe(Config.withDefault(false)),
+  verbose: Config.Boolean("AOKI_DESKTOP_VERBOSE").pipe(Config.withDefault(false)),
+  mockUpdates: Config.Boolean("AOKI_DESKTOP_MOCK_UPDATES").pipe(Config.withDefault(false)),
+  mockUpdateServerPort: Config.String("AOKI_DESKTOP_MOCK_UPDATE_SERVER_PORT").pipe(Config.option),
+  wslRuntime: Config.String("AOKI_DESKTOP_WSL_RUNTIME").pipe(Config.option),
 });
 
 const MockUpdateServerPortSchema = Schema.NumberFromString.check(
@@ -1931,11 +1931,11 @@ const rustTargetIsInstalled = Effect.fn("rustTargetIsInstalled")(function* (targ
 export const preflightLinuxDesktopBuild = Effect.fn("preflightLinuxDesktopBuild")(function* (
   arch: typeof BuildArch.Type = "x64",
 ) {
-  const reuseResourceMonitor = yield* Config.Boolean("T3CODE_DESKTOP_REUSE_RESOURCE_MONITOR").pipe(
+  const reuseResourceMonitor = yield* Config.Boolean("AOKI_DESKTOP_REUSE_RESOURCE_MONITOR").pipe(
     Config.withDefault(false),
   );
   const reuseCaptureHelpers = yield* Config.Boolean(
-    "T3CODE_DESKTOP_REUSE_LINUX_CAPTURE_HELPERS",
+    "AOKI_DESKTOP_REUSE_LINUX_CAPTURE_HELPERS",
   ).pipe(Config.withDefault(false));
   const needsRust = !reuseResourceMonitor || !reuseCaptureHelpers;
   const rustTarget = resolveResourceMonitorRustTargets("linux", arch)[0]!;
@@ -1972,7 +1972,7 @@ export const preflightMacDesktopBuild = Effect.fn("preflightMacDesktopBuild")(fu
   arch: typeof BuildArch.Type,
 ) {
   const rustTargets = resolveResourceMonitorRustTargets("mac", arch);
-  const reuseResourceMonitor = yield* Config.Boolean("T3CODE_DESKTOP_REUSE_RESOURCE_MONITOR").pipe(
+  const reuseResourceMonitor = yield* Config.Boolean("AOKI_DESKTOP_REUSE_RESOURCE_MONITOR").pipe(
     Config.withDefault(false),
   );
   const checks = yield* Effect.all(
@@ -2029,9 +2029,9 @@ function windowsVswherePrerequisiteScript(arch: typeof BuildArch.Type): string {
 export const preflightWindowsDesktopBuild = Effect.fn("preflightWindowsDesktopBuild")(
   function* (input: { readonly arch: typeof BuildArch.Type; readonly bundlesWslRuntime: boolean }) {
     const rustTarget = resolveResourceMonitorRustTargets("win", input.arch)[0]!;
-    const reuseResourceMonitor = yield* Config.Boolean(
-      "T3CODE_DESKTOP_REUSE_RESOURCE_MONITOR",
-    ).pipe(Config.withDefault(false));
+    const reuseResourceMonitor = yield* Config.Boolean("AOKI_DESKTOP_REUSE_RESOURCE_MONITOR").pipe(
+      Config.withDefault(false),
+    );
     const python = yield* resolvePythonForNodeGyp();
     const checks = yield* Effect.all(
       {
@@ -2220,7 +2220,7 @@ export const copyDirectoryPreservingSymlinks = Effect.fn("copyDirectoryPreservin
 export const verifyPackagedBundleIsSelfContained = Effect.fn("verifyPackagedBundleIsSelfContained")(
   function* (input: { readonly asarPath: string; readonly verbose: boolean }) {
     // A PR preview's bundle is untrusted and this job may hold signing secrets, so never run it.
-    if (yield* Config.Boolean("T3CODE_DESKTOP_UNTRUSTED_BUNDLE").pipe(Config.withDefault(false))) {
+    if (yield* Config.Boolean("AOKI_DESKTOP_UNTRUSTED_BUNDLE").pipe(Config.withDefault(false))) {
       yield* Effect.log(
         "[desktop-artifact] Skipped the bundle self-check for an untrusted bundle.",
       );
@@ -2230,7 +2230,7 @@ export const verifyPackagedBundleIsSelfContained = Effect.fn("verifyPackagedBund
     const path = yield* Path.Path;
 
     const probeRoot = yield* fs.makeTempDirectoryScoped({
-      prefix: "t3code-bundle-selfcheck-",
+      prefix: "aoki-bundle-selfcheck-",
     });
     const extractedApp = path.join(probeRoot, "extracted");
     const probeApp = path.join(probeRoot, "app");
@@ -2311,7 +2311,7 @@ export const stageLinuxCaptureHelper = Effect.fn("stageLinuxCaptureHelper")(func
   const path = yield* Path.Path;
   const [rustTarget] = resolveResourceMonitorRustTargets("linux", input.arch);
   // CI skips Rust on helper-cache hits; allow reuse without rebuilding.
-  const reuseHelpers = yield* Config.Boolean("T3CODE_DESKTOP_REUSE_LINUX_CAPTURE_HELPERS").pipe(
+  const reuseHelpers = yield* Config.Boolean("AOKI_DESKTOP_REUSE_LINUX_CAPTURE_HELPERS").pipe(
     Config.withDefault(false),
   );
   const binaryPath = path.join(
@@ -2374,7 +2374,7 @@ export const stageResourceMonitor = Effect.fn("stageResourceMonitor")(function* 
   const manifestPath = path.join(input.repoRoot, "native/resource-monitor/Cargo.toml");
   const executableName = resourceMonitorExecutableName(input.platform);
   const rustTargets = resolveResourceMonitorRustTargets(input.platform, input.arch);
-  const reuseResourceMonitor = yield* Config.Boolean("T3CODE_DESKTOP_REUSE_RESOURCE_MONITOR").pipe(
+  const reuseResourceMonitor = yield* Config.Boolean("AOKI_DESKTOP_REUSE_RESOURCE_MONITOR").pipe(
     Config.withDefault(false),
   );
   const builtBinaries: string[] = [];
@@ -2550,7 +2550,7 @@ const stageMacIcons = Effect.fn("build-desktop-artifact.stageMacIcons")(function
   }
 
   const tmpRoot = yield* fs.makeTempDirectoryScoped({
-    prefix: "t3code-icon-build-",
+    prefix: "aoki-icon-build-",
   });
 
   const iconPngPath = path.join(stageResourcesDir, "icon.png");
@@ -2732,7 +2732,7 @@ export const resolveGitHubPublishConfig = Effect.fn("resolveGitHubPublishConfig"
   updateChannel: "latest" | "nightly",
 ) {
   const env = yield* Config.all({
-    updateRepository: Config.String("T3CODE_DESKTOP_UPDATE_REPOSITORY").pipe(Config.option),
+    updateRepository: Config.String("AOKI_DESKTOP_UPDATE_REPOSITORY").pipe(Config.option),
     githubRepository: Config.String("GITHUB_REPOSITORY").pipe(Config.option),
   });
   const rawRepo = (
@@ -2884,9 +2884,8 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
         // macOS 26 offers Messages/Mail codes in every text field unless opted out.
         NSAutoFillRequiresTextContentTypeForOneTimeCodeOnMac: true,
         NSLocalNetworkUsageDescription:
-"Aoki connects to devices on your local network for remote environments and commands run by terminals and coding agents.",
-        NSCalendarsUsageDescription:
-          "Commands you run in Aoki may need access to your calendars.",
+          "Aoki connects to devices on your local network for remote environments and commands run by terminals and coding agents.",
+        NSCalendarsUsageDescription: "Commands you run in Aoki may need access to your calendars.",
         NSCalendarsFullAccessUsageDescription:
           "Commands you run in Aoki may need to read and write your calendar events.",
         NSCalendarsWriteOnlyAccessUsageDescription:
@@ -2915,7 +2914,7 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
       protocols: [
         {
           name: "Aoki",
-          schemes: ["t3code", "t3code-dev"],
+          schemes: ["aoki", "aoki-dev"],
         },
         {
           name: "Web site URL",
@@ -2960,7 +2959,7 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
     buildConfig.afterPack = path.join(repoRoot, "scripts/linux-after-pack.ts");
     buildConfig.linux = {
       target: target === "AppImage" ? [target, "deb"] : [target],
-      executableName: "t3code",
+      executableName: "aoki",
       icon: "icons",
       category: "Development",
       synopsis: "Desktop GUI for coding agents",
@@ -2968,7 +2967,7 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
       protocols: [
         {
           name: "Aoki",
-          schemes: ["t3code", "t3code-dev"],
+          schemes: ["aoki", "aoki-dev"],
         },
       ],
       desktop: {
@@ -2988,8 +2987,8 @@ export const createBuildConfig = Effect.fn("createBuildConfig")(function* (
     buildConfig.deb = {
       // FPM runs outside the staged app directory, so source paths must be absolute.
       fpm: [
-        `${path.join(repoRoot, "apps/desktop/resources/linux/com.t3tools.t3code.metainfo.xml")}=/usr/share/metainfo/com.t3tools.t3code.metainfo.xml`,
-        `${path.join(repoRoot, "LICENSE")}=/usr/share/doc/t3code/copyright`,
+        `${path.join(repoRoot, "apps/desktop/resources/linux/io.github.rockhounds.aoki.metainfo.xml")}=/usr/share/metainfo/io.github.rockhounds.aoki.metainfo.xml`,
+        `${path.join(repoRoot, "LICENSE")}=/usr/share/doc/aoki/copyright`,
       ],
       // Debian 13 and Ubuntu 24.04 use 64-bit-time names; retain old-name fallbacks.
       depends: [
@@ -3089,7 +3088,7 @@ export const stageWslRuntimeArchive = Effect.fn("stageWslRuntimeArchive")(functi
 
 // Match cliArchiveStem without its circular import. WSL uses the Windows host's architecture.
 export const wslRuntimeArchiveStem = (version: string, arch: typeof BuildArch.Type): string =>
-  `t3-${version}-linux-${arch}`;
+  `aoki-${version}-linux-${arch}`;
 
 export const parseWslRuntimeArchiveMembers = (listing: string): ReadonlyArray<string> =>
   listing
@@ -3174,7 +3173,7 @@ export const stageWindowsServerSidecar = Effect.fn("stageWindowsServerSidecar")(
     sidecarDependencies,
   );
   const sidecarPackageJson = {
-    name: "t3code-server",
+    name: "aoki-server",
     version: input.appVersion,
     private: true,
     packageManager: rootPackageJson.packageManager,
@@ -3293,7 +3292,7 @@ export const verifyWindowsPrimaryFffNativeLoad = Effect.fn(
   if (hostPlatform !== "win32" || hostArchitecture !== input.targetArch) return;
 
   const probeRoot = yield* fs.makeTempDirectoryScoped({
-    prefix: "t3code-windows-primary-native-probe-",
+    prefix: "aoki-windows-primary-native-probe-",
   });
   const fffEntryPath = path.join(input.asarPath, "node_modules/@ff-labs/fff-node/dist/index.js");
   const probeEnv = { ...process.env };
@@ -3540,7 +3539,7 @@ export const validateWindowsPackagedPayload = Effect.fn(
       );
     }
     const members = parseWslRuntimeArchiveMembers(listing.stdout);
-    // The WSL installer finds t3 under the archive's single stem-named directory.
+    // The WSL installer finds aoki under the archive's single stem-named directory.
     const stem = wslRuntimeArchiveStem(input.appVersion, input.targetArch);
     const topLevel = new Set(members.map((member) => member.split("/")[0]));
     if (topLevel.size !== 1 || !topLevel.has(stem)) {
@@ -3550,7 +3549,7 @@ export const validateWindowsPackagedPayload = Effect.fn(
         ),
       );
     }
-    const requiredMembers = [`${stem}/t3`, `${stem}/client`, `${stem}/node_modules`];
+    const requiredMembers = [`${stem}/aoki`, `${stem}/client`, `${stem}/node_modules`];
     const missingMembers = requiredMembers.filter((member) => !members.includes(member));
     const ptyCandidates = [
       `${stem}/node_modules/node-pty/build/Release/pty.node`,
@@ -3744,7 +3743,7 @@ const buildDesktopArtifactUnlocked = Effect.fn("buildDesktopArtifactUnlocked")(f
   const commitHash = yield* resolveGitCommitHash(repoRoot);
   const mkdir = options.keepStage ? fs.makeTempDirectory : fs.makeTempDirectoryScoped;
   const stageRoot = yield* mkdir({
-    prefix: `t3code-desktop-${options.platform}-stage-`,
+    prefix: `aoki-desktop-${options.platform}-stage-`,
   });
 
   const stageAppDir = path.join(stageRoot, "app");
@@ -3965,7 +3964,7 @@ const buildDesktopArtifactUnlocked = Effect.fn("buildDesktopArtifactUnlocked")(f
       ? path.join(stageAppDir, WINDOWS_SERVER_RESOURCE_SOURCE_DIR, WINDOWS_SERVER_ASAR_RESOURCE)
       : undefined;
   const stagePackageJson: StagePackageJson = {
-    name: "t3code",
+    name: "aoki",
     version: appVersion,
     buildVersion: appVersion,
     t3codeCommitHash: commitHash,
@@ -4243,61 +4242,61 @@ export const copyDesktopBuildArtifacts = Effect.fn("copyDesktopBuildArtifacts")(
 
 const buildDesktopArtifactCli = Command.make("build-desktop-artifact", {
   platform: Flag.Literals("platform", BuildPlatform.literals).pipe(
-    Flag.withDescription("Build platform (env: T3CODE_DESKTOP_PLATFORM)."),
+    Flag.withDescription("Build platform (env: AOKI_DESKTOP_PLATFORM)."),
     Flag.optional,
   ),
   target: Flag.String("target").pipe(
     Flag.withDescription(
-      "Artifact target, for example dmg/AppImage/nsis (env: T3CODE_DESKTOP_TARGET).",
+      "Artifact target, for example dmg/AppImage/nsis (env: AOKI_DESKTOP_TARGET).",
     ),
     Flag.optional,
   ),
   arch: Flag.Literals("arch", BuildArch.literals).pipe(
-    Flag.withDescription("Build arch, for example arm64/x64/universal (env: T3CODE_DESKTOP_ARCH)."),
+    Flag.withDescription("Build arch, for example arm64/x64/universal (env: AOKI_DESKTOP_ARCH)."),
     Flag.optional,
   ),
   buildVersion: Flag.String("build-version").pipe(
     Flag.withDescription(
-      "Compiled bundle and desktop package version (env: T3CODE_DESKTOP_VERSION).",
+      "Compiled bundle and desktop package version (env: AOKI_DESKTOP_VERSION).",
     ),
     Flag.optional,
   ),
   outputDir: Flag.String("output-dir").pipe(
-    Flag.withDescription("Output directory for artifacts (env: T3CODE_DESKTOP_OUTPUT_DIR)."),
+    Flag.withDescription("Output directory for artifacts (env: AOKI_DESKTOP_OUTPUT_DIR)."),
     Flag.optional,
   ),
   skipBuild: Flag.Boolean("skip-build").pipe(
     Flag.withDescription(
-      "Skip `vp run build:desktop` and use existing dist artifacts (env: T3CODE_DESKTOP_SKIP_BUILD).",
+      "Skip `vp run build:desktop` and use existing dist artifacts (env: AOKI_DESKTOP_SKIP_BUILD).",
     ),
     Flag.optional,
   ),
   keepStage: Flag.Boolean("keep-stage").pipe(
-    Flag.withDescription("Keep temporary staging files (env: T3CODE_DESKTOP_KEEP_STAGE)."),
+    Flag.withDescription("Keep temporary staging files (env: AOKI_DESKTOP_KEEP_STAGE)."),
     Flag.optional,
   ),
   signed: Flag.Boolean("signed").pipe(
     Flag.withDescription(
-      "Enable signing/notarization discovery; Windows uses Azure Trusted Signing (env: T3CODE_DESKTOP_SIGNED).",
+      "Enable signing/notarization discovery; Windows uses Azure Trusted Signing (env: AOKI_DESKTOP_SIGNED).",
     ),
     Flag.optional,
   ),
   verbose: Flag.Boolean("verbose").pipe(
-    Flag.withDescription("Stream subprocess stdout (env: T3CODE_DESKTOP_VERBOSE)."),
+    Flag.withDescription("Stream subprocess stdout (env: AOKI_DESKTOP_VERBOSE)."),
     Flag.optional,
   ),
   mockUpdates: Flag.Boolean("mock-updates").pipe(
-    Flag.withDescription("Enable mock updates (env: T3CODE_DESKTOP_MOCK_UPDATES)."),
+    Flag.withDescription("Enable mock updates (env: AOKI_DESKTOP_MOCK_UPDATES)."),
     Flag.optional,
   ),
   mockUpdateServerPort: Flag.Int("mock-update-server-port").pipe(
     Flag.withSchema(Schema.Int.check(Schema.isBetween({ minimum: 1, maximum: 65535 }))),
-    Flag.withDescription("Mock update server port (env: T3CODE_DESKTOP_MOCK_UPDATE_SERVER_PORT)."),
+    Flag.withDescription("Mock update server port (env: AOKI_DESKTOP_MOCK_UPDATE_SERVER_PORT)."),
     Flag.optional,
   ),
   wslRuntime: Flag.String("wsl-runtime").pipe(
     Flag.withDescription(
-      "Path to the Linux CLI release archive (t3-<version>-linux-x64.tar.gz) to embed as the WSL runtime of a Windows build (env: T3CODE_DESKTOP_WSL_RUNTIME).",
+      "Path to the Linux CLI release archive (aoki-<version>-linux-x64.tar.gz) to embed as the WSL runtime of a Windows build (env: AOKI_DESKTOP_WSL_RUNTIME).",
     ),
     Flag.optional,
   ),

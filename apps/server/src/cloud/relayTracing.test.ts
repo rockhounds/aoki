@@ -14,7 +14,7 @@ const tracesTo = (policy?: ManagedPolicyDocument) =>
   Effect.service(RelayTracing.RelayClientTracer).pipe(
     Effect.provide(
       relayLayer(
-        { serviceName: "t3code-server", runtime: "node", client: "environment-server" },
+        { serviceName: "aoki-server", runtime: "node", client: "environment-server" },
         { tracesUrl: "https://traces.example.com", tracesDataset: "relay", tracesToken: "token" },
       ).pipe(Layer.provide(ManagedPolicy.layerTest(policy)), Layer.provide(FetchHttpClient.layer)),
     ),
@@ -36,7 +36,7 @@ it.effect("a policy with telemetry off stops relay tracing to T3 Connect", () =>
 
 it.effect("relay tracing waits for the desktop shell's telemetry opt-out", () => {
   const fetchFn = vi.fn<typeof fetch>(async () => new Response(null, { status: 202 }));
-  const environment: NodeJS.ProcessEnv = { T3CODE_DESKTOP_SHELL_DISCOVERY_PENDING: "1" };
+  const environment: NodeJS.ProcessEnv = { AOKI_DESKTOP_SHELL_DISCOVERY_PENDING: "1" };
   return Effect.void.pipe(
     Effect.withSpan("relay.request"),
     RelayTracing.withRelayClientTracing,
@@ -44,14 +44,14 @@ it.effect("relay tracing waits for the desktop shell's telemetry opt-out", () =>
       Effect.sync(() => {
         assert.isFalse(allowedFor(environment, undefined));
         // What desktop shell discovery does once ~/.zshrc turns telemetry off.
-        environment.T3CODE_TELEMETRY_ENABLED = "false";
-        delete environment.T3CODE_DESKTOP_SHELL_DISCOVERY_PENDING;
+        environment.AOKI_TELEMETRY_ENABLED = "false";
+        delete environment.AOKI_DESKTOP_SHELL_DISCOVERY_PENDING;
       }),
     ),
     Layer.effectDiscard,
     Layer.provide(
       relayLayer(
-        { serviceName: "t3code-server", runtime: "node", client: "environment-server" },
+        { serviceName: "aoki-server", runtime: "node", client: "environment-server" },
         { tracesUrl: "https://traces.example.com", tracesDataset: "relay", tracesToken: "token" },
       ),
     ),
@@ -67,12 +67,12 @@ it.effect("relay tracing waits for the desktop shell's telemetry opt-out", () =>
 
 it("reports the server's relay tracing policy to clients", () => {
   assert.isTrue(allowedFor({}, undefined));
-  assert.isFalse(allowedFor({ T3CODE_TELEMETRY_ENABLED: "false" }, undefined));
+  assert.isFalse(allowedFor({ AOKI_TELEMETRY_ENABLED: "false" }, undefined));
   assert.isFalse(allowedFor({ CI: "true" }, undefined));
-  assert.isTrue(allowedFor({ CI: "true", T3CODE_TELEMETRY_ENABLED: "true" }, undefined));
+  assert.isTrue(allowedFor({ CI: "true", AOKI_TELEMETRY_ENABLED: "true" }, undefined));
   assert.isFalse(
     allowedFor(
-      { T3CODE_TELEMETRY_ENABLED: "true" },
+      { AOKI_TELEMETRY_ENABLED: "true" },
       { organization: "Example Corp", lockedSettings: [], limits: { telemetry: false } },
     ),
   );

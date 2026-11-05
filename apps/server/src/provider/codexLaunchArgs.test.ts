@@ -25,13 +25,13 @@ describe("codexAppServerArgs", () => {
     {
       name: "preserves an escaped trailing space in the environment override",
       launchArgs: "--strict-config",
-      environment: { T3CODE_CODEX_LAUNCH_ARGS: "--cloud-skills-snapshot skills.json\\ " },
+      environment: { AOKI_CODEX_LAUNCH_ARGS: "--cloud-skills-snapshot skills.json\\ " },
       expected: ["--cloud-skills-snapshot", "skills.json "],
     },
     {
       name: "uses configured arguments when the environment override is blank",
       launchArgs: "--strict-config",
-      environment: { T3CODE_CODEX_LAUNCH_ARGS: " \t " },
+      environment: { AOKI_CODEX_LAUNCH_ARGS: " \t " },
       version: "0.167.0",
       expected: ["--strict-config"],
     },

@@ -83,10 +83,9 @@ both cases fix the named change in place and `--continue`, or `--abort`.
 
 Aoki does not contact T3 Tools' services unless you opt in:
 
-- **Product analytics** are off. The server sends events only when `T3CODE_POSTHOG_KEY` and
-  `T3CODE_POSTHOG_HOST` point at your own PostHog project. `docs/user/telemetry.md` describes
-  upstream builds.
-- **Releases** come from `rockhounds/aoki`: `t3 update`, server self-update, the mobile apps'
+- **Product analytics** are off. The server sends events only when `AOKI_POSTHOG_KEY` and
+  `AOKI_POSTHOG_HOST` point at your own PostHog project. [Telemetry](docs/user/telemetry.md) describes the data and controls.
+- **Releases** come from `rockhounds/aoki`: `aoki update`, server self-update, the mobile apps'
   update checks, desktop release links, and the server archive that desktop SSH environments
   install on the remote machine. Aoki publishes no releases yet, so these find nothing, and desktop SSH
   environments cannot install a server on the remote machine.
@@ -94,6 +93,14 @@ Aoki does not contact T3 Tools' services unless you opt in:
   `main`.
 - **T3 Connect** (Clerk sign-in and the relay) exists only in builds made with T3 Connect values
   in `.env` (see `.env.example`). Copied thread links still open `app.t3.codes`.
+
+## Naming
+
+Aoki ships under its own identity and does not read T3 Code's: the `aoki` CLI and npm package,
+`~/.aoki` (or `AOKI_HOME`), `AOKI_*` environment variables, `aoki.json` project files, the
+`aoki://` URL scheme, `io.github.rockhounds.aoki` app and bundle IDs, and the `/etc/aoki`,
+`Aoki`, and `Rockhounds\Aoki` managed-policy locations. Names that point at T3 Tools' services,
+upstream repositories, or recorded provider transcripts stay as they are.
 
 ## Local-only work
 

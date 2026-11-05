@@ -190,7 +190,7 @@ struct MarkdownDocumentTests {
         #expect(template.displayName == "Release notes template")
         #expect(template.kind == .document)
         #expect(template.usePrompt == "Create a document using this $artifact-template-release about…")
-        #expect(template.useURL?.scheme == "t3code")
+        #expect(template.useURL?.scheme == "aoki")
     }
 
     @Test

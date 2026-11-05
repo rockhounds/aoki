@@ -176,11 +176,11 @@ jobs:
           import { appendFileSync, readFileSync } from "node:fs";
           import { parseEnv } from "node:util";
           const env = parseEnv(readFileSync(".env.local", "utf8"));
-          const googleServicesFile = env.T3CODE_ANDROID_GOOGLE_SERVICES_FILE;
+          const googleServicesFile = env.AOKI_ANDROID_GOOGLE_SERVICES_FILE;
           if (!googleServicesFile) {
-            throw new Error("T3CODE_ANDROID_GOOGLE_SERVICES_FILE is missing from the production environment");
+            throw new Error("AOKI_ANDROID_GOOGLE_SERVICES_FILE is missing from the production environment");
           }
-          appendFileSync(process.env.GITHUB_ENV, `T3CODE_ANDROID_GOOGLE_SERVICES_FILE=${googleServicesFile}\n`);
+          appendFileSync(process.env.GITHUB_ENV, `AOKI_ANDROID_GOOGLE_SERVICES_FILE=${googleServicesFile}\n`);
           NODE
 
       # Only so the versions and fingerprints below are read from the tree that
@@ -206,8 +206,8 @@ jobs:
           MOBILE_BUILD_PROFILE: ${{ inputs.profile || 'production' }}
         run: |
           if [ "$MOBILE_BUILD_PROFILE" = "testflight" ]; then
-            T3CODE_MOBILE_VERSION="$(node -p 'require("./eas.json").build.testflight.env.T3CODE_MOBILE_VERSION')"
-            export T3CODE_MOBILE_VERSION
+            AOKI_MOBILE_VERSION="$(node -p 'require("./eas.json").build.testflight.env.AOKI_MOBILE_VERSION')"
+            export AOKI_MOBILE_VERSION
           fi
           version="$(npx expo config --json --type public | jq -r '.version')"
           {
@@ -228,8 +228,8 @@ jobs:
           MOBILE_BUILD_PROFILE: ${{ inputs.profile || 'production' }}
         run: |
           if [ "$MOBILE_BUILD_PROFILE" = "testflight" ]; then
-            T3CODE_MOBILE_VERSION="$(node -p 'require("./eas.json").build.testflight.env.T3CODE_MOBILE_VERSION')"
-            export T3CODE_MOBILE_VERSION
+            AOKI_MOBILE_VERSION="$(node -p 'require("./eas.json").build.testflight.env.AOKI_MOBILE_VERSION')"
+            export AOKI_MOBILE_VERSION
           fi
           version="$(npx expo config --json --type public | jq -r '.version')"
           hash="$(eas fingerprint:generate --platform ios --environment production --json --non-interactive | sed -n '/^{/,$p' | jq -er '.hash | select(type == "string" and length > 0)')"
@@ -289,8 +289,8 @@ jobs:
           OTA_MESSAGE: ${{ inputs.message || format('Production OTA ({0})', github.sha) }}
         run: |
           if [ "$MOBILE_BUILD_PROFILE" = "testflight" ]; then
-            T3CODE_MOBILE_VERSION="$(node -p 'require("./eas.json").build.testflight.env.T3CODE_MOBILE_VERSION')"
-            export T3CODE_MOBILE_VERSION
+            AOKI_MOBILE_VERSION="$(node -p 'require("./eas.json").build.testflight.env.AOKI_MOBILE_VERSION')"
+            export AOKI_MOBILE_VERSION
           fi
           eas update \
             --channel production \
@@ -315,10 +315,10 @@ jobs:
           for target in ios:production ios:testflight android:production; do
             platform="${target%%:*}"
             profile="${target#*:}"
-            unset T3CODE_MOBILE_VERSION
+            unset AOKI_MOBILE_VERSION
             if [ "$profile" = "testflight" ]; then
-              T3CODE_MOBILE_VERSION="$(node -p 'require("./eas.json").build.testflight.env.T3CODE_MOBILE_VERSION')"
-              export T3CODE_MOBILE_VERSION
+              AOKI_MOBILE_VERSION="$(node -p 'require("./eas.json").build.testflight.env.AOKI_MOBILE_VERSION')"
+              export AOKI_MOBILE_VERSION
             fi
             version="$(npx expo config --json --type public | jq -r '.version')"
             # eas-cli prints an environment-loaded notice to stdout before the

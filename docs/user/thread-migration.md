@@ -13,7 +13,7 @@ Sending your first message starts a fresh provider session using the [portable h
 
 ## Keeping a recovery copy
 
-T3 Code does not have a whole-thread export command. Before a major server update, stop the server and back up your `userdata` directory (`~/.t3/userdata` by default, or `<base-dir>/userdata`).
+T3 Code does not have a whole-thread export command. Before a major server update, stop the server and back up your `userdata` directory (`~/.aoki/userdata` by default, or `<base-dir>/userdata`).
 
 If a migrated transcript is missing, inspect your backup read-only without pointing a server at it:
 

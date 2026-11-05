@@ -55,7 +55,7 @@ const traceSummaryFixture = Effect.gen(function* () {
     Effect.provide(
       ConfigProvider.layer(
         ConfigProvider.fromEnv({
-          env: { T3CODE_TRACE_FILE: traceFilePath, T3CODE_TRACE_MAX_FILES: "2" },
+          env: { AOKI_TRACE_FILE: traceFilePath, AOKI_TRACE_MAX_FILES: "2" },
         }),
       ),
     ),

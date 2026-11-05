@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 
 const CONFIG_PATH = "apps/mobile/app.config.ts";
-const VERSION_LINE = /^( {2}version: repoEnv\.T3CODE_MOBILE_VERSION \?\? ")[^"]+(".*)$/m;
+const VERSION_LINE = /^( {2}version: repoEnv\.AOKI_MOBILE_VERSION \?\? ")[^"]+(".*)$/m;
 
 // Replaces one string literal, so the result needs no formatter.
 function setMobileVersion(source, version) {

@@ -2500,7 +2500,7 @@ describe("orphan worktree reports", () => {
           const config = yield* ServerConfig.ServerConfig;
           const checkout = yield* fs.makeTempDirectoryScoped({ prefix: "cleanup-dev-checkout-" });
           yield* fs.writeFileString(`${checkout}/.git`, "gitdir: /repo/.git/worktrees/dev\n");
-          const baseDir = worktreeHome ? `${checkout}/.t3` : config.baseDir;
+          const baseDir = worktreeHome ? `${checkout}/.aoki` : config.baseDir;
           const fixture = yield* cleanupFixture().pipe(
             Effect.provideService(ServerConfig.ServerConfig, {
               ...config,

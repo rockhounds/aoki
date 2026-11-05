@@ -187,7 +187,7 @@ export const make = Effect.gen(function* () {
         HttpClientRequest.bearerToken(Redacted.value(credential.token)),
         HttpClientRequest.setHeaders({
           accept: input.accept ?? "application/json",
-          "user-agent": "t3code",
+          "user-agent": "aoki",
         }),
       );
       return Effect.gen(function* () {

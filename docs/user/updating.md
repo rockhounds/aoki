@@ -14,7 +14,7 @@ Click the **Update** button at the bottom of the sidebar (web or desktop) to upd
 
 In the desktop app, change **Settings → About → Update track** to switch connected machines together.
 
-- Moving a background service to an older Stable release requires running `t3 update --channel stable --allow-downgrade` on that host.
+- Moving a background service to an older Stable release requires running `aoki update --channel stable --allow-downgrade` on that host.
 - A switch is blocked if the machine's database has schema changes the target track doesn't support yet. macOS desktop apps must switch on that Mac.
 
 ## Continue threads after restarts
@@ -30,8 +30,8 @@ In the desktop app, change **Settings → About → Update track** to switch con
 | Situation                           | Action                                                                                                |
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | Background service / desktop server | Click **Update server** in **Settings → Environments** (desktop hosts relaunch automatically).        |
-| Installed `t3` CLI                  | Run `t3 update <version>` on the host (then `t3 service restart` if you declined the restart prompt). |
-| `npx` server                        | Stop the server and relaunch with `npx t3@<version>` and your usual flags.                            |
+| Installed `aoki` CLI                  | Run `aoki update <version>` on the host (then `aoki service restart` if you declined the restart prompt). |
+| `npx` server                        | Stop the server and relaunch with `npx aoki@<version>` and your usual flags.                            |
 | Package manager (Nix, AUR)          | Update via your package manager.                                                                      |
 
 Each server checks npm/Homebrew/pnpm using its own local registry and proxy settings.

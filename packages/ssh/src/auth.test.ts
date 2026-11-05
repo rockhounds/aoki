@@ -82,7 +82,7 @@ describe("ssh auth", () => {
       assert.equal(env.SSH_ASKPASS, askpassPath);
       assert.equal(env.SSH_ASKPASS_REQUIRE, "force");
       assert.equal(env.T3_SSH_AUTH_SECRET, "super-secret");
-      assert.equal(env.DISPLAY, "t3code");
+      assert.equal(env.DISPLAY, "aoki");
       assert.equal(yield* fs.exists(askpassPath), true);
       assert.include(yield* fs.readFileString(askpassPath), 'printf "%s\\n" "$T3_SSH_AUTH_SECRET"');
     }).pipe(
@@ -229,13 +229,13 @@ describe("ssh auth", () => {
         const runtimeDirectoryOf = (askpass: string) => path.dirname(path.dirname(askpass));
 
         const first = yield* askpassPath();
-        const ownedTarget = yield* fs.makeTempDirectory({ prefix: "t3code-ssh-symlink-target-" });
+        const ownedTarget = yield* fs.makeTempDirectory({ prefix: "aoki-ssh-symlink-target-" });
         yield* fs.remove(runtimeDirectoryOf(first), { recursive: true });
         yield* fs.symlink(ownedTarget, runtimeDirectoryOf(first));
 
         const next = yield* askpassPath();
         assert.notEqual(next, first);
-        assert.equal(yield* fs.exists(path.join(ownedTarget, "t3code-ssh-askpass")), false);
+        assert.equal(yield* fs.exists(path.join(ownedTarget, "aoki-ssh-askpass")), false);
 
         yield* fs.remove(runtimeDirectoryOf(first));
         yield* fs.remove(ownedTarget, { recursive: true });

@@ -1,13 +1,13 @@
 import { tokenizeCliArgs } from "@t3tools/shared/cliArgs";
 import { compareSemverVersions, parseSemver } from "@t3tools/shared/semver";
 
-const T3CODE_CODEX_LAUNCH_ARGS_ENV = "T3CODE_CODEX_LAUNCH_ARGS";
+const AOKI_CODEX_LAUNCH_ARGS_ENV = "AOKI_CODEX_LAUNCH_ARGS";
 
 export const resolveCodexLaunchArgs = (
   launchArgs?: string,
   environment: NodeJS.ProcessEnv = process.env,
 ) => {
-  const override = environment[T3CODE_CODEX_LAUNCH_ARGS_ENV];
+  const override = environment[AOKI_CODEX_LAUNCH_ARGS_ENV];
   return override?.trim() ? override : launchArgs?.trim() || "";
 };
 

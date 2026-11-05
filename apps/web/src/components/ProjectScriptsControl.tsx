@@ -206,7 +206,7 @@ export default function ProjectScriptsControl({
             <MenuShortcut>
               <DownloadIcon
                 className="size-3.5"
-                aria-label={gt("Import", { $context: "verb, import an action from t3.json" })}
+                aria-label={gt("Import", { $context: "verb, import an action from aoki.json" })}
               />
             </MenuShortcut>
           </MenuItem>
