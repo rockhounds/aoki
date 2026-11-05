@@ -67,13 +67,10 @@ function retryDelayMs(failures: number, random: number): number {
   return Math.round(ceiling / 2 + (ceiling / 2) * random);
 }
 
+// Aoki ships no analytics endpoint; events go out only when an operator configures one.
 const TelemetryEnvConfig = Config.all({
-  ingestKey: Config.String("T3CODE_TELEMETRY_KEY").pipe(
-    Config.withDefault("phc_XOWci4oZP4VvLiEyrFqkFjP4CZn55mjYYBMREK5Wd6m"),
-  ),
-  ingestHost: Config.String("T3CODE_TELEMETRY_HOST").pipe(
-    Config.withDefault("https://ingest.t3.codes"),
-  ),
+  ingestKey: Config.String("T3CODE_TELEMETRY_KEY").pipe(Config.withDefault("")),
+  ingestHost: Config.String("T3CODE_TELEMETRY_HOST").pipe(Config.withDefault("")),
   enabled: Config.Boolean("T3CODE_TELEMETRY_ENABLED").pipe(Config.option),
   flushBatchSize: Config.Number("T3CODE_TELEMETRY_FLUSH_BATCH_SIZE").pipe(Config.withDefault(20)),
   maxBufferedEvents: Config.Number("T3CODE_TELEMETRY_MAX_BUFFERED_EVENTS").pipe(
@@ -157,10 +154,18 @@ export const make = Effect.gen(function* () {
   // A managed policy can switch analytics off over the environment, never on.
   const policyAllows =
     ManagedPolicy.deniedBy(yield* ManagedPolicy.ManagedPolicy, "telemetry") === undefined;
+  const endpointConfigured =
+    telemetryConfig.ingestKey.trim() !== "" && telemetryConfig.ingestHost.trim() !== "";
   // A cached PATH does not establish consent from the current login shell.
   const telemetryEnabled = Effect.suspend(() => {
-    if (!enabledAtStartup || !policyAllows || isDoNotTrackSet(hostEnvironment))
+    if (
+      !endpointConfigured ||
+      !enabledAtStartup ||
+      !policyAllows ||
+      isDoNotTrackSet(hostEnvironment)
+    ) {
       return Effect.succeed(false);
+    }
     if (!awaitingShellConsent) return Effect.succeed(true);
     if (hostEnvironment.T3CODE_DESKTOP_SHELL_DISCOVERY_PENDING === "1")
       return Effect.succeed(false);

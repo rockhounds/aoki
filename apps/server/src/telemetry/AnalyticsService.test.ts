@@ -118,26 +118,21 @@ const recordTwentyEvents = Effect.gen(function* () {
   }
 });
 
+const testEndpoint = {
+  T3CODE_TELEMETRY_KEY: "phc_test_key",
+  T3CODE_TELEMETRY_HOST: "http://localhost",
+};
+
 const analyticsLayerWith = (
   client: HttpClient.HttpClient,
   policy?: ManagedPolicyDocument,
-  telemetryEnv: { readonly T3CODE_TELEMETRY_ENABLED?: boolean } = {
-    T3CODE_TELEMETRY_ENABLED: true,
-  },
+  config: Record<string, unknown> = { ...testEndpoint, T3CODE_TELEMETRY_ENABLED: true },
 ) =>
   AnalyticsService.layer.pipe(
     Layer.provideMerge(
       ServerConfig.ServerConfig.layerTest(process.cwd(), { prefix: "t3-telemetry-retry-" }),
     ),
-    Layer.provide(
-      ConfigProvider.layer(
-        ConfigProvider.fromUnknown({
-          ...telemetryEnv,
-          T3CODE_TELEMETRY_KEY: "phc_test_key",
-          T3CODE_TELEMETRY_HOST: "http://localhost",
-        }),
-      ),
-    ),
+    Layer.provide(ConfigProvider.layer(ConfigProvider.fromUnknown(config))),
     Layer.provide(
       Layer.mergeAll(
         Layer.succeed(HostProcess.Platform, "win32"),
@@ -331,9 +326,10 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))("AnalyticsService
   it.effect("sends nothing on a CI runner unless the environment opts in", () =>
     Effect.gen(function* () {
       const onCi = (telemetryEnv: Parameters<typeof analyticsLayerWith>[2]) =>
-        sendFor(1, respondWithStatus(204), recordTwentyEvents, undefined, telemetryEnv).pipe(
-          Effect.provideService(HostProcess.Environment, { GITHUB_ACTIONS: "true" }),
-        );
+        sendFor(1, respondWithStatus(204), recordTwentyEvents, undefined, {
+          ...testEndpoint,
+          ...telemetryEnv,
+        }).pipe(Effect.provideService(HostProcess.Environment, { GITHUB_ACTIONS: "true" }));
       assert.deepEqual(yield* onCi({}), []);
       assert.equal((yield* onCi({ T3CODE_TELEMETRY_ENABLED: true })).length, 1);
     }),
@@ -510,6 +506,25 @@ it.layer(Layer.mergeAll(NodeServices.layer, NodeCrypto.layer))("AnalyticsService
       }).pipe(Effect.provide(layerRuntime));
 
       assert.deepEqual(capturedPaths, []);
+    }),
+  );
+
+  it.effect("sends nothing until a PostHog key and host are configured", () =>
+    Effect.gen(function* () {
+      const requestedUrls: Array<string> = [];
+      const client = HttpClient.make((request) => {
+        requestedUrls.push(request.url);
+        return respondWithStatus(204)(request);
+      });
+      yield* Effect.gen(function* () {
+        const analytics = yield* AnalyticsService.AnalyticsService;
+        yield* analytics.record("test.unconfigured", { index: 1 });
+        yield* analytics.flush;
+      }).pipe(
+        Effect.provide(analyticsLayerWith(client, undefined, { T3CODE_TELEMETRY_ENABLED: true })),
+      );
+
+      assert.deepEqual(requestedUrls, []);
     }),
   );
 });
