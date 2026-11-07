@@ -97,8 +97,9 @@ public actor T3ConnectManagedEnvironmentAuthorizer {
             "subject_token": credential.bootstrapCredential,
             "subject_token_type": "urn:t3:params:oauth:token-type:environment-bootstrap",
             "requested_token_type": "urn:ietf:params:oauth:token-type:access_token",
-            "client_device_type": "mobile",
-            "client_os": ProcessInfo.processInfo.operatingSystemVersionString,
+            "client_device_type": MobileClientMetadata.clientSurface,
+            "client_os": MobileClientMetadata.osName,
+            "client_surface": MobileClientMetadata.clientSurface,
         ]
         if let scopes { fields["scope"] = scopes.joined(separator: " ") }
         if let clientLabel, !clientLabel.isEmpty {

@@ -3520,7 +3520,6 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
                 cancelMarkdownPrefetches(for: invalidatedIDs)
             }
 
-            let wasNearBottom = isNearBottom(collectionView)
             let isInitialLoad = currentThreadID == nil || threadChanged
             let previousIDs = orderedIDs
             let prependedMessages = !threadChanged
@@ -3528,8 +3527,9 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
                 && Array(newIDs.suffix(previousIDs.count)) == previousIDs
             // Self-sizing cells can grow before the next layout restores the
             // bottom offset. Keep following until an actual drag releases it.
-            let shouldFollowBottom = isInitialLoad || (!turnFoldsChanged && (wasNearBottom
-                || (collectionView as? BottomAnchoredTranscriptCollectionView)?.maintainsBottomAnchor == true))
+            let transcript = collectionView as? BottomAnchoredTranscriptCollectionView
+            transcript?.prepareForContentUpdate(isInitialLoad: isInitialLoad, turnFoldsChanged: turnFoldsChanged)
+            let shouldFollowBottom = transcript?.maintainsBottomAnchor == true
             let prependAnchor = !shouldFollowBottom
                 && (prependedMessages || turnFoldsChanged || (loadEarlierChanged && !canLoadEarlier))
                 ? visibleAnchor(in: collectionView, dataSource: dataSource)
@@ -3540,8 +3540,6 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
                 messagesByID = replacementMessagesByID
             }
             orderedIDs = newIDs
-            (collectionView as? BottomAnchoredTranscriptCollectionView)?.maintainsBottomAnchor =
-                shouldFollowBottom
 
             var snapshot: NSDiffableDataSourceSnapshot<Section, String>
             if threadChanged || loadEarlierChanged {
@@ -3596,7 +3594,6 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
                 refresh(reconfiguredIDs, in: &snapshot)
             }
 
-            let transcript = collectionView as? BottomAnchoredTranscriptCollectionView
             let visibleRow = isInitialLoad ? nil : transcript?.firstVisibleItem()
             defer { if let visibleRow { transcript?.keepOnScreen(visibleRow) } }
             dataSource.apply(snapshot, animatingDifferences: false) {
@@ -4238,6 +4235,11 @@ final class BottomAnchoredTranscriptCollectionView: UICollectionView {
     }
     var readerItemID: ((IndexPath) -> String?)?
     var readerIndexPath: ((String) -> IndexPath?)?
+
+    func prepareForContentUpdate(isInitialLoad: Bool, turnFoldsChanged: Bool) {
+        // Only reader actions resume following; shrinking content can also put a reader near the bottom.
+        maintainsBottomAnchor = isInitialLoad || (!turnFoldsChanged && maintainsBottomAnchor)
+    }
 
     private struct ReaderAnchor {
         let indexPath: IndexPath

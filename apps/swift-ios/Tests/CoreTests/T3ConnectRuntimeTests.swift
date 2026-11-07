@@ -240,6 +240,9 @@ final class T3ConnectRuntimeTests: XCTestCase {
         let fields = try XCTUnwrap(form.queryItems)
         XCTAssertEqual(fields.first { $0.name == "subject_token" }?.value, "bootstrap+once")
         XCTAssertEqual(fields.first { $0.name == "client_label" }?.value, "Alex + iPhone")
+        XCTAssertEqual(fields.first { $0.name == "client_device_type" }?.value, "mobile")
+        XCTAssertEqual(fields.first { $0.name == "client_os" }?.value, "iOS")
+        XCTAssertEqual(fields.first { $0.name == "client_surface" }?.value, "mobile")
         XCTAssertFalse(fields.contains { $0.name == "scope" })
     }
 

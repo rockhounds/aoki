@@ -117,7 +117,7 @@ struct FeatureV2WorkLogView: View {
                 Button { state.toggle(message.id) } label: {
                     HStack(spacing: 8) {
                         Image(systemName: state.expandedIDs.contains(message.id) ? "chevron.down" : "chevron.right")
-                        Text(message.activeWorkLabel ?? message.toolName ?? "Work log")
+                        Text(message.toolName ?? "Work log")
                         Spacer(minLength: 0)
                     }
                     .frame(minHeight: T3Metrics.minimumTapTarget)
