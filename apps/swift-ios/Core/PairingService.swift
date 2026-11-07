@@ -142,9 +142,9 @@ public actor PairingService {
                 name: "requested_token_type",
                 value: "urn:ietf:params:oauth:token-type:access_token"
             ),
-            URLQueryItem(name: "client_device_type", value: "mobile"),
-            URLQueryItem(name: "client_os", value: "iOS"),
-            URLQueryItem(name: "client_surface", value: "mobile"),
+            URLQueryItem(name: "client_device_type", value: MobileClientMetadata.clientSurface),
+            URLQueryItem(name: "client_os", value: MobileClientMetadata.osName),
+            URLQueryItem(name: "client_surface", value: MobileClientMetadata.clientSurface),
         ]
         if let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
            !appVersion.isEmpty {

@@ -1,8 +1,28 @@
 import Foundation
 
 enum MobileClientMetadata {
+    static var clientSurface: String {
+        #if os(macOS)
+        "desktop"
+        #else
+        "mobile"
+        #endif
+    }
+
+    static var osName: String {
+        #if os(macOS)
+        "macOS"
+        #else
+        "iOS"
+        #endif
+    }
+
     static func deviceType(for model: String) -> String {
+        #if os(macOS)
+        "desktop"
+        #else
         model.hasPrefix("iPad") ? "tablet" : "phone"
+        #endif
     }
 
     static var osMajorVersion: Int {
@@ -85,8 +105,8 @@ public actor T3Client {
             }
             query.append(URLQueryItem(name: "wsTicket", value: ticket.ticket))
             query.append(URLQueryItem(name: "orchestrationProtocol", value: "2"))
-            query.append(URLQueryItem(name: "clientSurface", value: "mobile"))
-            query.append(URLQueryItem(name: "clientOs", value: "iOS"))
+            query.append(URLQueryItem(name: "clientSurface", value: MobileClientMetadata.clientSurface))
+            query.append(URLQueryItem(name: "clientOs", value: MobileClientMetadata.osName))
             query.append(URLQueryItem(
                 name: "clientOsMajorVersion",
                 value: String(MobileClientMetadata.osMajorVersion)

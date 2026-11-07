@@ -55,6 +55,18 @@ struct TranscriptViewportGeometryTests {
         #expect(!view.maintainsBottomAnchor)
         #expect(!button.isHidden)
         #expect(view.bounds.contains(button.frame))
+
+        view.setContentOffset(CGPoint(x: 0, y: 2_350), animated: false)
+        view.prepareForContentUpdate(isInitialLoad: false, turnFoldsChanged: false)
+        #expect(!view.maintainsBottomAnchor)
+        layout.height = 3_100
+        layout.invalidateLayout()
+        view.layoutIfNeeded()
+        #expect(view.contentOffset.y == 2_350)
+        layout.height = 3_000
+        layout.invalidateLayout()
+        view.layoutIfNeeded()
+
         button.sendActions(for: .touchUpInside)
         #expect(view.contentOffset.y == 2_400)
         #expect(view.maintainsBottomAnchor)

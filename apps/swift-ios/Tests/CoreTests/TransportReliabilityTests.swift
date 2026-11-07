@@ -4,6 +4,8 @@ import XCTest
 @MainActor
 final class TransportReliabilityTests: XCTestCase {
     func testMobileClientMetadataIncludesOSVersionAndDeviceModel() {
+        XCTAssertEqual(MobileClientMetadata.clientSurface, "mobile")
+        XCTAssertEqual(MobileClientMetadata.osName, "iOS")
         XCTAssertGreaterThan(MobileClientMetadata.osMajorVersion, 0)
         XCTAssertFalse(MobileClientMetadata.deviceModel.isEmpty)
         XCTAssertEqual(MobileClientMetadata.deviceType(for: "iPad16,6"), "tablet")
