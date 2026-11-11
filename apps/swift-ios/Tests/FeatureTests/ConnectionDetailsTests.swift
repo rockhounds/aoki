@@ -14,6 +14,16 @@ struct ConnectionDetailsTests {
     }
 
     @Test
+    func keepsPercentEncodedCharactersInFragmentTokens() throws {
+        let details = try ConnectionDetailsParser.parse(
+            "http://192.168.1.42:3773/pair#token=once%2Bonly%26secret"
+        )
+
+        #expect(details.endpoint == "http://192.168.1.42:3773")
+        #expect(details.pairingCode == "once+only&secret")
+    }
+
+    @Test
     func parsesHostedPairingURL() throws {
         let details = try ConnectionDetailsParser.parse(
             "https://app.t3.codes/pair?host=https%3A%2F%2Fdesktop.tailnet.ts.net%2F#token=PAIRCODE"
