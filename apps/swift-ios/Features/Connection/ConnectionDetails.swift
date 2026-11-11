@@ -112,7 +112,8 @@ enum ConnectionDetailsParser {
             throw ConnectionDetailsError.invalidAddress
         }
 
-        let fragmentItems = URLComponents(string: "?\(components.fragment ?? "")")?.queryItems ?? []
+        // percentEncodedFragment keeps %26 from re-parsing as a separator.
+        let fragmentItems = URLComponents(string: "?\(components.percentEncodedFragment ?? "")")?.queryItems ?? []
         let queryItems = components.queryItems ?? []
         let allItems = queryItems + fragmentItems
         let token = firstValue(named: tokenNames, in: allItems)

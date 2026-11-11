@@ -78,7 +78,9 @@ public enum PairingURL {
         try requireSupportedScheme(components.scheme)
 
         let query = components.queryItems ?? []
-        let fragment = queryItems(fromFragment: components.fragment)
+        // percentEncodedFragment: the decoded fragment would re-parse %26 as
+        // a separator and truncate tokens containing reserved characters.
+        let fragment = queryItems(fromFragment: components.percentEncodedFragment)
         let token = (fragment + query)
             .first(where: { $0.name.caseInsensitiveCompare("token") == .orderedSame })?
             .value?
