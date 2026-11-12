@@ -1,0 +1,38 @@
+name: local-only guard
+
+# The Garden is the maintainer's local dev (AOKI.md, "Local-only work") and must never
+# appear in a pushed tree. This fails the run if it does. Keep the path list in sync with
+# scripts/aoki/check-local-only.sh.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: no local-only work in the tree
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check for local-only paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          hits="$(
+            git ls-tree -r --name-only HEAD | grep -xF -f- <<'PATHS' || true
+            apps/aoki-companion/Sources/CompanionGarden.swift
+            apps/aoki-companion/Sources/CompanionGardenView.swift
+            apps/aoki-companion/Sources/GardenLandscape.swift
+            apps/aoki-companion/Sources/GardenViewport.swift
+            apps/aoki-companion/Tests/CompanionGardenTests.swift
+            PATHS
+          )"
+          if [[ -n "$hits" ]]; then
+            echo "::error::Local-only work is in this tree: the Garden must not be pushed (AOKI.md, Local-only work)." >&2
+            printf '%s\n' "$hits" >&2
+            exit 1
+          fi

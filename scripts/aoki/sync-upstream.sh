@@ -93,6 +93,7 @@ verify() {
 }
 
 finish() {
+  "$ROOT/scripts/aoki/check-local-only.sh"
   auto_resolve
   local left
   left="$(conflicted)"
