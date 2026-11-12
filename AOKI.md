@@ -95,6 +95,18 @@ Aoki does not contact T3 Tools' services unless you opt in:
 - **T3 Connect** (Clerk sign-in and the relay) exists only in builds made with T3 Connect values
   in `.env` (see `.env.example`). Copied thread links still open `app.t3.codes`.
 
+## Local-only work
+
+Some work stays on the maintainer's machines and must never land on `main` or on any public
+remote. The companion's Garden UI is the current list: `apps/aoki-companion/Sources/CompanionGarden.swift`,
+`CompanionGardenView.swift`, `GardenLandscape.swift`, `GardenViewport.swift`, and
+`Tests/CompanionGardenTests.swift`. The Garden is the companion's root screen, so the companion
+commit cannot land until that screen is replaced with something shareable.
+
+`scripts/aoki/check-local-only.sh` fails if any local-only path is reachable from a bookmark, and
+`jj sync` runs it before finishing. The `local-only` workflow fails CI if a pushed tree contains
+one anyway. Keep the script's path list and the workflow's in sync.
+
 ## Toolchain
 
 Upstream pins Node `26.12.1` and pnpm `12.14.0` (see `package.json`). On this machine:
