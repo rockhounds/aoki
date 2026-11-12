@@ -107,6 +107,10 @@ commit cannot land until that screen is replaced with something shareable.
 `jj sync` runs it before finishing. The `local-only` workflow fails CI if a pushed tree contains
 one anyway. Keep the script's path list and the workflow's in sync.
 
+Move local-only work between your machines with `git bundle` or a direct fetch by commit id
+(the guard treats every jj bookmark as a push target), and push with `jj git push --bookmark main`
+so nothing else travels.
+
 ## Toolchain
 
 Upstream pins Node `26.12.1` and pnpm `12.14.0` (see `package.json`). On this machine:
