@@ -238,6 +238,20 @@ public struct SettingsView: View {
                     .padding(.horizontal, 16)
                     .padding(.bottom, 12)
                 settingsDivider
+                Picker("Text Selection", selection: preference(\.transcriptTextSelection)) {
+                    ForEach(FeatureTranscriptTextSelection.allCases, id: \.self) { mode in
+                        Text(mode.title).tag(mode)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .frame(minHeight: T3Metrics.minimumTapTarget)
+                .accessibilityIdentifier("settings-text-selection")
+                Text(model.snapshot.settings.transcriptTextSelection.explanation)
+                    .font(T3Typography.supporting)
+                    .foregroundStyle(T3Colors.textSecondary)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
+                settingsDivider
                 SettingsToggleRow(title: "Legacy Plan mode", systemImage: "list.bullet.clipboard",
                     isOn: preference(\.legacyPlanModeEnabled))
             }
@@ -271,7 +285,7 @@ public struct SettingsView: View {
     }
 
     private var aboutSection: some View {
-        SettingsSection(title: "About", footer: "Version \(appVersionLabel)") {
+        SettingsSection(title: "About", footer: "Version \(appVersionLabel) · based on T3 Code \(upstreamVersionLabel)") {
             VStack(spacing: 0) {
                 Link(destination: URL(string: "https://github.com/pingdotgg/t3code")!) {
                     SettingsNavigationRow(
@@ -369,6 +383,10 @@ public struct SettingsView: View {
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
             ?? "?"
         return "\(version) (\(build))"
+    }
+
+    private var upstreamVersionLabel: String {
+        Bundle.main.object(forInfoDictionaryKey: "AOKIUpstreamVersion") as? String ?? "?"
     }
 
     private func preference<Value>(

@@ -1309,6 +1309,30 @@ public enum FeatureAppearance: String, CaseIterable, Sendable, Codable {
     case dark
 }
 
+/// How a long press on an agent's message reaches its text. Drawn text is
+/// cheaper to scroll than text views, so only `.always` keeps text views on.
+public enum FeatureTranscriptTextSelection: String, CaseIterable, Sendable, Codable {
+    case menu
+    case longPress
+    case always
+
+    public var title: String {
+        switch self {
+        case .menu: "Menu"
+        case .longPress: "Long Press"
+        case .always: "Always"
+        }
+    }
+
+    public var explanation: String {
+        switch self {
+        case .menu: "Long press a message for Copy and Select Text. Smoothest scrolling."
+        case .longPress: "Long press an agent message to start selecting at that word."
+        case .always: "Agent messages are always selectable. Long transcripts may scroll less smoothly."
+        }
+    }
+}
+
 public struct FeatureTextSizeAdjustment: Sendable, Equatable, Hashable, Codable {
     public static let range = -2...3
     public static let standard = FeatureTextSizeAdjustment(steps: 0)
@@ -1341,6 +1365,7 @@ public struct FeatureSettings: Sendable, Equatable, Codable {
     public var followUpBehavior: FeatureFollowUpBehavior
     public var legacyPlanModeEnabled: Bool
     public var composerEnterBehavior: FeatureComposerEnterBehavior
+    public var transcriptTextSelection: FeatureTranscriptTextSelection
 
     public init(
         appearance: FeatureAppearance = .system,
@@ -1353,8 +1378,10 @@ public struct FeatureSettings: Sendable, Equatable, Codable {
         defaultSelection: FeatureSelection? = nil,
         followUpBehavior: FeatureFollowUpBehavior = .queue,
         legacyPlanModeEnabled: Bool = false,
-        composerEnterBehavior: FeatureComposerEnterBehavior = .send
+        composerEnterBehavior: FeatureComposerEnterBehavior = .send,
+        transcriptTextSelection: FeatureTranscriptTextSelection = .menu
     ) {
+        self.transcriptTextSelection = transcriptTextSelection
         self.followUpBehavior = followUpBehavior
         self.legacyPlanModeEnabled = legacyPlanModeEnabled
         self.composerEnterBehavior = composerEnterBehavior
@@ -1380,6 +1407,7 @@ public struct FeatureSettings: Sendable, Equatable, Codable {
         case followUpBehavior
         case legacyPlanModeEnabled
         case composerEnterBehavior
+        case transcriptTextSelection
     }
 
     public init(from decoder: any Decoder) throws {
@@ -1390,6 +1418,10 @@ public struct FeatureSettings: Sendable, Equatable, Codable {
             FeatureComposerEnterBehavior.self,
             forKey: .composerEnterBehavior
         ) ?? .send
+        transcriptTextSelection = (try? container.decodeIfPresent(
+            FeatureTranscriptTextSelection.self,
+            forKey: .transcriptTextSelection
+        )) ?? .menu
         appearance = try container.decodeIfPresent(
             FeatureAppearance.self,
             forKey: .appearance
@@ -1429,6 +1461,7 @@ public struct FeatureSettings: Sendable, Equatable, Codable {
         try container.encode(followUpBehavior, forKey: .followUpBehavior)
         try container.encode(legacyPlanModeEnabled, forKey: .legacyPlanModeEnabled)
         try container.encode(composerEnterBehavior, forKey: .composerEnterBehavior)
+        try container.encode(transcriptTextSelection, forKey: .transcriptTextSelection)
         try container.encode(appearance, forKey: .appearance)
         try container.encode(textSize, forKey: .textSize)
         try container.encode(codeSize, forKey: .codeSize)
