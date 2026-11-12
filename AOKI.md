@@ -97,15 +97,17 @@ Aoki does not contact T3 Tools' services unless you opt in:
 
 ## Local-only work
 
-Some work stays on the maintainer's machines and must never land on `main` or on any public
-remote. The companion's Garden UI is the current list: `apps/aoki-companion/Sources/CompanionGarden.swift`,
-`CompanionGardenView.swift`, `GardenLandscape.swift`, `GardenViewport.swift`, and
-`Tests/CompanionGardenTests.swift`. The Garden is the companion's root screen, so the companion
-commit cannot land until that screen is replaced with something shareable.
+The Garden companion lives in `apps/aoki-companion` on an unbookmarked change above the
+main app. Build and publish the main app from its own changes. The companion has its own
+version and can be built from the private change.
 
 `scripts/aoki/check-local-only.sh` fails if any local-only path is reachable from a bookmark, and
 `jj sync` runs it before finishing. The `local-only` workflow fails CI if a pushed tree contains
-one anyway. Keep the script's path list and the workflow's in sync.
+the companion directory.
+
+Move local-only work between your machines with `git bundle` or a direct fetch by commit id
+(the guard treats every jj bookmark as a push target), and push with `jj git push --bookmark main`
+so nothing else travels.
 
 ## Toolchain
 
