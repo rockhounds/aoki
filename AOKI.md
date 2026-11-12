@@ -79,6 +79,20 @@ both cases fix the named change in place and `--continue`, or `--abort`.
 - `AOKI.md`: this file
 - `scripts/aoki/`: fork maintenance scripts
 
+## Versioning
+
+The root `package.json`'s `version` is the one Aoki version. `node scripts/aoki/version.ts`
+checks the server, web, desktop, and contracts packages and the SwiftUI app's
+`MARKETING_VERSION`. Use `--stamp` to update those version fields.
+`scripts/aoki/version.test.ts` fails CI on drift. An upstream sync does not change the version, since
+the base below records it. Bump the patch when Aoki ships a fix or feature, and the minor only for a
+release worth announcing.
+
+`scripts/aoki/upstream.json` records the T3 Code base the stack is synced to; `jj sync` updates it
+and squashes the record into the Aoki change that owns the file. Surfaces that show a version also
+show it as "based on T3 Code <version>". The React Native app keeps upstream's own App Store
+version line (`AOKI_MOBILE_VERSION`).
+
 ## Upstream services
 
 Aoki does not contact T3 Tools' services unless you opt in:

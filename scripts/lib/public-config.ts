@@ -169,3 +169,15 @@ function firstNonEmpty(sources: readonly Environment[], ...names: readonly strin
 function readEnvFile(path: string): Record<string, string | undefined> {
   return NodeFS.existsSync(path) ? NodeUtil.parseEnv(NodeFS.readFileSync(path, "utf8")) : {};
 }
+
+export function readRepoVersion(repoRoot: string = REPO_ROOT): string | undefined {
+  const packageJsonPath = NodePath.join(repoRoot, "package.json");
+  if (!NodeFS.existsSync(packageJsonPath)) return undefined;
+  const parsed: unknown = JSON.parse(NodeFS.readFileSync(packageJsonPath, "utf8"));
+  return typeof parsed === "object" &&
+    parsed !== null &&
+    "version" in parsed &&
+    typeof parsed.version === "string"
+    ? parsed.version
+    : undefined;
+}

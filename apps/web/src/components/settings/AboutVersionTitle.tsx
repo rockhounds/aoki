@@ -1,6 +1,6 @@
-import { msg, T, useGT } from "gt-react";
+import { msg, T, useGT, Var } from "gt-react";
 
-import { APP_VERSION } from "../../branding";
+import { AOKI_UPSTREAM_VERSION, APP_VERSION } from "../../branding";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { InlineButton } from "../ui/button";
 import { stackedThreadToast, toastManager } from "../ui/toast";
@@ -48,6 +48,13 @@ export function AboutVersionTitle() {
           }
         />
       </code>
+      {AOKI_UPSTREAM_VERSION ? (
+        <span className="text-muted-foreground">
+          <T>
+            based on T3 Code <Var>{AOKI_UPSTREAM_VERSION}</Var>
+          </T>
+        </span>
+      ) : null}
     </span>
   );
 }

@@ -9,6 +9,7 @@ import "vite-plus/test/config";
 import { defineConfig, type Connect, type Plugin } from "vite-plus";
 import * as Hash from "effect/Hash";
 import pkg from "./package.json" with { type: "json" };
+import upstreamRecord from "../../scripts/aoki/upstream.json" with { type: "json" };
 import pdfjsPkg from "pdfjs-dist/package.json" with { type: "json" };
 
 import { DEV_PROXIED_PATH_PREFIXES } from "@t3tools/shared/devProxy";
@@ -356,6 +357,7 @@ export default defineConfig(({ command }) => {
       ),
       "import.meta.env.VITE_RELEASE_CHANNEL": JSON.stringify(configuredReleaseChannel),
       "import.meta.env.APP_VERSION": JSON.stringify(configuredAppVersion),
+      "import.meta.env.AOKI_UPSTREAM_VERSION": JSON.stringify(upstreamRecord.version),
     },
     resolve: {
       tsconfigPaths: true,

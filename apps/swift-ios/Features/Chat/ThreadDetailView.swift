@@ -1382,6 +1382,7 @@ public struct ThreadDetailView: View {
                     expandedTurnFoldIDs: expandedTurnFoldIDs,
                     dynamicTypeSize: dynamicTypeSize,
                     codeSizeSteps: codeSizeSteps,
+                    textSelection: model.snapshotExceptThreads.settings.transcriptTextSelection,
                     isWorking: isWorking,
                     isCompacting: isCompacting,
                     activeSubagentCount: detail.activeSubagentCount,
@@ -2967,6 +2968,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
     let expandedTurnFoldIDs: Set<String>?
     let dynamicTypeSize: DynamicTypeSize
     let codeSizeSteps: Int
+    let textSelection: FeatureTranscriptTextSelection
     let isWorking: Bool
     let isCompacting: Bool
     let activeSubagentCount: Int
@@ -3049,6 +3051,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
             expandedTurnFoldIDs: expandedTurnFoldIDs,
             dynamicTypeSize: dynamicTypeSize,
             codeSizeSteps: codeSizeSteps,
+            textSelection: textSelection,
             isWorking: isWorking,
             isCompacting: isCompacting,
             activeSubagentCount: activeSubagentCount,
@@ -3121,6 +3124,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
         private var currentExpandedTurnFoldIDs: Set<String>?
         private var currentDynamicTypeSize: DynamicTypeSize?
         private var currentCodeSizeSteps = 0
+        private var currentTextSelection = FeatureTranscriptTextSelection.menu
         private var currentIsWorking = false
         private var currentIsCompacting = false
         private var currentActiveSubagentCount = 0
@@ -3146,8 +3150,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
                   message.attachments.isEmpty,
                   message.context == nil,
                   !message.text.isEmpty,
-                  messageID != selectingMessageID,
-                  !TranscriptDebug.forcesSelectableText,
+                  !isSelectable(messageID),
                   !message.text.contains("t3-context://"),
                   let document = MarkdownRenderCache.shared.documentImmediately(for: MarkdownContentRevision(message.text))
             else { return nil }
@@ -3224,17 +3227,31 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
             markdownPrefetches.values.forEach { $0.task.cancel() }
         }
 
+        /// Agent messages only: a user message keeps the row menu so Edit stays reachable.
+        private func isSelectable(_ messageID: String) -> Bool {
+            messageID == selectingMessageID || TranscriptDebug.forcesSelectableText
+                || (currentTextSelection == .always && messagesByID[messageID]?.role == .assistant)
+        }
+
         func collectionView(
             _ collectionView: UICollectionView,
             contextMenuConfigurationForItemAt indexPath: IndexPath,
             point: CGPoint
         ) -> UIContextMenuConfiguration? {
-            // The message being selected belongs to its text views' own long press.
+            // A selectable message belongs to its text views' own long press.
             guard let messageID = dataSource?.itemIdentifier(for: indexPath),
-                  messageID != selectingMessageID,
+                  !isSelectable(messageID),
                   let message = messagesByID[messageID],
                   message.role == .user || message.role == .assistant else { return nil }
             let hasText = !message.text.isEmpty && message.workflowScript != true
+            if hasText, message.role == .assistant, currentTextSelection == .longPress {
+                beginSelecting(messageID)
+                DispatchQueue.main.async { [weak self, weak collectionView] in
+                    guard let collectionView else { return }
+                    self?.selectWord(at: point, of: messageID, in: collectionView)
+                }
+                return nil
+            }
             let canEdit = message.role == .user
                 && (canEditMessage?(messageID) == true || canEditPendingMessage?(messageID) == true)
             guard hasText || canEdit else { return nil }
@@ -3286,6 +3303,37 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
             let ids = [previous, messageID].compactMap { $0 }.filter { snapshot.indexOfItem($0) != nil }
             refresh(ids, in: &snapshot)
             dataSource.apply(snapshot, animatingDifferences: false)
+        }
+
+        /// The press that triggered this is not delivered to the new text views,
+        /// so select the word under it and let the handles carry on from there.
+        private func selectWord(at point: CGPoint, of messageID: String, in collectionView: UICollectionView) {
+            guard selectingMessageID == messageID,
+                  let indexPath = dataSource?.indexPath(for: messageID) else { return }
+            collectionView.layoutIfNeeded()
+            guard let cell = collectionView.cellForItem(at: indexPath) else { return }
+            var textViews: [UITextView] = []
+            var pending: [UIView] = [cell.contentView]
+            while let view = pending.popLast() {
+                if let textView = view as? UITextView, textView.isSelectable, !textView.isHidden {
+                    textViews.append(textView)
+                } else {
+                    pending.append(contentsOf: view.subviews)
+                }
+            }
+            func distance(_ textView: UITextView) -> CGFloat {
+                let frame = textView.convert(textView.bounds, to: collectionView)
+                let dx = max(frame.minX - point.x, 0, point.x - frame.maxX)
+                let dy = max(frame.minY - point.y, 0, point.y - frame.maxY)
+                return dx * dx + dy * dy
+            }
+            guard let textView = textViews.min(by: { distance($0) < distance($1) }),
+                  let position = textView.closestPosition(to: collectionView.convert(point, to: textView))
+            else { return }
+            let word = textView.tokenizer.rangeEnclosingPosition(position, with: .word, inDirection: .storage(.forward))
+                ?? textView.tokenizer.rangeEnclosingPosition(position, with: .word, inDirection: .storage(.backward))
+            guard let word, textView.becomeFirstResponder() else { return }
+            textView.selectedTextRange = word
         }
 
         func connect(to collectionView: UICollectionView) {
@@ -3353,7 +3401,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
                         .environment(\.t3CodeSizeSteps, self?.currentCodeSizeSteps ?? 0)
                         .environment(
                             \.markdownTextSelectable,
-                            self?.selectingMessageID == messageID || TranscriptDebug.forcesSelectableText
+                            self?.isSelectable(messageID) == true
                         )
                         .environment(
                             \.openURL,
@@ -3417,6 +3465,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
             expandedTurnFoldIDs: Set<String>?,
             dynamicTypeSize: DynamicTypeSize,
             codeSizeSteps: Int,
+            textSelection: FeatureTranscriptTextSelection,
             isWorking: Bool,
             isCompacting: Bool,
             activeSubagentCount: Int,
@@ -3456,6 +3505,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
             currentPresentationDismissal = presentationDismissal
             let typeSizeChanged = currentDynamicTypeSize != dynamicTypeSize
                 || currentCodeSizeSteps != codeSizeSteps
+                || currentTextSelection != textSelection
             let workingChanged = currentIsWorking != isWorking
             let workingDetailChanged = currentIsCompacting != isCompacting
                 || currentActiveSubagentCount != activeSubagentCount
@@ -3498,6 +3548,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
             currentExpandedTurnFoldIDs = expandedTurnFoldIDs
             currentDynamicTypeSize = dynamicTypeSize
             currentCodeSizeSteps = codeSizeSteps
+            currentTextSelection = textSelection
             currentIsWorking = isWorking
             currentIsCompacting = isCompacting
             currentActiveSubagentCount = activeSubagentCount

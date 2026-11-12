@@ -1,7 +1,7 @@
 import type { ExpoConfig } from "expo/config";
 
 import { BRAND_ASSET_PATHS } from "../../scripts/lib/brand-assets.ts";
-import { loadRepoEnv } from "../../scripts/lib/public-config.ts";
+import { loadRepoEnv, readRepoVersion } from "../../scripts/lib/public-config.ts";
 
 type AppVariant = "development" | "preview" | "production";
 
@@ -246,7 +246,7 @@ const config: ExpoConfig = {
   slug: "aoki",
   platforms: ["ios", "android"],
   scheme: variant.scheme,
-  version: repoEnv.AOKI_MOBILE_VERSION ?? "2.4.0",
+  version: repoEnv.AOKI_MOBILE_VERSION ?? readRepoVersion() ?? "0.0.0",
   runtimeVersion: {
     // Skip costly fingerprinting on dev launches; preview and production OTAs require matching native projects.
     policy: runtimeVersionPolicy,

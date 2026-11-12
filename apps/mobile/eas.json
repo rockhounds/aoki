@@ -57,10 +57,7 @@
       }
     },
     "testflight": {
-      "extends": "production",
-      "env": {
-        "AOKI_MOBILE_VERSION": "3.0.0"
-      }
+      "extends": "production"
     },
     "production": {
       "corepack": true,

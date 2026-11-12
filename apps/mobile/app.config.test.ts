@@ -14,6 +14,7 @@ vi.mock("../../scripts/lib/public-config.ts", () => ({
     AOKI_IOS_PERSONAL_TEAM_BUNDLE_ID: process.env.AOKI_IOS_PERSONAL_TEAM_BUNDLE_ID,
     AOKI_MOBILE_UPDATES_ENABLED: process.env.AOKI_MOBILE_UPDATES_ENABLED,
   }),
+  readRepoVersion: () => "1.2.3-mock",
 }));
 
 afterEach(() => {
@@ -58,6 +59,7 @@ it.each([
   ]);
   expect(config.android?.package).toBe(androidId);
   expect(config.ios?.appleTeamId).toBeUndefined();
+  expect(config.version).toBe("1.2.3-mock");
   expect(config.owner).toBeUndefined();
   expect(config.extra?.eas.projectId).toBeUndefined();
   expect(config.updates?.enabled).toBe(false);
