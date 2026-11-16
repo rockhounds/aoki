@@ -10,6 +10,10 @@ struct ProjectCreationModelsTests {
         let discovery = SourceControlDiscoveryResult(versionControlSystems: [], sourceControlProviders: [
             SourceControlProviderDiscoveryItem(kind: .forgejo, label: "Forgejo", status: .available, installHint: "Install tea",
                 auth: SourceControlProviderAuth(status: .authenticated, account: "forge-user")),
+            SourceControlProviderDiscoveryItem(kind: .unknown, label: "GitCafe", status: .available, installHint: "",
+                auth: SourceControlProviderAuth(status: .authenticated)),
+            SourceControlProviderDiscoveryItem(kind: .unknown, label: "Cursor Origin", status: .available, installHint: "",
+                auth: SourceControlProviderAuth(status: .authenticated)),
         ])
         let option = ProjectRemoteSourceOptions.options(discovery: discovery).first { $0.source == .forgejo }
         #expect(option?.isReady == true)
