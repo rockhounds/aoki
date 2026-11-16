@@ -84,10 +84,10 @@ enum ProjectRemoteSourceOptions {
     static func options(
         discovery: SourceControlDiscoveryResult?
     ) -> [ProjectRemoteSourceOption] {
+        // Servers ship kinds this client decodes as `.unknown` (gitcafe, cursor-origin); duplicates must not trap.
         let providerByKind = Dictionary(
-            uniqueKeysWithValues: (discovery?.sourceControlProviders ?? []).map {
-                ($0.kind.rawValue, $0)
-            }
+            (discovery?.sourceControlProviders ?? []).map { ($0.kind.rawValue, $0) },
+            uniquingKeysWith: { first, _ in first }
         )
 
         return ProjectRemoteSource.allCases.map { source in
