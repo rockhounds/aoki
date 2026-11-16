@@ -28,7 +28,8 @@ struct FeatureTranscriptAgentTests {
         let workflows = try FeatureThreadWorkflows(
             projection: #require(snapshot["projection"]), environmentID: "remote"
         )
-        #expect(workflows.agentRoster == nil)
+        #expect(workflows.agentRoster?.runID == "current")
+        #expect(workflows.agents.first?.runID == "old-run")
         let resolved = try #require(workItem(raw).threadAgent(environmentID: "remote", agents: workflows.agents))
         #expect(resolved == workflows.agents.first)
         #expect(resolved.childThreadID == FeatureScopedID.thread(environmentID: "remote", wireID: "live-child"))
