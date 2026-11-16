@@ -57,7 +57,7 @@ struct UsageModelsTests {
         #expect(unknown.costLabel == "Unpriced")
         #expect(unknown.costShareLabel == "No known rates")
         #expect(unknown.totalTokens == 120)
-        #expect(reported.costLabel == "$0.00")
+        #expect(reported.costLabel == UsageFormat.usd(0))
         #expect(!reported.isCostUnknown)
         #expect(merged.costQuality.unpricedShare == 0.5)
     }
@@ -69,7 +69,7 @@ struct UsageModelsTests {
             records: 2, costShare: 1, unpricedRecords: 1
         )
         #expect(!model.isCostUnknown)
-        #expect(model.costLabel == "$2.00")
+        #expect(model.costLabel == UsageFormat.usd(2))
     }
 
     @Test
