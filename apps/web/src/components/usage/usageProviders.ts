@@ -53,6 +53,18 @@ export const PROVIDER_PRESENTATION = {
     color: "#e0913a",
     driverKind: ProviderDriverKind.make("acpRegistry"),
   },
+  devin: {
+    // oxlint-disable-next-line t3code/no-untranslated-copy -- provider name
+    label: "Devin",
+    color: "#8269dc",
+    driverKind: ProviderDriverKind.make("acpRegistry"),
+  },
+  factoryDroid: {
+    // oxlint-disable-next-line t3code/no-untranslated-copy -- provider name
+    label: "Factory Droid",
+    color: "#a2755e",
+    driverKind: ProviderDriverKind.make("acpRegistry"),
+  },
 } satisfies Record<UsageProviderKind, UsageProviderPresentation>;
 
 export const PROVIDER_ORDER = Object.keys(PROVIDER_PRESENTATION) as UsageProviderKind[];

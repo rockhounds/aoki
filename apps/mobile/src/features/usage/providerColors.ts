@@ -11,5 +11,7 @@ export function providerColors(scheme: "light" | "dark"): Record<UsageProviderKi
     pi: "#4d9f8a",
     muse: "#0866ff",
     commandCode: "#e0913a",
+    devin: "#8269dc",
+    factoryDroid: "#a2755e",
   };
 }

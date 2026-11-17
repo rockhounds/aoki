@@ -86,17 +86,24 @@ const STALE_TEMP_DIRECTORY_MS = 60 * 60 * 1000;
 
 const TRANSCRIPT_READ_CONCURRENCY = 4;
 
-const transcriptReaders = BUILT_IN_USAGE_DRIVERS.flatMap((driver) =>
-  driver.usage?.kind === "transcripts" ? [{ driver, reader: driver.usage }] : [],
+const usageReaders = BUILT_IN_USAGE_DRIVERS.flatMap((driver) =>
+  (driver.usage ? ("kind" in driver.usage ? [driver.usage] : driver.usage) : []).map((reader) => ({
+    driver,
+    reader,
+  })),
 );
 
-const scanReaders = BUILT_IN_USAGE_DRIVERS.flatMap((driver) =>
-  driver.usage?.kind === "scan" ? [{ driver, reader: driver.usage }] : [],
+const transcriptReaders = usageReaders.flatMap(({ driver, reader }) =>
+  reader.kind === "transcripts" ? [{ driver, reader }] : [],
+);
+
+const scanReaders = usageReaders.flatMap(({ driver, reader }) =>
+  reader.kind === "scan" ? [{ driver, reader }] : [],
 );
 
 const providerRateModels = new Map(
-  BUILT_IN_USAGE_DRIVERS.flatMap(({ usage }) =>
-    usage?.rateModel === undefined ? [] : [[usage.provider, usage.rateModel] as const],
+  usageReaders.flatMap(({ reader }) =>
+    reader.rateModel === undefined ? [] : [[reader.provider, reader.rateModel] as const],
   ),
 );
 

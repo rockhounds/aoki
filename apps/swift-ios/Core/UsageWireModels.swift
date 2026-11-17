@@ -19,6 +19,9 @@ public enum UsageProviderKind: String, Codable, CaseIterable, Sendable {
     case cursor
     case opencode
     case antigravity
+    case commandCode
+    case devin
+    case factoryDroid
 
     public init?(driver: String) {
         self.init(rawValue: driver == "claudeAgent" ? "claude" : driver)
@@ -32,6 +35,9 @@ public enum UsageProviderKind: String, Codable, CaseIterable, Sendable {
         case .cursor: "Cursor"
         case .opencode: "OpenCode"
         case .antigravity: "Antigravity"
+        case .commandCode: "Command Code"
+        case .devin: "Devin"
+        case .factoryDroid: "Factory Droid"
         }
     }
 }

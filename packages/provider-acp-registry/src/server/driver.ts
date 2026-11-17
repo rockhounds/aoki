@@ -67,6 +67,8 @@ import * as AcpRegistryRuntimeCoordinator from "./AcpRegistryRuntimeCoordinator.
 import * as AcpRegistryAuth from "./auth.ts";
 import * as AcpRegistryAuthenticationState from "./authenticationState.ts";
 import { commandCodeUsageReader } from "./commandCodeUsage.ts";
+import { devinUsageReader } from "./devinUsage.ts";
+import { factoryDroidUsageReader } from "./factoryDroidUsage.ts";
 import {
   acpUsageAgent,
   readAcpRegistryUsageLimits,
@@ -634,7 +636,7 @@ export const AcpRegistryDriver: ProviderDriver<
   },
   configSchema: AcpRegistrySettings,
   defaultConfig: () => decodeSettings({}),
-  usage: commandCodeUsageReader,
+  usage: [commandCodeUsageReader, devinUsageReader, factoryDroidUsageReader],
   create: Effect.fn("AcpRegistryDriver.create")(function* ({
     instanceId,
     displayName,

@@ -333,3 +333,24 @@ it.effect("reads usage in full when the saved answer cannot be read", () =>
     unmount();
   }),
 );
+
+it.effect("keeps the provisional usage when the first refresh fails", () =>
+  Effect.gen(function* () {
+    const harness = yield* makeHarness(
+      (_request, input) =>
+        input.provisional === true
+          ? Effect.void
+          : Effect.fail(new UsageReadError({ reason: "scanFailed", detail: "Scan unavailable" })),
+      () => [cursorSource(true)],
+    );
+    const summary = harness.summary();
+    const terminal = yield* AtomRegistry.toStream(harness.registry, summary).pipe(
+      Stream.filter((result) => result._tag !== "Initial" && !result.waiting),
+      Stream.runHead,
+      Effect.map(Option.getOrThrow),
+    );
+    expect(terminal._tag).toBe("Success");
+    expect(AsyncResult.getOrElse(terminal, () => null)?.sources).toEqual([cursorSource(true)]);
+    expect(harness.inputs().map(({ provisional }) => provisional)).toEqual([true, undefined]);
+  }),
+);

@@ -12,6 +12,8 @@ export const PROVIDER_ORDER: readonly UsageProviderKind[] = [
   "pi",
   "muse",
   "commandCode",
+  "devin",
+  "factoryDroid",
 ];
 
 export function usageProviderKind(driver: string): UsageProviderKind | null {
@@ -29,6 +31,8 @@ export const PROVIDER_LABEL: Record<UsageProviderKind, string> = {
   pi: "Pi",
   muse: "Muse Code",
   commandCode: "Command Code",
+  devin: "Devin",
+  factoryDroid: "Factory Droid",
 };
 
 export function useProviderColors(): Record<UsageProviderKind, string> {

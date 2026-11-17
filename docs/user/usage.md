@@ -13,6 +13,9 @@ Usage aggregates history across Codex, Claude Code, Grok Build, OpenCode, Antigr
 - **Custom data directories**: Honors `CODEX_HOME`, `CLAUDE_CONFIG_DIR`, `GROK_HOME`, `PI_CODING_AGENT_DIR` / `PI_CODING_AGENT_SESSION_DIR`, `OPENCODE_DATA_DIR`, `ANTIGRAVITY_DATA_DIR`, and `XDG_DATA_HOME` (Muse). Use absolute or `~/` paths. Set `AOKI_HOST_ID` to pin a container's host identity.
 - **Exclusions**: Codex and Claude Code 2.0.63+ text-generation runs (titles, commits, PR text, review guides) and Grok turns without a saved completed-turn record are not included.
 
+- **Devin**: Sign in to Devin on the machine running your ACP Registry provider. Usage includes the token history saved by Devin CLI on that machine, and **Usage → Limits** shows the shared daily and weekly quotas that Devin reports for your plan.
+- **Command Code and Factory Droid**: **Usage → Tokens** includes Command Code account activity and Factory Droid session totals. Factory Droid saves one total per session, charted at the time it was last saved.
+
 ## Custom model prices and filtering
 
 - **Custom prices & model mapping**: Open the environment dropdown on **Usage → Model prices** (or click **Set price** on an unpriced model) to set USD per million input/output/cache tokens, or set **Map to** to merge a preview/alias model ID into a target model's totals.
