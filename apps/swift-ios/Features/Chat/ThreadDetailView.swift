@@ -3503,7 +3503,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
             currentIsWorkflowBusy = isWorkflowBusy
             let presentationDismissalChanged = currentPresentationDismissal.requestID != presentationDismissal.requestID
             currentPresentationDismissal = presentationDismissal
-            let typeSizeChanged = currentDynamicTypeSize != dynamicTypeSize
+            let rowStyleChanged = currentDynamicTypeSize != dynamicTypeSize
                 || currentCodeSizeSteps != codeSizeSteps
                 || currentTextSelection != textSelection
             let workingChanged = currentIsWorking != isWorking
@@ -3513,7 +3513,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
                 || currentIsMonitoring != isMonitoring
             let loadEarlierChanged = currentCanLoadEarlier != canLoadEarlier
                 || currentIsLoadingEarlier != isLoadingEarlier
-            guard threadChanged || imageContextChanged || skillsChanged || typeSizeChanged
+            guard threadChanged || imageContextChanged || skillsChanged || rowStyleChanged
                 || inspectionContextChanged || !workflowChangedIDs.isEmpty
                 || presentationDismissalChanged
                 || revisionChanged || turnFoldsChanged || workingChanged
@@ -3526,7 +3526,7 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
             let state = incremental ?? fullState(messages: messages)
             let newIDs = state.ids
             let idsChanged = state.idsChanged
-            let contentChangedIDs = typeSizeChanged || imageContextChanged || skillsChanged || inspectionContextChanged
+            let contentChangedIDs = rowStyleChanged || imageContextChanged || skillsChanged || inspectionContextChanged
                 ? newIDs
                 : state.changedIDs
             var changedIDs = workflowChangedIDs.isEmpty

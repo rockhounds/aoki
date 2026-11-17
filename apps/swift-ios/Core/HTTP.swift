@@ -716,9 +716,11 @@ public struct AuthOtherClientSessionsRevokeResult: Codable, Equatable, Sendable 
     public let revokedCount: Int
 }
 
+/// `path` must already be percent-encoded; dynamic segments such as thread IDs
+/// can contain a literal `%` that the plain `path` setter would encode again.
 func endpoint(_ baseURL: URL, path: String, queryItems: [URLQueryItem] = []) -> URL {
     var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)!
-    components.path = path
+    components.percentEncodedPath = path
     components.queryItems = queryItems.isEmpty ? nil : queryItems
     components.fragment = nil
     return components.url!

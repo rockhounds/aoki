@@ -94,6 +94,14 @@ final class V2OrchestrationClientTests: XCTestCase {
         XCTAssertEqual(history.value(forHTTPHeaderField: "x-t3-orchestration-protocol"), "2")
     }
 
+    func testEndpointSendsEncodedThreadIDsUnchanged() throws {
+        let url = endpoint(
+            try XCTUnwrap(URL(string: "http://192.168.1.7:3773")),
+            path: "/api/orchestration/threads/thread:delegated-task:mcp%253A1/bounded"
+        )
+        XCTAssertEqual(url.absoluteString, "http://192.168.1.7:3773/api/orchestration/threads/thread:delegated-task:mcp%253A1/bounded")
+    }
+
     func testV2ConnectionSendsCanonicalLaunchCommand() async throws {
         let transport = try V2ClientHTTPTransport()
         let socket = V2ClientCommandSocket()
