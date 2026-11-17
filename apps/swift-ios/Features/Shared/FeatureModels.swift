@@ -1309,7 +1309,7 @@ public enum FeatureAppearance: String, CaseIterable, Sendable, Codable {
     case dark
 }
 
-/// How a long press on an agent's message reaches its text. Drawn text is
+/// How a long press on a message reaches its text. Drawn text is
 /// cheaper to scroll than text views, so only `.always` keeps text views on.
 public enum FeatureTranscriptTextSelection: String, CaseIterable, Sendable, Codable {
     case menu
@@ -1327,8 +1327,8 @@ public enum FeatureTranscriptTextSelection: String, CaseIterable, Sendable, Coda
     public var explanation: String {
         switch self {
         case .menu: "Long press a message for Copy and Select Text. Smoothest scrolling."
-        case .longPress: "Long press an agent message to start selecting at that word."
-        case .always: "Agent messages are always selectable. Long transcripts may scroll less smoothly."
+        case .longPress: "Long press a message and drag to select. Edit actions are unavailable."
+        case .always: "Messages are always selectable. Edit actions are unavailable, and long transcripts may scroll less smoothly."
         }
     }
 }

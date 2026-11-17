@@ -15,6 +15,8 @@ const hour = 60 * 60 * 1000;
 describe("acpUsageAgent", () => {
   it("recognizes registry, local, and renamed installs", () => {
     const settings = { agentId: "", commandPath: "", authMethodId: "" };
+    assert.strictEqual(acpUsageAgent({ ...settings, agentId: "devin" }), "devin");
+    assert.strictEqual(acpUsageAgent({ ...settings, commandPath: "C:\\bin\\devin.exe" }), "devin");
     assert.strictEqual(acpUsageAgent({ ...settings, agentId: "factory-droid" }), "factoryDroid");
     assert.strictEqual(
       acpUsageAgent({ ...settings, commandPath: "/home/me/.local/bin/droid" }),

@@ -526,6 +526,76 @@ describe("Codex usage history", () => {
 });
 
 describe("UsageService", () => {
+  it.effect("reports Factory Droid's saved session tokens once across provider instances", () =>
+    Effect.gen(function* () {
+      const { settings, home } = yield* setup;
+      const factoryHome = NodePath.join(home, "factory");
+      const workspace = NodePath.join(factoryHome, "sessions", "workspace");
+      const file = NodePath.join(workspace, "session.settings.json");
+      const savedAt = DateTime.toEpochMillis(DateTime.makeUnsafe("2026-08-01T10:00:00Z")) / 1000;
+      yield* Effect.promise(async () => {
+        await NodeFSP.mkdir(workspace, { recursive: true });
+        await NodeFSP.writeFile(
+          file,
+          JSON.stringify({
+            model: "last-selected-model",
+            tokenUsage: {
+              inputTokens: 81,
+              outputTokens: 29,
+              cacheCreationTokens: 40,
+              cacheReadTokens: 50,
+              thinkingTokens: 7,
+              factoryCredits: 101,
+            },
+            lastCallTokenUsage: { inputTokens: 999 },
+            inclusiveTokenUsage: { inputTokens: 999 },
+          }),
+        );
+        await NodeFSP.utimes(file, savedAt, savedAt);
+      });
+      const instance = {
+        driver: ProviderDriverKind.make("acpRegistry"),
+        config: { agentId: "factory-droid" },
+        environment: [{ name: "FACTORY_DIR", value: factoryHome, sensitive: false }],
+      };
+      const service = yield* UsageService.make.pipe(
+        Effect.provide(
+          layerService({
+            prefix: "factory-droid-usage",
+            home,
+            settings: {
+              providerInstances: {
+                ...settings.providerInstances,
+                [ProviderInstanceId.make("droid")]: instance,
+                [ProviderInstanceId.make("other-droid")]: instance,
+              },
+            },
+          }),
+        ),
+      );
+      const summary = yield* service.readSummary(WINDOW);
+      assert.deepEqual(
+        summary.buckets
+          .filter((bucket) => bucket.provider === "factoryDroid")
+          .map(({ day, totals, sessions, costSource }) => ({ day, totals, sessions, costSource })),
+        [
+          {
+            day: "2026-08-01",
+            totals: {
+              uncachedInputTokens: 81,
+              outputTokens: 29,
+              cacheCreationTokens: 40,
+              cachedInputTokens: 50,
+              reasoningTokens: 7,
+            },
+            sessions: 1,
+            costSource: "unpriced",
+          },
+        ],
+      );
+    }),
+  );
+
   it.effect("keeps pricing metadata paired with the rates used during a concurrent refresh", () =>
     Effect.gen(function* () {
       const { home, settings } = yield* setup;

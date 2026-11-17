@@ -692,6 +692,9 @@ extension UsageProviderKind {
         case .cursor: .blue
         case .opencode: .purple
         case .antigravity: .green
+        case .commandCode: .orange
+        case .devin: .purple
+        case .factoryDroid: .brown
         }
     }
 }

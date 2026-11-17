@@ -17,13 +17,16 @@ import * as Path from "effect/Path";
 import * as Schema from "effect/Schema";
 
 import type { AcpRegistrySettings } from "../settings.ts";
+import { readDevinAccountUsage } from "./devinUsageLimits.ts";
 
-export type AcpUsageAgent = "commandCode" | "factoryDroid";
+export type AcpUsageAgent = "commandCode" | "factoryDroid" | "devin";
 
 export function acpUsageAgent(
   settings: Pick<AcpRegistrySettings, "agentId" | "commandPath" | "authMethodId">,
 ): AcpUsageAgent | undefined {
   const executable = settings.commandPath.split(/[\\/]/).pop() ?? "";
+  if (settings.agentId === "devin" || executable === "devin" || executable === "devin.exe")
+    return "devin";
   if (settings.agentId === "factory-droid" || executable === "droid") return "factoryDroid";
   if (
     settings.agentId === "command-code" ||
@@ -402,6 +405,7 @@ const readFactoryUsageLimits = Effect.fn("AcpRegistryUsage.readFactoryUsageLimit
 const AGENT_LABEL: Record<AcpUsageAgent, string> = {
   commandCode: "Command Code",
   factoryDroid: "Factory",
+  devin: "Devin",
 };
 
 /** Undefined when the agent has no stored sign-in to read usage with. */
@@ -413,10 +417,23 @@ export const readAcpRegistryUsageLimits = Effect.fn("AcpRegistryUsage.readUsageL
   const read =
     agent === "commandCode"
       ? readCommandCodeUsageLimits(environment, checkedAt)
-      : readFactoryUsageLimits(environment, checkedAt);
+      : agent === "factoryDroid"
+        ? readFactoryUsageLimits(environment, checkedAt)
+        : readDevinAccountUsage(environment, Date.parse(checkedAt)).pipe(
+            Effect.flatMap((account) =>
+              account && account.windows.length > 0
+                ? fingerprintCredential(`devin\0${account.identity}`).pipe(
+                    Effect.map((credentialFingerprint) => ({
+                      ...makeUsageLimits({ checkedAt, windows: account.windows }),
+                      credentialFingerprint,
+                    })),
+                  )
+                : Effect.undefined,
+            ),
+          );
   return yield* read.pipe(
     Effect.timeout("10 seconds"),
-    Effect.tapCause((cause) => Effect.logDebug("ACP usage limits read failed", { agent, cause })),
+    Effect.tapCause(() => Effect.logDebug("ACP usage limits read failed", { agent })),
     Effect.orElseSucceed(() =>
       makeUnavailableUsageLimits({
         checkedAt,

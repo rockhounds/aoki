@@ -36,6 +36,13 @@ Cursor reads account usage from Cursor's API for the account you signed in with 
 account counts once across connected environments. T3 does not estimate missing tokens from
 conversation text.
 
+Sign in to Devin on the machine running your ACP Registry provider. **Usage** includes
+the token history saved by Devin CLI on that machine. **Usage → Limits** shows the shared
+daily and weekly quotas that Devin reports for your plan.
+
+**Usage → Tokens** includes Command Code account activity and Factory Droid session totals.
+Factory Droid saves one total per session. Aoki charts that total at the time it was last saved.
+
 Usage includes each configured account's history, including disabled accounts. Custom homes follow
 the account's home setting or its `CODEX_HOME`, `CLAUDE_CONFIG_DIR`, or `GROK_HOME` environment
 variable. Pi reads `~/.pi/agent/sessions`, or the `sessions` directory under

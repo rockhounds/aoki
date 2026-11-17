@@ -3091,7 +3091,8 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
     }
 
     @MainActor
-    final class Coordinator: NSObject, UICollectionViewDataSourcePrefetching, UICollectionViewDelegate {
+    final class Coordinator: NSObject, UICollectionViewDataSourcePrefetching, UICollectionViewDelegate,
+        UIGestureRecognizerDelegate {
         private struct MarkdownPrefetch {
             let revision: MarkdownContentRevision
             let task: Task<Void, Never>
@@ -3227,10 +3228,15 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
             markdownPrefetches.values.forEach { $0.task.cancel() }
         }
 
-        /// Agent messages only: a user message keeps the row menu so Edit stays reachable.
         private func isSelectable(_ messageID: String) -> Bool {
             messageID == selectingMessageID || TranscriptDebug.forcesSelectableText
-                || (currentTextSelection == .always && messagesByID[messageID]?.role == .assistant)
+                || (currentTextSelection == .always && messagesByID[messageID] != nil)
+        }
+
+        private func hasSelectableText(_ messageID: String) -> Bool {
+            guard let message = messagesByID[messageID],
+                  message.role == .user || message.role == .assistant else { return false }
+            return !message.text.isEmpty && message.workflowScript != true
         }
 
         func collectionView(
@@ -3243,15 +3249,9 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
                   !isSelectable(messageID),
                   let message = messagesByID[messageID],
                   message.role == .user || message.role == .assistant else { return nil }
-            let hasText = !message.text.isEmpty && message.workflowScript != true
-            if hasText, message.role == .assistant, currentTextSelection == .longPress {
-                beginSelecting(messageID)
-                DispatchQueue.main.async { [weak self, weak collectionView] in
-                    guard let collectionView else { return }
-                    self?.selectWord(at: point, of: messageID, in: collectionView)
-                }
-                return nil
-            }
+            let hasText = hasSelectableText(messageID)
+            // Long Press mode: `selectionPress` owns the press on text.
+            if hasText, currentTextSelection == .longPress { return nil }
             let canEdit = message.role == .user
                 && (canEditMessage?(messageID) == true || canEditPendingMessage?(messageID) == true)
             guard hasText || canEdit else { return nil }
@@ -3305,13 +3305,51 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
             dataSource.apply(snapshot, animatingDifferences: false)
         }
 
-        /// The press that triggered this is not delivered to the new text views,
-        /// so select the word under it and let the handles carry on from there.
-        private func selectWord(at point: CGPoint, of messageID: String, in collectionView: UICollectionView) {
-            guard selectingMessageID == messageID,
-                  let indexPath = dataSource?.indexPath(for: messageID) else { return }
+        private var selectionPressRecognizer: UILongPressGestureRecognizer?
+        private var selectionPress: TranscriptSelectionPress?
+
+        /// Long Press mode. The press swaps its row to text views, then keeps
+        /// driving their selection until the finger lifts, like a long press on
+        /// a text view would. Drawn rows have no text views to receive it.
+        @objc private func handleSelectionPress(_ recognizer: UILongPressGestureRecognizer) {
+            guard let collectionView = recognizer.view as? UICollectionView else { return }
+            let point = recognizer.location(in: collectionView)
+            switch recognizer.state {
+            case .began:
+                guard let indexPath = collectionView.indexPathForItem(at: point),
+                      let messageID = dataSource?.itemIdentifier(for: indexPath) else { return }
+                beginSelecting(messageID)
+                selectionPress = TranscriptSelectionPress(messageID: messageID)
+                trackSelectionPress(at: point, in: collectionView)
+            case .changed:
+                trackSelectionPress(at: point, in: collectionView)
+            case .ended:
+                trackSelectionPress(at: point, in: collectionView)
+                if let press = selectionPress, let textView = press.textView {
+                    press.finish(at: collectionView.convert(point, to: textView))
+                }
+                selectionPress = nil
+            default:
+                selectionPress?.cancel()
+                selectionPress = nil
+            }
+        }
+
+        private func trackSelectionPress(at point: CGPoint, in collectionView: UICollectionView) {
+            guard let press = selectionPress, selectingMessageID == press.messageID else { return }
+            // SwiftUI may lay the new text views out a frame after the swap.
+            if press.textView == nil {
+                guard let textView = textView(of: press.messageID, nearest: point, in: collectionView) else { return }
+                press.start(in: textView, at: collectionView.convert(point, to: textView))
+            } else if let textView = press.textView {
+                press.extend(to: collectionView.convert(point, to: textView))
+            }
+        }
+
+        private func textView(of messageID: String, nearest point: CGPoint, in collectionView: UICollectionView) -> UITextView? {
+            guard let indexPath = dataSource?.indexPath(for: messageID) else { return nil }
             collectionView.layoutIfNeeded()
-            guard let cell = collectionView.cellForItem(at: indexPath) else { return }
+            guard let cell = collectionView.cellForItem(at: indexPath) else { return nil }
             var textViews: [UITextView] = []
             var pending: [UIView] = [cell.contentView]
             while let view = pending.popLast() {
@@ -3327,13 +3365,25 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
                 let dy = max(frame.minY - point.y, 0, point.y - frame.maxY)
                 return dx * dx + dy * dy
             }
-            guard let textView = textViews.min(by: { distance($0) < distance($1) }),
-                  let position = textView.closestPosition(to: collectionView.convert(point, to: textView))
-            else { return }
-            let word = textView.tokenizer.rangeEnclosingPosition(position, with: .word, inDirection: .storage(.forward))
-                ?? textView.tokenizer.rangeEnclosingPosition(position, with: .word, inDirection: .storage(.backward))
-            guard let word, textView.becomeFirstResponder() else { return }
-            textView.selectedTextRange = word
+            return textViews.min { distance($0) < distance($1) }
+        }
+
+        func gestureRecognizerShouldBegin(_ recognizer: UIGestureRecognizer) -> Bool {
+            guard recognizer === selectionPressRecognizer, currentTextSelection == .longPress,
+                  let collectionView = recognizer.view as? UICollectionView,
+                  let indexPath = collectionView.indexPathForItem(at: recognizer.location(in: collectionView)),
+                  let messageID = dataSource?.itemIdentifier(for: indexPath) else { return false }
+            // Rows already showing text views handle their own long press.
+            return hasSelectableText(messageID) && !isSelectable(messageID)
+        }
+
+        /// The row menu's press declines these rows, so let it run alongside; the
+        /// scroll pan must still yield or dragging the selection would scroll.
+        func gestureRecognizer(
+            _ recognizer: UIGestureRecognizer,
+            shouldRecognizeSimultaneouslyWith other: UIGestureRecognizer
+        ) -> Bool {
+            recognizer === selectionPressRecognizer && !(other is UIPanGestureRecognizer)
         }
 
         func connect(to collectionView: UICollectionView) {
@@ -3448,6 +3498,10 @@ private struct FeatureTranscriptCollectionView: UIViewRepresentable {
             }
             collectionView.prefetchDataSource = self
             collectionView.delegate = self
+            let selectionPress = UILongPressGestureRecognizer(target: self, action: #selector(handleSelectionPress))
+            selectionPress.delegate = self
+            collectionView.addGestureRecognizer(selectionPress)
+            selectionPressRecognizer = selectionPress
         }
 
         func update(

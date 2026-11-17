@@ -63,7 +63,9 @@ import {
   runStreamInSession,
   subscribe,
   subscribeDynamicWithSession,
+  type EnvironmentRpcFailure,
   type EnvironmentRpcInput,
+  type EnvironmentRpcUnavailableError,
 } from "../rpc/client.ts";
 import type { RpcSession } from "../rpc/session.ts";
 import { followStreamInEnvironment } from "./runtime.ts";
@@ -1623,28 +1625,39 @@ export function createServerEnvironmentAtoms<R, E>(
       execute: (input, emit, previous) => {
         const settled = (summary: UsageSummary) =>
           !summary.sources.some((source) => source.refreshing === true);
+        const keepOnFailure =
+          (summary: UsageSummary) =>
+          (
+            error:
+              | EnvironmentRpcFailure<typeof WS_METHODS.serverGetUsageSummary>
+              | EnvironmentRpcUnavailableError,
+          ) =>
+            error._tag === "EnvironmentAuthorizationError"
+              ? Effect.fail(error)
+              : Effect.logWarning("Could not refresh usage summary.").pipe(
+                  Effect.annotateLogs({ ...safeErrorLogAttributes(error) }),
+                  Effect.as(summary),
+                );
         const read = request(WS_METHODS.serverGetUsageSummary, input).pipe(
           Effect.filterOrElse(settled, (summary) =>
             emit(summary).pipe(
               Effect.andThen(
-                request(WS_METHODS.serverGetUsageSummary, { ...input, awaitRefresh: true }),
-              ),
-              Effect.catch((error) =>
-                Effect.logWarning("Could not refresh slow usage sources.").pipe(
-                  Effect.annotateLogs({ ...safeErrorLogAttributes(error) }),
-                  Effect.as(summary),
+                request(WS_METHODS.serverGetUsageSummary, { ...input, awaitRefresh: true }).pipe(
+                  Effect.catch(keepOnFailure(summary)),
                 ),
               ),
             ),
           ),
         );
-        if (Option.isSome(previous)) return read;
+        if (Option.isSome(previous)) return read.pipe(Effect.catch(keepOnFailure(previous.value)));
         return request(WS_METHODS.serverGetUsageSummary, { ...input, provisional: true }).pipe(
           Effect.matchEffect({
             // The saved answer only speeds things up; without it the plain read still answers.
             onFailure: () => read,
             onSuccess: (saved) =>
-              settled(saved) ? Effect.succeed(saved) : emit(saved).pipe(Effect.andThen(read)),
+              settled(saved)
+                ? Effect.succeed(saved)
+                : emit(saved).pipe(Effect.andThen(read.pipe(Effect.catch(keepOnFailure(saved))))),
           }),
         );
       },
