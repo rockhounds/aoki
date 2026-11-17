@@ -25,6 +25,7 @@ import * as Result from "effect/Result";
 import * as Schema from "effect/Schema";
 import * as Semaphore from "effect/Semaphore";
 import * as ChildProcessSpawner from "effect/process/ChildProcessSpawner";
+import * as HttpClient from "effect/http/HttpClient";
 
 import * as ProviderHost from "@t3tools/provider-core/server/ProviderHost";
 import { AcpRegistryAdapterV2Driver, type AcpRegistryAdapterV2DriverEnv } from "./adapter.ts";
@@ -65,6 +66,12 @@ import * as AcpRegistrySupport from "./AcpRegistrySupport.ts";
 import * as AcpRegistryRuntimeCoordinator from "./AcpRegistryRuntimeCoordinator.ts";
 import * as AcpRegistryAuth from "./auth.ts";
 import * as AcpRegistryAuthenticationState from "./authenticationState.ts";
+import { commandCodeUsageReader } from "./commandCodeUsage.ts";
+import {
+  acpUsageAgent,
+  readAcpRegistryUsageLimits,
+  type AcpRegistryUsageEnv,
+} from "./usageLimits.ts";
 import {
   acpRegistryCurrentModelOptions,
   acpRegistryModelsToDiscover,
@@ -610,9 +617,14 @@ export const checkAcpRegistryProviderReadiness = Effect.fn(
 export type AcpRegistryDriverEnv =
   | AcpRegistryAdapterV2DriverEnv
   | Digest.Digest
+  | HttpClient.HttpClient
   | ProviderHost.ProviderHost;
 
-export const AcpRegistryDriver: ProviderDriver<AcpRegistrySettings, AcpRegistryDriverEnv> = {
+export const AcpRegistryDriver: ProviderDriver<
+  AcpRegistrySettings,
+  AcpRegistryDriverEnv,
+  AcpRegistryUsageEnv
+> = {
   driverKind: DRIVER_KIND,
   metadata: {
     displayName: "ACP Registry",
@@ -622,6 +634,7 @@ export const AcpRegistryDriver: ProviderDriver<AcpRegistrySettings, AcpRegistryD
   },
   configSchema: AcpRegistrySettings,
   defaultConfig: () => decodeSettings({}),
+  usage: commandCodeUsageReader,
   create: Effect.fn("AcpRegistryDriver.create")(function* ({
     instanceId,
     displayName,
@@ -780,7 +793,17 @@ export const AcpRegistryDriver: ProviderDriver<AcpRegistrySettings, AcpRegistryD
     });
     // A local executable's version comes only from probing it, so readiness checks reuse the last report.
     const reportedLocalVersion = yield* Ref.make<string | null>(null);
-    const checkProvider = checkAcpRegistryProviderReadiness(readinessInput).pipe(
+    const usageAgent = acpUsageAgent(effectiveConfig);
+    const checkUsageLimits =
+      usageAgent === undefined
+        ? undefined
+        : readAcpRegistryUsageLimits(usageAgent, processEnvironment).pipe(
+            Effect.provideService(FileSystem.FileSystem, yield* FileSystem.FileSystem),
+            Effect.provideService(Path.Path, yield* Path.Path),
+            Effect.provideService(HttpClient.HttpClient, yield* HttpClient.HttpClient),
+            Effect.provideService(Digest.Digest, yield* Digest.Digest),
+          );
+    const checkReadiness = checkAcpRegistryProviderReadiness(readinessInput).pipe(
       Effect.provideService(AcpRegistrySupport.AcpRegistryCatalog, catalog),
       Effect.flatMap((provider) =>
         Ref.get(reportedLocalVersion).pipe(
@@ -793,6 +816,12 @@ export const AcpRegistryDriver: ProviderDriver<AcpRegistrySettings, AcpRegistryD
       ),
       Effect.flatMap(withLiveRuntimeState),
     );
+    const checkProvider = Effect.gen(function* () {
+      const provider = yield* checkReadiness;
+      if (!checkUsageLimits || !provider.enabled || !provider.installed) return provider;
+      const usageLimits = yield* checkUsageLimits;
+      return usageLimits ? { ...provider, usageLimits } : provider;
+    });
     const modelsToDiscover = Effect.fn("AcpRegistryDriver.modelsToDiscover")(function* (
       provider: ServerProvider,
     ) {
@@ -995,6 +1024,7 @@ export const AcpRegistryDriver: ProviderDriver<AcpRegistrySettings, AcpRegistryD
       // Inspection may fetch the registry when its disk cache is missing; creation must not wait on that.
       initialSnapshot: () => buildInitialAcpRegistrySnapshot(readinessInput),
       checkProvider,
+      ...(checkUsageLimits ? { checkUsageLimits } : {}),
       enrichSnapshot: Effect.fn("enrichSnapshot")(function* ({
         snapshot,
         getSnapshot,

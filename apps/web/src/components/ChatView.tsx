@@ -1537,7 +1537,7 @@ export default function ChatView(props: ChatViewProps) {
     panelKey: usageLimitsKey,
     providerInstanceId: activeProviderInstanceId,
     model: activeUsageModel,
-    providerDriver: activeProviderStatus?.driver ?? null,
+    provider: activeProviderStatus ?? null,
     providers: providerStatuses,
     sources: serverConfig?.usageLimitSources ?? EMPTY_USAGE_LIMIT_SOURCES,
   });
