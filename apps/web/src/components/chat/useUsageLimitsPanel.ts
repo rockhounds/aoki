@@ -19,7 +19,7 @@ export function useUsageLimitsPanel(input: {
   readonly panelKey: string | null;
   readonly providerInstanceId: ProviderInstanceId | null;
   readonly model: string | null;
-  readonly providerDriver: ServerProvider["driver"] | null;
+  readonly provider: ServerProvider | null;
   readonly providers: readonly ServerProvider[];
   readonly sources: UsageLimitSourceSnapshots;
 }) {
@@ -29,7 +29,7 @@ export function useUsageLimitsPanel(input: {
     panelKey,
     providerInstanceId,
     model,
-    providerDriver,
+    provider,
     providers,
     sources,
   } = input;
@@ -58,8 +58,7 @@ export function useUsageLimitsPanel(input: {
         )
       : null;
   // Intercept /usage-limits only when Limits has selected-provider data.
-  const offered =
-    providerDriver !== null && hasProviderUsageLimits(providerDriver, providers, sources);
+  const offered = provider !== null && hasProviderUsageLimits(provider, providers, sources);
 
   const open = useStableCallback(() => {
     const now = Date.now();

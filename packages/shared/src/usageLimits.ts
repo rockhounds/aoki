@@ -214,20 +214,44 @@ export function collectExternalUsageLinks(
   return [...links.values()];
 }
 
+export interface LimitAgent {
+  readonly key: string;
+  readonly name: string;
+  readonly iconUrl?: string | undefined;
+}
+
+/** ACP Registry instances are distinct agents behind one driver, so their limits never pool together. */
+function limitAgent(
+  provider: Pick<ServerProvider, "driver" | "displayName" | "instanceId" | "iconUrl">,
+): LimitAgent | undefined {
+  if (provider.driver !== "acpRegistry") return undefined;
+  const name = provider.displayName?.trim() || String(provider.instanceId);
+  return {
+    key: name.toLowerCase(),
+    name,
+    ...(provider.iconUrl ? { iconUrl: provider.iconUrl } : {}),
+  };
+}
+
+function limitGroupKey(driver: ServerProvider["driver"], agent: LimitAgent | undefined): string {
+  return agent ? `${driver}:${agent.key}` : driver;
+}
+
 function accountKey(
-  driver: ServerProvider["driver"],
+  group: string,
   email: string | undefined,
   limits?: ServerProviderUsageLimits,
 ): string | null {
   const normalizedEmail = email?.trim().toLowerCase();
-  if (normalizedEmail) return `${driver}:${normalizedEmail}`;
+  if (normalizedEmail) return `${group}:${normalizedEmail}`;
   return limits?.credentialFingerprint
-    ? `${driver}:credential:${limits.credentialFingerprint}`
+    ? `${group}:credential:${limits.credentialFingerprint}`
     : null;
 }
 
 interface AccountReport {
   readonly driver: ServerProvider["driver"];
+  readonly agent?: LimitAgent | undefined;
   readonly email?: string | undefined;
   readonly workspaceId?: string | undefined;
   readonly usageLimits?: ServerProviderUsageLimits | undefined;
@@ -235,6 +259,7 @@ interface AccountReport {
 
 const nativeReport = (provider: ServerProvider): AccountReport => ({
   driver: provider.driver,
+  agent: limitAgent(provider),
   email: provider.auth.email,
   workspaceId: provider.auth.workspaceId,
   usageLimits: provider.usageLimits,
@@ -244,13 +269,21 @@ const nativeReport = (provider: ServerProvider): AccountReport => ({
 function accountKeyResolver(reports: Iterable<AccountReport>) {
   const workspaces = new Map<string, Set<string>>();
   for (const report of reports) {
-    const key = accountKey(report.driver, report.email, report.usageLimits);
+    const key = accountKey(
+      limitGroupKey(report.driver, report.agent),
+      report.email,
+      report.usageLimits,
+    );
     if (key && report.workspaceId) {
       workspaces.set(key, (workspaces.get(key) ?? new Set()).add(report.workspaceId));
     }
   }
   return (report: AccountReport): string | null => {
-    const key = accountKey(report.driver, report.email, report.usageLimits);
+    const key = accountKey(
+      limitGroupKey(report.driver, report.agent),
+      report.email,
+      report.usageLimits,
+    );
     if (!key) return null;
     if (report.workspaceId) return `${key}:${report.workspaceId}`;
     const known = workspaces.get(key);
@@ -304,6 +337,7 @@ function hubIdentity(environmentId: EnvironmentId, source: UsageLimitSourceSnaps
 export interface LimitAccount {
   readonly key: string;
   readonly driver: ServerProvider["driver"];
+  readonly agent?: LimitAgent;
   readonly displayName: string | null;
   readonly email: string | undefined;
   readonly plan: string | undefined;
@@ -398,9 +432,11 @@ export function collectLimitAccounts(presentations: LimitPresentations): readonl
     const label = presentation.entry.target.label;
     for (const provider of providersWithLimits(presentation.serverConfig?.providers ?? [])) {
       if (!provider.usageLimits || limitsNotice(provider.usageLimits) !== null) continue;
+      const agent = limitAgent(provider);
       merge(nativeRowKey(resolveKey, environmentId, provider), {
         key: `${environmentId}:${provider.instanceId}`,
         driver: provider.driver,
+        ...(agent ? { agent } : {}),
         displayName: provider.displayName?.trim() || null,
         email: provider.auth.email,
         plan: provider.auth.label,
@@ -509,7 +545,9 @@ export interface LimitPoolWindow {
 }
 
 export interface LimitPool {
+  readonly key: string;
   readonly driver: ServerProvider["driver"];
+  readonly agent?: LimitAgent;
   readonly accounts: readonly LimitAccount[];
   readonly windows: readonly LimitPoolWindow[];
 }
@@ -565,13 +603,15 @@ export function collectLimitPools(
   accounts: readonly LimitAccount[],
   now: number,
 ): readonly LimitPool[] {
-  const byDriver = new Map<ServerProvider["driver"], LimitAccount[]>();
+  const byGroup = new Map<string, LimitAccount[]>();
   for (const account of accounts) {
-    const list = byDriver.get(account.driver);
+    const group = limitGroupKey(account.driver, account.agent);
+    const list = byGroup.get(group);
     if (list) list.push(account);
-    else byDriver.set(account.driver, [account]);
+    else byGroup.set(group, [account]);
   }
-  return [...byDriver].map(([driver, members]) => {
+  return [...byGroup].map(([key, members]) => {
+    const { driver, agent } = members[0]!;
     const orderWindow = members
       .flatMap((account) => account.limits.windows)
       .sort((left, right) => WINDOW_KIND_ORDER[left.kind] - WINDOW_KIND_ORDER[right.kind])[0];
@@ -590,7 +630,13 @@ export function collectLimitPools(
         accountSortName(left).localeCompare(accountSortName(right)) ||
         left.key.localeCompare(right.key),
     );
-    return { driver, accounts: sorted, windows: poolWindows(sorted, now) };
+    return {
+      key,
+      driver,
+      ...(agent ? { agent } : {}),
+      accounts: sorted,
+      windows: poolWindows(sorted, now),
+    };
   });
 }
 
@@ -827,12 +873,19 @@ export function isUsageLimitsCommand(prompt: string): boolean {
 }
 
 export function hasProviderUsageLimits(
-  driver: ServerProvider["driver"],
+  selected:
+    | ServerProvider["driver"]
+    | Pick<ServerProvider, "driver" | "displayName" | "instanceId" | "iconUrl">,
   providers: readonly ServerProvider[],
   sources: UsageLimitSourceSnapshots,
 ): boolean {
+  const driver = typeof selected === "string" ? selected : selected.driver;
+  const agent = typeof selected === "string" ? undefined : limitAgent(selected);
   return (
-    providersWithLimits(providers).some((provider) => provider.driver === driver) ||
+    providersWithLimits(providers).some(
+      (provider) =>
+        provider.driver === driver && (!agent || limitAgent(provider)?.key === agent.key),
+    ) ||
     sources.some(
       (source) =>
         source.accounts.some((account) => account.driver === driver) ||
@@ -863,15 +916,21 @@ export function withUsageLimitsCommands(
   providers: readonly ServerProvider[],
   sources: UsageLimitSourceSnapshots,
 ): ServerProvider[] {
-  const supportedDrivers = new Set([
-    ...providersWithLimits(providers).map((provider) => provider.driver),
+  const supportedGroups = new Set<string>([
+    ...providersWithLimits(providers).map((provider) =>
+      limitGroupKey(provider.driver, limitAgent(provider)),
+    ),
     ...sources.flatMap((source) => source.accounts.map((account) => account.driver)),
   ]);
   const unreadableSource = sources.some(
     (source) => source.error !== undefined && source.accounts.length === 0,
   );
   return providers.map((provider) => {
-    if (!unreadableSource && !supportedDrivers.has(provider.driver)) return provider;
+    if (
+      !unreadableSource &&
+      !supportedGroups.has(limitGroupKey(provider.driver, limitAgent(provider)))
+    )
+      return provider;
     const commands = (items: readonly ServerProviderSlashCommand[]) => [
       ...items.filter((command) => command.name !== USAGE_LIMITS_COMMAND.name),
       USAGE_LIMITS_COMMAND,
@@ -953,6 +1012,7 @@ export function collectProviderUsageLimits(
 ): UsageLimitsReport | null {
   const selected = providers.find((provider) => provider.instanceId === instanceId);
   if (!selected) return null;
+  const selectedAgent = limitAgent(selected);
   // Only an instance sent to a hub is known to reach the accounts that hub routes its model to.
   const hubs = instanceHubs(selected, sources);
   const routes =
@@ -964,7 +1024,11 @@ export function collectProviderUsageLimits(
     shownHubs.flatMap((source) => source.accounts.filter(routes).map((account) => account.driver)),
   );
   if (drivers.size === 0) drivers.add(selected.driver);
-  if (![...drivers].some((driver) => hasProviderUsageLimits(driver, providers, sources))) {
+  if (
+    ![...drivers].some((driver) =>
+      hasProviderUsageLimits(driver === selected.driver ? selected : driver, providers, sources),
+    )
+  ) {
     return null;
   }
   const resolveKey = accountKeyResolver([
@@ -983,6 +1047,12 @@ export function collectProviderUsageLimits(
   >();
   for (const provider of providersWithLimits(providers)) {
     if (!drivers.has(provider.driver) || !provider.usageLimits) continue;
+    if (
+      provider.driver === selected.driver &&
+      selectedAgent &&
+      limitAgent(provider)?.key !== selectedAgent.key
+    )
+      continue;
     const accountKey = resolveKey(nativeReport(provider));
     if (routedKeys && (accountKey === null || !routedKeys.has(accountKey))) continue;
     const snapshot = { provider, limits: provider.usageLimits };

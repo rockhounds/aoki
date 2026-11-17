@@ -239,6 +239,59 @@ describe("pools", () => {
   };
   const laptop = { entry: { target: { label: "Laptop" } } };
 
+  it("pools each ACP Registry agent on its own, even when both sign in with one email", () => {
+    const acp = ProviderDriverKind.make("acpRegistry");
+    const agent = (instanceId: string, displayName: string, iconUrl?: string) =>
+      provider({
+        instanceId: ProviderInstanceId.make(instanceId),
+        driver: acp,
+        displayName,
+        ...(iconUrl ? { iconUrl } : {}),
+        auth: { status: "authenticated", email: "same@example.com" },
+        usageLimits: { checkedAt, windows: [window] },
+      });
+    const droidIcon = "https://cdn.agentclientprotocol.com/registry/v1/latest/factory-droid.svg";
+    const input = new Map([
+      [
+        EnvironmentId.make("env-a"),
+        {
+          ...laptop,
+          serverConfig: {
+            providers: [
+              agent("acp_command_code", "Command Code"),
+              agent("acp_droid", "Factory Droid", droidIcon),
+            ],
+          },
+        },
+      ],
+      [
+        EnvironmentId.make("env-b"),
+        {
+          entry: { target: { label: "Desktop" } },
+          serverConfig: { providers: [agent("acp_droid_desktop", "Factory Droid", droidIcon)] },
+        },
+      ],
+    ]);
+    const pools = collectLimitPools(collectLimitAccounts(input), now);
+    expect(
+      pools.map((pool) => ({
+        key: pool.key,
+        agent: pool.agent,
+        accounts: pool.accounts.map((account) => account.environments.length),
+      })),
+    ).toEqual([
+      {
+        key: "acpRegistry:command code",
+        agent: { key: "command code", name: "Command Code" },
+        accounts: [1],
+      },
+      {
+        key: "acpRegistry:factory droid",
+        agent: { key: "factory droid", name: "Factory Droid", iconUrl: droidIcon },
+        accounts: [2],
+      },
+    ]);
+  });
   it("merges one account reported natively on two environments and by a hub into one entry", () => {
     const native = provider({
       driver: claude,
@@ -1623,6 +1676,38 @@ describe("/usage-limits", () => {
     expect(ids(selected, "gpt-5.6-sol")).toEqual(["codex", "codex-personal", "hub:oss"]);
   });
 
+  it("scopes ACP Registry reports and the command to the selected agent", () => {
+    const acp = ProviderDriverKind.make("acpRegistry");
+    const droid = provider({
+      instanceId: ProviderInstanceId.make("acp_droid"),
+      driver: acp,
+      displayName: "Factory Droid",
+      usageLimits: limits,
+    });
+    const commandCode = provider({
+      instanceId: ProviderInstanceId.make("acp_command_code"),
+      driver: acp,
+      displayName: "Command Code",
+      usageLimits: limits,
+    });
+    const other = provider({
+      instanceId: ProviderInstanceId.make("acp_other"),
+      driver: acp,
+      displayName: "Other Agent",
+    });
+    const providers = [droid, commandCode, other];
+    expect(
+      collectProviderUsageLimits(droid.instanceId, providers, [], now)?.accounts.map(
+        (account) => account.id,
+      ),
+    ).toEqual(["acp_droid"]);
+    expect(collectProviderUsageLimits(other.instanceId, providers, [], now)).toBeNull();
+    expect(
+      withUsageLimitsCommands(providers, []).map((entry) =>
+        entry.slashCommands.map((command) => command.name),
+      ),
+    ).toEqual([["usage-limits"], ["usage-limits"], []]);
+  });
   it("keeps the freshest usable native duplicate and the freshest native credits in either order", () => {
     const failed = provider({
       auth: selected.auth,

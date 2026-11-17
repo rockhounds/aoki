@@ -56,6 +56,7 @@ const PACE: Record<LimitPace, { readonly label: string; readonly icon: typeof Ga
 };
 
 export function barColor(driver: ServerProvider["driver"]): string {
+  if (driver === "acpRegistry") return "var(--foreground)";
   const presentation = Object.values(PROVIDER_PRESENTATION).find(
     (entry) => entry.driverKind === driver,
   );
@@ -399,8 +400,11 @@ export function UsageLimitsSection({
   readonly now: number;
 }) {
   const presentations = useAtomValue(environmentPresentations.presentationsWithProvidersAtom);
+  // ACP Registry hosts many agents, so hiding one agent's usage must not hide the others' limits.
   const hiddenDrivers = new Set<ServerProvider["driver"]>(
-    [...hiddenProviders].map((provider) => PROVIDER_PRESENTATION[provider].driverKind),
+    [...hiddenProviders]
+      .map((provider) => PROVIDER_PRESENTATION[provider].driverKind)
+      .filter((driver) => driver !== "acpRegistry"),
   );
   const isVisible = (driver: ServerProvider["driver"]) => !hiddenDrivers.has(driver);
   const selected = new Map(
