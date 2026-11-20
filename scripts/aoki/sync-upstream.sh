@@ -29,9 +29,9 @@ set -euo pipefail
 # everything lives in a function that is parsed before the first command.
 main() {
 
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 NODE_BIN="${AOKI_NODE_BIN:-$HOME/.local/node-v26.12.1/bin}"
 [[ -d "$NODE_BIN" ]] && export PATH="$NODE_BIN:$PATH"
-export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
 ROOT="$(jj root)"
 OMNIFORK_DIR="${OMNIFORK_DIR:-$HOME/omnifork}"
@@ -100,6 +100,8 @@ conflict_paths() { j resolve --list -r "$1" 2>/dev/null | sed -E 's/ +[0-9]+-sid
 # Make sure the verify workspace exists and its working copy sits on top of $1.
 ws_at() {
   if [[ ! -d "$VERIFY_WS/.jj" ]]; then
+    [[ -z "$(ls -A "$VERIFY_WS" 2>/dev/null)" ]] \
+      || die "$VERIFY_WS exists but is not a jj workspace; move it aside (or set AOKI_VERIFY_WS) and run this again"
     mkdir -p "$(dirname "$VERIFY_WS")"
     j workspace forget aoki-verify 2>/dev/null || true
     j workspace add --name aoki-verify -r "$1" "$VERIFY_WS"
@@ -116,7 +118,7 @@ resolve_lockfile() {
   for rev in $(conflicted); do
     [[ "$(conflict_paths "$rev")" == "pnpm-lock.yaml" ]] || continue
     log "regenerating pnpm-lock.yaml in $rev"
-    ws_at "$rev"
+    ws_at "$rev" || return 1
     (cd "$VERIFY_WS" && jj --quiet restore --from "$rev-" pnpm-lock.yaml \
       && pnpm install --lockfile-only --silent && jj --quiet squash)
     refresh
@@ -167,7 +169,7 @@ verify() {
   check_swift_rpc "$1" || return 1
   [[ "$VERIFY" == 1 ]] || { log "skipping verification (--no-verify)"; return 0; }
   log "verifying the top of the stack in $VERIFY_WS: pnpm install --frozen-lockfile && pnpm typecheck"
-  ws_at "$1"
+  ws_at "$1" || return 1
   (cd "$VERIFY_WS" && pnpm install --frozen-lockfile --silent && pnpm typecheck)
 }
 
@@ -190,7 +192,7 @@ record() {
   [[ -n "$to" && -n "$version" ]] || die "cannot read $TRUNK to record the synced T3 Code version"
   desired="$(printf '{\n  "commit": "%s",\n  "version": "%s"\n}' "$to" "$version")"
   if [[ "$(cat "$ROOT/scripts/aoki/upstream.json" 2>/dev/null || true)" != "$desired" ]]; then
-    printf '%s' "$desired" >"$ROOT/scripts/aoki/upstream.json"
+    printf '%s\n' "$desired" >"$ROOT/scripts/aoki/upstream.json"
     fold scripts/aoki/upstream.json
     log "recorded synced base: T3 Code $version (${to:0:8})"
   fi
@@ -239,8 +241,13 @@ date -u +%FT%TZ >>"$STATE/runs"
 
 while :; do
   rc=0
-  omnifork sync --no-verify || rc=$?
+  sync_args=(sync --no-verify)
+  [[ ! -f "$STATE/fetched" ]] || sync_args+=(--no-fetch)
+  omnifork "${sync_args[@]}" || rc=$?
   refresh
+  if [[ "$rc" == 0 || "$rc" == 2 ]]; then
+    touch "$STATE/fetched"
+  fi
   [[ "$rc" == 0 ]] && break
   [[ "$rc" == 2 ]] || die "omnifork failed; the repo is as it left it (--abort restores it)"
   resolve_lockfile && continue

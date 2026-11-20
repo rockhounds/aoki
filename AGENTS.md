@@ -1,6 +1,6 @@
 # Aoki
 
-Aoki is a tracking fork of [T3 Code](https://github.com/pingdotgg/t3code). Use **Aoki** for this project and **T3 Code** for upstream. Read [AOKI.md](AOKI.md) for fork conventions, including using jj for history changes.
+Aoki is a tracking fork of [T3 Code](https://github.com/pingdotgg/t3code). Use **Aoki** for this project and **T3 Code** for upstream. Read [AOKI.md](AOKI.md) for fork conventions, including using jj for history changes. Sync with upstream only through `jj sync`, which uses our omnifork tool to carry Aoki's changes; follow the [sync-upstream skill](.agents/skills/sync-upstream/SKILL.md).
 
 Aoki is a minimal GUI for coding agents. A Node WebSocket server wraps provider CLIs and agents (Codex, Claude Code, Cursor, Grok, OpenCode, Antigravity, Kiro, Pi, Muse Code, fx) and serves web, desktop, and mobile clients.
 
