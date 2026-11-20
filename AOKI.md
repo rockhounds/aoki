@@ -31,6 +31,15 @@ operations. (`git` still works read-only, and git hooks do **not** run under jj:
 | `main`     | bookmark at the top of the Aoki stack                             |
 | `aoki()`   | revset alias for `trunk()..main`: every Aoki change, nothing else |
 
+The aliases and `jj sync` are repo-level jj config, which lives outside the checkout. A new clone
+sets them once:
+
+```bash
+jj config set --repo 'revset-aliases."trunk()"' 'main@upstream'
+jj config set --repo 'revset-aliases."aoki()"' 'trunk()..main'
+jj config set --repo aliases.sync '["util", "exec", "--", "bash", "-c", "exec \"$(jj root)/scripts/aoki/sync-upstream.sh\" \"$@\"", ""]'
+```
+
 ### History model
 
 `main` is upstream's history plus a linear stack of meaningful Aoki changes, and nothing else:
@@ -59,17 +68,40 @@ Rules that keep it that way:
 ### Syncing with upstream
 
 ```bash
-jj sync                 # = scripts/aoki/sync-upstream.sh
-jj sync --status        # in progress? show the stack
-jj sync --continue      # after resolving conflicts / fixing verification
+jj sync                 # = scripts/aoki/sync-upstream.sh; run it again after every fix
+jj sync --status        # in progress? what to resolve next
 jj sync --abort         # jj op restore to before the sync
 ```
 
-What it does: `jj git fetch --remote upstream`, then `jj rebase -b main -d 'trunk()'`. Lockfile-only
-conflicts are resolved automatically by regenerating `pnpm-lock.yaml` from that change's manifests.
-Then it runs `pnpm install --frozen-lockfile && pnpm typecheck` in a separate verify workspace
-(`~/.cache/aoki/verify-aoki`). Exit code 2 means conflicts remain, 3 means verification failed; in
-both cases fix the named change in place and `--continue`, or `--abort`.
+A sync fetches upstream and moves every Aoki change above it, on `main` or not, onto the new
+`trunk()`. Three tools share the work:
+
+- **jj** does the rebase, records conflicts in the change that has them, and keeps every earlier
+  state in `jj op log`.
+- **omnifork** does what jj won't. A change like the rename edits the same names all over the tree,
+  so a plain rebase conflicts with every upstream edit near them and leaves upstream's new code on
+  the old names. omnifork learns those edits from the change itself and applies them to upstream's
+  new code before merging, so only real disagreements are left as conflicts. It carries the stack
+  from the bottom and stops at the first change that still conflicts; the next run goes on from
+  there. Old names it cannot decide are listed in `.jj/omnifork/reviews.txt`.
+- **`jj sync`** adds Aoki's policy. It regenerates `pnpm-lock.yaml` when that is the only conflict,
+  checks that the SwiftUI client only sends requests upstream's contracts still have, runs
+  `pnpm install --frozen-lockfile && pnpm typecheck` in a separate verify workspace
+  (`~/.cache/aoki/verify-aoki`), runs the local-only guard, and records the sync.
+
+Exit code 2 means conflicts or places to review remain, 3 means verification failed. Fix the named
+change in place and run `jj sync` again, or `--abort`. The
+[sync-upstream skill](.agents/skills/sync-upstream/SKILL.md) has the steps around the command and
+the retro that follows every sync.
+
+Each sync appends a line to `scripts/aoki/sync-log.jsonl`: the upstream range, the top of the
+stack before and after, and how many conflicted files and review places were left to a person.
+`omnifork replay` reruns a logged sync in a scratch repository and scores it against the result
+that was accepted, which is how a change to omnifork is judged.
+
+omnifork is developed alongside Aoki and is not published yet. Its source is a separate jj repo,
+`~/omnifork` on the maintainer's machines (`OMNIFORK_DIR` names another path), and `jj sync` builds
+it with cargo on every run.
 
 `main` is rewritten by every sync, so once Aoki has its own remote, publish with
 `jj git push --bookmark main` (jj does the lease check).
@@ -77,7 +109,8 @@ both cases fix the named change in place and `--continue`, or `--abort`.
 ## Aoki-specific files
 
 - `AOKI.md`: this file
-- `scripts/aoki/`: fork maintenance scripts
+- `scripts/aoki/`: fork maintenance scripts and the sync log
+- `.agents/skills/sync-upstream/`: how to run a sync and what to improve after it
 
 ## Versioning
 
