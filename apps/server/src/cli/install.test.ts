@@ -23,11 +23,11 @@ const setup = Effect.gen(function* () {
   const executable = path.join(runtimeDir, "versions", VERSION, "aoki");
   yield* fs.makeDirectory(path.dirname(executable), { recursive: true });
   yield* fs.writeFileString(executable, "");
-  const npmPackage = path.join(root, ".npm/_npx/abc/node_modules/aoki");
+  const npmPackage = path.join(root, ".npm/_npx/abc/node_modules/@rockhounds/aoki");
   yield* fs.makeDirectory(path.join(npmPackage, "bin"), { recursive: true });
   yield* fs.writeFileString(
     path.join(npmPackage, "package.json"),
-    JSON.stringify({ name: "aoki", version: VERSION }),
+    JSON.stringify({ name: "@rockhounds/aoki", version: VERSION }),
   );
   const binDir = path.join(root, "bin");
   const provide = <A, E, R>(effect: Effect.Effect<A, E, R>, env: NodeJS.ProcessEnv = {}) =>

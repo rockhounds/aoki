@@ -559,7 +559,7 @@ export const pairCommand = Command.make("pair", {
         return yield* new IncompatibleServerProtocolError({
           serverVersion: target.descriptor.serverVersion,
           serverProtocolVersion,
-          pairCommand: `npx aoki@${target.descriptor.serverVersion} pair${baseDirArgs}`,
+          pairCommand: `npx @rockhounds/aoki@${target.descriptor.serverVersion} pair${baseDirArgs}`,
         });
       }
 

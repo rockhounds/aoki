@@ -21,7 +21,7 @@ import {
 import { useSelectWorkspaceDetail } from "../layout/workspace/useSelectWorkspaceDetail";
 import { usePrepareTriage } from "./usePrepareTriage";
 
-const CLI_COMMAND = "npx aoki triage";
+const CLI_COMMAND = "npx @rockhounds/aoki triage";
 
 /**
  * In-app `aoki triage`, as on web: the server writes the session files and

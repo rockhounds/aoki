@@ -20,7 +20,7 @@ curl -fsSL https://t3.codes/install.sh | sh
 irm https://t3.codes/install.ps1 | iex
 ```
 
-Set `AOKI_CHANNEL=nightly` for nightly builds or `AOKI_VERSION=<ver>` to pin a version. To try once without installing, run `npx aoki@latest` (requires Node.js; always runs the latest stable release).
+Set `AOKI_CHANNEL=nightly` for nightly builds or `AOKI_VERSION=<ver>` to pin a version. To try once without installing, run `npx @rockhounds/aoki@latest` (requires Node.js; always runs the latest stable release).
 
 | Task                          | Command                                                                 |
 | ----------------------------- | ----------------------------------------------------------------------- |

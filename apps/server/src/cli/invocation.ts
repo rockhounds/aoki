@@ -59,7 +59,7 @@ export const resolveEntryPath = Effect.gen(function* () {
       .pipe(Effect.flatMap(decodeInstallManifest), Effect.option);
     if (
       Option.isSome(manifest) &&
-      manifest.value.name === "aoki" &&
+      manifest.value.name === "@rockhounds/aoki" &&
       manifest.value.version === packageJson.version
     ) {
       return npmLauncher;
@@ -100,7 +100,8 @@ export const resolveServerInstallation = Effect.gen(function* () {
       baseDir: linked[1] || "/",
     } satisfies ServerInstallation;
   }
-  const match = /^(.*)\/lib\/node_modules\/aoki\/(?:dist\/bin\.mjs|bin\/aoki\.mjs)$/.exec(entry);
+  const match =
+    /^(.*)\/lib\/node_modules\/@rockhounds\/aoki\/(?:dist\/bin\.mjs|bin\/aoki\.mjs)$/.exec(entry);
   if (!match) {
     const runner = detectCliRunner(entry);
     return runner === null
@@ -116,11 +117,11 @@ export const resolveServerInstallation = Effect.gen(function* () {
   )
     return null;
 
-  const packageRoot = path.join(prefix, "lib/node_modules/aoki");
+  const packageRoot = path.join(prefix, "lib/node_modules/@rockhounds/aoki");
   const manifest = yield* fs
     .readFileString(path.join(packageRoot, "package.json"))
     .pipe(Effect.flatMap(decodeInstallManifest));
-  if (manifest.name !== "aoki" || !manifest.bin) return null;
+  if (manifest.name !== "@rockhounds/aoki" || !manifest.bin) return null;
   const bin = yield* fs.realPath(path.join(packageRoot, manifest.bin.aoki));
   const globalBin = yield* fs.realPath(path.join(prefix, "bin/aoki"));
   if (globalBin !== bin || bin !== entry) return null;
@@ -130,7 +131,7 @@ export const resolveServerInstallation = Effect.gen(function* () {
 /** The original package spec is unavailable at startup; infer its channel from the version. */
 function suggestedPackageSpec(version: string): string {
   const channel = /^[^-+]+-(nightly|preview)\./.exec(version)?.[1];
-  return channel === undefined ? "aoki" : `aoki@${channel}`;
+  return channel === undefined ? "@rockhounds/aoki" : `@rockhounds/aoki@${channel}`;
 }
 
 function formatCliCommand(input: {

@@ -20,7 +20,7 @@
   "48eac1114b42d9b1": "本次启动 Aoki 将使用 Windows 后端，并在下次启动应用时重试 WSL。",
   "b5435aa5b470bafd": "WSL 后端无法启动",
   "b13d8ad92fb0b75b": "正在回退到 Windows 后端，以便打开 Aoki。修复 WSL 发行版后，请在“设置 > 共享与访问”中重新启用 WSL 后端。",
-  "fdcf4b81cb5b663a": "另一个 Aoki 服务器（例如后台服务）正在使用此数据目录，或此目录已配置旧版后台服务。请停止该服务器，或尝试 `aoki update`。如果旧版启动器无法更新，请运行 `aoki service uninstall`，并可使用当前 CLI 运行 `aoki service install` 重新安装。如果 `aoki` 缺失或过旧，请使用 `npx aoki@latest`，并在每条命令中通过 `--base-dir` 指定该服务的 Aoki 主目录。然后重新打开 Aoki。你也可以设置单独的 AOKI_HOME，并与正在运行的服务器配对。",
+  "fe467140abf6ab05": "Another Aoki server, such as the background service, is using this data directory, or an older background service is set up for it. Stop that server or try `aoki update`. If the older launcher cannot update, run `aoki service uninstall` and optionally reinstall with `aoki service install` from a current CLI. Use `npx @rockhounds/aoki@latest` if `aoki` is missing or outdated, and pass `--base-dir` with the service's Aoki home to each command. Then reopen Aoki. You can also set a separate AOKI_HOME and pair with the running server.",
   "8c60864728a2a788": "Aoki 后台服务正在使用此 Aoki 主目录（PID {pid}，端口 {port}，版本 {version}）。请使用 `aoki service uninstall` 停止它，并通过 `--base-dir` 传入此 Aoki 主目录，然后重新打开 Aoki。你也可以设置单独的 AOKI_HOME 并与正在运行的服务器配对。",
   "75d6e5576f650f28": "Aoki 后台服务正在使用此 Aoki 主目录（PID {pid}，端口 {port}）。请使用 `aoki service uninstall` 停止它，并通过 `--base-dir` 传入此 Aoki 主目录，然后重新打开 Aoki。你也可以设置单独的 AOKI_HOME 并与正在运行的服务器配对。",
   "dd6addfc2794229d": "另一个 Aoki 服务器（例如 `aoki serve`，或通过 SSH 启动的服务器）正在使用此 Aoki 主目录（PID {pid}，端口 {port}，版本 {version}）。如果是另一台机器上的 Aoki 应用通过 SSH 启动了它，该应用会重新启动它：请在那里移除或断开该 SSH 环境，或退出该应用。然后停止该服务器，并重新打开 Aoki。你也可以设置单独的 AOKI_HOME 并与正在运行的服务器配对。",

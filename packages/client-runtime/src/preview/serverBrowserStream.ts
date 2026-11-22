@@ -526,7 +526,7 @@ const decodeHostSetup = (reason: string): PreviewStreamHostSetup => {
       return { need: value.need, command: value.command };
     }
   } catch {}
-  return { need: "sandbox", command: "sudo npx aoki browser setup" };
+  return { need: "sandbox", command: "sudo npx @rockhounds/aoki browser setup" };
 };
 
 export const previewStreamHostSetupMessage = (

@@ -31,7 +31,7 @@ In the desktop app, change **Settings → About → Update track** to switch con
 | ----------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | Background service / desktop server | Click **Update server** in **Settings → Environments** (desktop hosts relaunch automatically).        |
 | Installed `aoki` CLI                  | Run `aoki update <version>` on the host (then `aoki service restart` if you declined the restart prompt). |
-| `npx` server                        | Stop the server and relaunch with `npx aoki@<version>` and your usual flags.                            |
+| `npx` server                        | Stop the server and relaunch with `npx @rockhounds/aoki@<version>` and your usual flags.                            |
 | Package manager (Nix, AUR)          | Update via your package manager.                                                                      |
 
 Each server checks npm/Homebrew/pnpm using its own local registry and proxy settings.

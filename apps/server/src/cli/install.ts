@@ -64,7 +64,7 @@ export const installCli = Effect.fn("cli.install.install")(function* () {
   // cmd.exe expands `%` and reads the shim in the OEM code page, so such a path would not run.
   if (windows && /[%\u0080-\uffff]/.test(executable)) {
     return yield* new CliInstallError({
-      reason: `An aoki.cmd cannot run ${executable}, because the path has % or non-ASCII characters. Keep using npx aoki.`,
+      reason: `An aoki.cmd cannot run ${executable}, because the path has % or non-ASCII characters. Keep using npx @rockhounds/aoki.`,
     });
   }
   // Absolute, so the PATH hint never adds a folder that changes with the working directory.
@@ -268,7 +268,7 @@ export const isForegroundPs = (output: string) => {
 };
 
 /**
- * A background job (`npx aoki serve &`) that reads the terminal is stopped by the shell, so only
+ * A background job (`npx @rockhounds/aoki serve &`) that reads the terminal is stopped by the shell, so only
  * the terminal's foreground process group may prompt. Unknown counts as background.
  */
 export const inTerminalForeground = Effect.gen(function* () {

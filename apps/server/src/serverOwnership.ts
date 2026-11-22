@@ -59,7 +59,7 @@ export class OlderBootServiceError extends Schema.TaggedError<OlderBootServiceEr
   override readonly [Runtime.errorExitCode] = SERVER_EXIT_CODE_STATE_DIR_OWNED;
 
   override get message(): string {
-    return `An Aoki background service set up for ${this.baseDir} may still run a release without the ownership lock. On that machine, try \`aoki update\` and let it restart (or run \`aoki service restart\` if the update is already installed). If the older launcher cannot update, run \`aoki service uninstall\`, then reinstall with \`aoki service install\` from a current CLI. You can also leave the service uninstalled. Pass \`--base-dir ${this.baseDir}\` to each command, and use \`npx aoki@latest\` if \`aoki\` is not installed or is outdated. Then retry. No server was stopped.`;
+    return `An Aoki background service set up for ${this.baseDir} may still run a release without the ownership lock. On that machine, try \`aoki update\` and let it restart (or run \`aoki service restart\` if the update is already installed). If the older launcher cannot update, run \`aoki service uninstall\`, then reinstall with \`aoki service install\` from a current CLI. You can also leave the service uninstalled. Pass \`--base-dir ${this.baseDir}\` to each command, and use \`npx @rockhounds/aoki@latest\` if \`aoki\` is not installed or is outdated. Then retry. No server was stopped.`;
   }
 }
 

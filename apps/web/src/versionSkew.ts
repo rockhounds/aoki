@@ -126,7 +126,7 @@ export function manualServerUpdateCommand(
 ): string {
   const quote = (value: string) => `'${value.replaceAll("'", "'\\''")}'`;
   if (installation?.kind === "npm-global") {
-    return `npm install --global --prefix ${quote(installation.prefix)} aoki@${targetVersion}`;
+    return `npm install --global --prefix ${quote(installation.prefix)} @rockhounds/aoki@${targetVersion}`;
   }
   if (installation?.kind === "t3-launcher") {
     // An inherited AOKI_HOME would otherwise send the update to a home the launcher is not in.
@@ -134,7 +134,7 @@ export function manualServerUpdateCommand(
   }
   const runner =
     installation?.kind === "pnpm-dlx" ? "pnpm dlx" : installation?.kind === "bunx" ? "bunx" : "npx";
-  return `${runner} aoki@${targetVersion}`;
+  return `${runner} @rockhounds/aoki@${targetVersion}`;
 }
 
 export function buildVersionMismatchDismissalKey(

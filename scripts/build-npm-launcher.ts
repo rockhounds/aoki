@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// GitHub archives avoid npm scanning delays; output <output-dir>/t3/ and publishable aoki.tgz.
+// GitHub archives avoid npm scanning delays; output <output-dir>/<stem>/ and a publishable <stem>.tgz.
 import * as NodeRuntime from "@effect/platform-node/NodeRuntime";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import * as Effect from "effect/Effect";
@@ -17,7 +17,8 @@ import serverPackageJson from "../apps/server/package.json" with { type: "json" 
 
 import { windowsSystemTar } from "./lib/windows-tar.ts";
 
-export const NPM_LAUNCHER_PACKAGE_NAME = "aoki";
+export const NPM_LAUNCHER_PACKAGE_NAME = "@rockhounds/aoki";
+const NPM_LAUNCHER_FILE_STEM = NPM_LAUNCHER_PACKAGE_NAME.replace(/^@/, "").replaceAll("/", "-");
 
 const encodePackageJson = Schema.encodeEffect(fromJsonStringPretty(Schema.Unknown));
 
@@ -91,8 +92,8 @@ export const buildNpmLauncher = Effect.fn("buildNpmLauncher")(function* (input: 
     yield* fs.copyFile(readme, path.join(stageDir, "README.md"));
   }
 
-  const packageDir = path.join(input.outputDir, NPM_LAUNCHER_PACKAGE_NAME);
-  const tarball = path.join(input.outputDir, `${NPM_LAUNCHER_PACKAGE_NAME}.tgz`);
+  const packageDir = path.join(input.outputDir, NPM_LAUNCHER_FILE_STEM);
+  const tarball = path.join(input.outputDir, `${NPM_LAUNCHER_FILE_STEM}.tgz`);
   yield* fs.remove(tarball, { force: true });
   const tar = (yield* HostProcess.Platform) === "win32" ? windowsSystemTar() : "tar";
   // npm tarballs root everything under `package/`.

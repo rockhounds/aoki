@@ -197,7 +197,7 @@ if ((Test-Path $marker) -and ((Get-Content $marker -Raw).Trim() -eq $version)) {
     } catch {
       $status = $_.Exception.Response.StatusCode.value__
       if ($status -eq 404) {
-        Fail "aoki $version has no release archive for win32-$arch; releases before the self-contained CLI can only be installed with 'npm install -g aoki@$version'"
+        Fail "aoki $version has no release archive for win32-$arch; releases before the self-contained CLI can only be installed with 'npm install -g @rockhounds/aoki@$version'"
       }
       throw
     }

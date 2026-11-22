@@ -145,7 +145,7 @@ Aoki does not contact T3 Tools' services unless you opt in:
 
 ## Naming
 
-Aoki ships under its own identity and does not read T3 Code's: the `aoki` CLI and npm package,
+Aoki ships under its own identity and does not read T3 Code's: the `aoki` CLI and `@rockhounds/aoki` npm package,
 `~/.aoki` (or `AOKI_HOME`), `AOKI_*` environment variables, `aoki.json` project files, the
 `aoki://` URL scheme, `io.github.rockhounds.aoki` app and bundle IDs, and the `/etc/aoki`,
 `Aoki`, and `Rockhounds\Aoki` managed-policy locations. Names that point at T3 Tools' services,

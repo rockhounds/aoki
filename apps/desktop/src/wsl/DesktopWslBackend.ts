@@ -128,7 +128,7 @@ export const layer = Layer.effect(
                 Ref.set(
                   preflightErrorRef,
                   Option.some(
-                    "Another Aoki server is using this distro's T3 home, or an older background service is set up for it. Stop that server or pair with it, or try `aoki update` in the distro. If the older launcher cannot update, run `aoki service uninstall` and optionally reinstall with `aoki service install` from a current CLI in the distro. Use `npx aoki@latest` if `aoki` is missing or outdated, and pass `--base-dir` with the service's T3 home to each command.",
+                    "Another Aoki server is using this distro's T3 home, or an older background service is set up for it. Stop that server or pair with it, or try `aoki update` in the distro. If the older launcher cannot update, run `aoki service uninstall` and optionally reinstall with `aoki service install` from a current CLI in the distro. Use `npx @rockhounds/aoki@latest` if `aoki` is missing or outdated, and pass `--base-dir` with the service's T3 home to each command.",
                   ),
                 ),
               ),

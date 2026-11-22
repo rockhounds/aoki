@@ -634,7 +634,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: npm-launcher
-          path: npm-packages/aoki.tgz
+          path: npm-packages/rockhounds-aoki.tgz
           if-no-files-found: error
           retention-days: 30
 
@@ -1158,9 +1158,9 @@ jobs:
         env:
           RELEASE_VERSION: ${{ needs.preflight.outputs.version }}
         run: |
-          built="$(tar -xzOf npm-packages/aoki.tgz package/package.json | jq -r .version)"
+          built="$(tar -xzOf npm-packages/rockhounds-aoki.tgz package/package.json | jq -r .version)"
           if [[ "$built" != "$RELEASE_VERSION" ]]; then
-            echo "::error::npm-launcher holds aoki@$built, expected aoki@$RELEASE_VERSION." >&2
+            echo "::error::npm-launcher holds @rockhounds/aoki@$built, expected @rockhounds/aoki@$RELEASE_VERSION." >&2
             exit 1
           fi
 
@@ -1169,8 +1169,8 @@ jobs:
           DIST_TAG: ${{ needs.preflight.outputs.cli_dist_tag }}
         run: |
           # The ./ keeps npm from reading the path as a GitHub owner/repo spec.
-          if ! npm publish --access public --tag "$DIST_TAG" --provenance ./npm-packages/aoki.tgz; then
-            echo "::error::npm publish failed. Make sure package aoki has a trusted publisher registered for .github/workflows/release.yml (see docs/operations/03_release.md)." >&2
+          if ! npm publish --access public --tag "$DIST_TAG" --provenance ./npm-packages/rockhounds-aoki.tgz; then
+            echo "::error::npm publish failed. Make sure package @rockhounds/aoki has a trusted publisher registered for .github/workflows/release.yml (see docs/operations/03_release.md)." >&2
             exit 1
           fi
 

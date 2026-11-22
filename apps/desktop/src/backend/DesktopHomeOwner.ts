@@ -96,7 +96,7 @@ export const homeOwnedMessage = (owner: Option.Option<HomeOwner>): string =>
     onNone: () =>
       m(
         msg(
-          "Another Aoki server, such as the background service, is using this data directory, or an older background service is set up for it. Stop that server or try `aoki update`. If the older launcher cannot update, run `aoki service uninstall` and optionally reinstall with `aoki service install` from a current CLI. Use `npx aoki@latest` if `aoki` is missing or outdated, and pass `--base-dir` with the service's Aoki home to each command. Then reopen Aoki. You can also set a separate AOKI_HOME and pair with the running server.",
+          "Another Aoki server, such as the background service, is using this data directory, or an older background service is set up for it. Stop that server or try `aoki update`. If the older launcher cannot update, run `aoki service uninstall` and optionally reinstall with `aoki service install` from a current CLI. Use `npx @rockhounds/aoki@latest` if `aoki` is missing or outdated, and pass `--base-dir` with the service's Aoki home to each command. Then reopen Aoki. You can also set a separate AOKI_HOME and pair with the running server.",
         ),
       ),
     onSome: (owner) => {

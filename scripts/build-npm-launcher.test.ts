@@ -131,7 +131,7 @@ it.layer(NodeServices.layer)("build-npm-launcher", (it) => {
         const manifest = yield* decodeManifest(
           yield* fs.readFileString(path.join(output.packageDir, "package.json")),
         );
-        assert.equal(manifest.name, "aoki");
+        assert.equal(manifest.name, "@rockhounds/aoki");
         assert.equal(manifest.version, VERSION);
         assert.deepStrictEqual(manifest.bin, { aoki: "./bin/aoki.mjs" });
         assert.isUndefined(manifest.dependencies);
