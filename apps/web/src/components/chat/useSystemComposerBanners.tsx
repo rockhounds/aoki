@@ -29,11 +29,13 @@ import { Button } from "../ui/button";
 import { ServerUpdateAction, serverUpdateStageLabel } from "../ServerUpdateAction";
 import { useAutoBalanceUpdateBanner } from "./useAutoBalanceUpdateBanner";
 import { ComposerServerUpdateIcon } from "./ComposerServerUpdateStatus";
+import * as AsyncResult from "effect/reactivity/AsyncResult";
+import { cliReleaseFeedAtom, EMPTY_CLI_RELEASE_FEED } from "../../state/cliReleaseFeed";
 import {
   dismissServerUpdateFailure,
   isServerUpdateFailureDismissed,
-  resolveServerConfigVersionMismatch,
   resolveServerSelfUpdateCapability,
+  resolveServerUpdateTarget,
   supportsDesktopAppUpdate,
 } from "../../versionSkew";
 
@@ -140,7 +142,6 @@ export function useSystemComposerBanners(input: SystemComposerBannersInput) {
     handleDisconnectActiveEnvironment,
   );
   const autoBalanceUpdateBanner = useAutoBalanceUpdateBanner(autoUpdateEnvironments);
-  const versionMismatch = resolveServerConfigVersionMismatch(serverConfig, messages);
   const versionMismatchServerName =
     hasMultipleRegisteredEnvironments && activeThreadEnvironmentId !== null
       ? (activeEnvironment?.label ?? serverConfig?.environment.label ?? activeThreadEnvironmentId)
@@ -153,6 +154,14 @@ export function useSystemComposerBanners(input: SystemComposerBannersInput) {
   const versionMismatchSelfUpdate = resolveServerSelfUpdateCapability(serverConfig);
   const versionMismatchInstallation = serverConfig?.environment.capabilities.serverInstallation;
   const versionMismatchDesktopAppUpdate = supportsDesktopAppUpdate(serverConfig);
+  const releaseFeed = AsyncResult.getOrElse(
+    useAtomValue(cliReleaseFeedAtom),
+    () => EMPTY_CLI_RELEASE_FEED,
+  );
+  const retryTarget = resolveServerUpdateTarget(
+    releaseFeed,
+    serverConfig?.environment.serverVersion,
+  );
   const serverUpdateState = useAtomValue(
     serverEnvironment.updateStateAtom(serverUpdateEnvironmentId),
   );
@@ -267,7 +276,7 @@ export function useSystemComposerBanners(input: SystemComposerBannersInput) {
             : serverUpdateStageLabel(serverUpdateState.stage, messages),
         actions: !updateFailed ? (
           disconnectAction
-        ) : !versionMismatch ||
+        ) : retryTarget === undefined ||
           (versionMismatchSelfUpdate === "desktop-managed" &&
             !versionMismatchDesktopAppUpdate) ? undefined : (
           <ServerUpdateAction
@@ -276,7 +285,7 @@ export function useSystemComposerBanners(input: SystemComposerBannersInput) {
             selfUpdate={versionMismatchSelfUpdate}
             installation={versionMismatchInstallation}
             desktopAppUpdate={versionMismatchDesktopAppUpdate}
-            targetVersion={versionMismatch.clientVersion}
+            targetVersion={retryTarget}
             label={gt("Retry", { $context: "verb, retries the server update" })}
             variant="ghost"
           />

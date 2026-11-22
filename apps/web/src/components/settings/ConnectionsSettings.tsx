@@ -87,11 +87,13 @@ import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 import { Button } from "../ui/button";
 import { EnvironmentMachineIcon } from "../EnvironmentMachineIcon";
 import { type ServerClientSessionRecord } from "~/environments/primary";
+import * as AsyncResult from "effect/reactivity/AsyncResult";
+import { cliReleaseFeedAtom, EMPTY_CLI_RELEASE_FEED } from "~/state/cliReleaseFeed";
 import { isDesktopLocalConnectionTarget } from "~/connection/desktopLocal";
 import { useUiStateStore } from "~/uiStateStore";
 import {
-  resolveServerConfigVersionMismatch,
   resolveServerSelfUpdateCapability,
+  resolveServerUpdateTarget,
   supportsDesktopAppUpdate,
 } from "~/versionSkew";
 import { hasCloudPublicConfig } from "~/cloud/publicConfig";
@@ -304,13 +306,20 @@ function ConnectionsSettingsContent({
     environment,
     updateStatus: savedUpdateStates[index]!.status,
   }));
+  const releaseFeed = AsyncResult.getOrElse(
+    useAtomValue(cliReleaseFeedAtom),
+    () => EMPTY_CLI_RELEASE_FEED,
+  );
   const savedServerUpdateTargets = savedServerUpdateStates.flatMap(
     ({ environment, updateStatus }): ServerUpdateTarget[] => {
-      const mismatch = resolveServerConfigVersionMismatch(environment.serverConfig, m);
+      const updateTarget = resolveServerUpdateTarget(
+        releaseFeed,
+        environment.serverConfig?.environment.serverVersion,
+      );
       const selfUpdate = resolveServerSelfUpdateCapability(environment.serverConfig);
       const desktopAppUpdate = supportsDesktopAppUpdate(environment.serverConfig);
       if (
-        !mismatch ||
+        updateTarget === undefined ||
         updateStatus === "running" ||
         !environment.entry.enabled ||
         environment.connection.phase !== "connected" ||
@@ -327,7 +336,7 @@ function ConnectionsSettingsContent({
           selfUpdate,
           installation: environment.serverConfig?.environment.capabilities.serverInstallation,
           desktopAppUpdate,
-          targetVersion: mismatch.clientVersion,
+          targetVersion: updateTarget,
         },
       ];
     },
@@ -419,7 +428,10 @@ function ConnectionsSettingsContent({
     "remoteClients",
     m,
   );
-  const primaryVersionMismatch = resolveServerConfigVersionMismatch(primaryServerConfig, m);
+  const primaryUpdateTarget = resolveServerUpdateTarget(
+    releaseFeed,
+    primaryServerConfig?.environment.serverVersion,
+  );
   const primaryServerUpdateState = useAtomValue(
     serverEnvironment.updateStateAtom(primaryEnvironmentId),
   );
@@ -1355,7 +1367,7 @@ function ConnectionsSettingsContent({
                   )
                 }
                 control={
-                  primaryVersionMismatch &&
+                  primaryUpdateTarget !== undefined &&
                   primaryEnvironmentId !== null &&
                   primaryServerUpdateState.status !== "running" ? (
                     <ServerUpdateAction
@@ -1371,12 +1383,12 @@ function ConnectionsSettingsContent({
                         primaryServerConfig?.environment.capabilities.serverInstallation
                       }
                       desktopAppUpdate={supportsDesktopAppUpdate(primaryServerConfig)}
-                      targetVersion={primaryVersionMismatch.clientVersion}
+                      targetVersion={primaryUpdateTarget}
                       label={
                         primaryServerUpdateState.status === "failed"
                           ? gt("Retry update")
                           : gt("Update to {version}", {
-                              version: primaryVersionMismatch.clientVersion,
+                              version: primaryUpdateTarget,
                             })
                       }
                     />

@@ -5,6 +5,7 @@ import type {
   ServerSelfUpdateCapability,
 } from "@t3tools/contracts";
 import type { ServerUpdateState } from "@t3tools/client-runtime/state/server";
+import { cliReleaseChannelOf } from "@t3tools/shared/cliRelease";
 import { compareSemverVersions, parseSemver } from "@t3tools/shared/semver";
 import * as Schema from "effect/Schema";
 import { msg } from "gt-react";
@@ -87,6 +88,24 @@ export function resolveServerConfigVersionMismatch(
   resolve: MessageResolver = m,
 ): VersionMismatch | null {
   return resolveVersionMismatch(serverConfig?.environment.serverVersion, APP_VERSION, resolve);
+}
+
+/**
+ * The release an update can actually deliver for a server on `serverVersion`'s channel:
+ * the feed's newest release on that channel, only when it is newer than the server.
+ * `undefined` means no published update exists, whatever the client's own version says.
+ */
+export function resolveServerUpdateTarget(
+  releases: { readonly stable?: string; readonly nightly?: string },
+  serverVersion: string | null | undefined,
+): string | undefined {
+  if (!serverVersion) return undefined;
+  const channel = cliReleaseChannelOf(serverVersion);
+  const target =
+    channel === "stable" ? releases.stable : channel === "nightly" ? releases.nightly : undefined;
+  return target !== undefined && resolveVersionMismatch(serverVersion, target) !== null
+    ? target
+    : undefined;
 }
 
 export function resolveServerSelfUpdateCapability(

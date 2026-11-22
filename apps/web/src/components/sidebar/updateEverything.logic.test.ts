@@ -46,7 +46,7 @@ function machine(
 }
 
 describe("collectServerUpdateTargets", () => {
-  it("updates remote servers that can move to the target and names every skipped one", () => {
+  it("updates remote servers to their channel's published release and names every skipped one", () => {
     const { targets, skipped } = collectServerUpdateTargets(
       [
         machine("this-app", "0.0.40", "desktop-managed", { hostedByThisApp: true }),
@@ -68,15 +68,15 @@ describe("collectServerUpdateTargets", () => {
         machine("current-offline", "0.0.50", "boot-service", { connected: false }),
         machine("manual", "0.0.40", undefined),
       ],
-      "0.0.50",
+      { stable: "0.0.50", nightly: "0.0.50-nightly.20261002.1" },
     );
 
     expect(targets.map((target) => [target.serverLabel, target.targetVersion])).toEqual([
       ["service", "0.0.50"],
-      ["other-desktop", "0.0.50"],
+      ["nightly-service", "0.0.50-nightly.20261002.1"],
+      ["other-desktop", "0.0.50-nightly.20261002.1"],
     ]);
     expect(skipped.map((entry) => [entry.label, entry.reason])).toEqual([
-      ["nightly-service", "on the nightly channel"],
       ["offline", "not connected"],
       ["never-connected", "not connected"],
       ["no-scope", "no permission"],
@@ -85,16 +85,26 @@ describe("collectServerUpdateTargets", () => {
     ]);
   });
 
-  it("does not offer a Nightly build to a Stable desktop app, whose own feed has nothing newer", () => {
-    const { targets, skipped } = collectServerUpdateTargets(
-      [machine("stable-desktop", "0.1.9", "desktop-managed")],
-      "0.1.10-nightly.20261116.4761",
-    );
+  it("offers nothing when the feed publishes no release for a machine's channel", () => {
+    const machines = [
+      machine("service", "0.0.40", "boot-service"),
+      machine("nightly-service", "0.0.49-nightly.20261001.3", "boot-service"),
+      machine("stable-desktop", "0.1.9", "desktop-managed"),
+    ];
 
-    expect(targets.map((target) => target.serverLabel)).toEqual([]);
-    expect(skipped.map((entry) => [entry.label, entry.reason])).toEqual([
-      ["stable-desktop", "on the stable channel"],
+    // Version skew alone is not an update: an empty feed means nothing exists to install.
+    expect(collectServerUpdateTargets(machines, {}).targets).toEqual([]);
+    expect(collectServerUpdateTargets(machines, {}).skipped).toEqual([]);
+
+    // A release only counts where it is newer: nightly machines see no stable update,
+    // and 0.0.50 is not an update for a server already on 0.1.9.
+    const { targets, skipped } = collectServerUpdateTargets(machines, {
+      stable: "0.0.50",
+    });
+    expect(targets.map((target) => [target.serverLabel, target.targetVersion])).toEqual([
+      ["service", "0.0.50"],
     ]);
+    expect(skipped).toEqual([]);
   });
 
   it("skips servers whose policy refuses the update, with the policy's message", () => {
@@ -120,7 +130,7 @@ describe("collectServerUpdateTargets", () => {
     ];
 
     expect(
-      collectServerUpdateTargets(machines, "0.0.50").skipped.map((entry) => [
+      collectServerUpdateTargets(machines, { stable: "0.0.50" }).skipped.map((entry) => [
         entry.label,
         entry.reason,
       ]),
@@ -137,7 +147,7 @@ describe("collectServerUpdateTargets", () => {
             },
           },
         })),
-        "0.0.50-nightly.20261028.1",
+        { nightly: "0.0.50-nightly.20261028.1" },
       ).skipped.map((entry) => entry.label),
     ).toEqual(["off", "no-nightly"]);
   });

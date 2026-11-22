@@ -1,10 +1,16 @@
 import { msg, useMessages } from "gt-react";
 import { useAtomValue } from "@effect/atom-react";
 import { PROVIDER_DISPLAY_NAMES } from "@t3tools/contracts";
+import { cliReleaseChannelOf } from "@t3tools/shared/cliRelease";
+import * as AsyncResult from "effect/reactivity/AsyncResult";
 
-import { APP_VERSION } from "~/branding";
 import { isDesktopLocalConnectionTarget } from "~/connection/desktopLocal";
 import { isElectron } from "~/env";
+import {
+  cliReleaseFeedAtom,
+  EMPTY_CLI_RELEASE_FEED,
+  type CliReleaseFeed,
+} from "~/state/cliReleaseFeed";
 import { useEnvironments } from "~/state/environments";
 import { environmentIdsKey } from "~/state/environmentAtomList";
 import { environmentUpdateStatesAtom, serverEnvironment } from "~/state/server";
@@ -54,7 +60,6 @@ export function useUpdateEverything(
   localUpdateVersion: string | null,
   channelSwitch?: ChannelSwitchRelease,
 ) {
-  const targetVersion = localUpdateVersion ?? APP_VERSION;
   const { environments } = useEnvironments();
   const resolve = useMessages();
   const environmentIds = environmentIdsKey(environments.map(({ environmentId }) => environmentId));
@@ -69,9 +74,21 @@ export function useUpdateEverything(
     canMaintain: canUpdateServer(sessionStates[index]!),
     updateState: updateStates[index]!,
   }));
+  // A downloaded desktop update is itself a published release, so it stands in for its channel
+  // while the feed check is unresolved. Every server target the feed cannot back stays unoffered.
+  const feed = AsyncResult.getOrElse(
+    useAtomValue(cliReleaseFeedAtom),
+    () => EMPTY_CLI_RELEASE_FEED,
+  );
+  const releases: CliReleaseFeed =
+    localUpdateVersion === null
+      ? feed
+      : cliReleaseChannelOf(localUpdateVersion) === "nightly"
+        ? { ...feed, nightly: feed.nightly ?? localUpdateVersion }
+        : { ...feed, stable: feed.stable ?? localUpdateVersion };
   const { targets: servers, skipped } = channelSwitch
     ? collectChannelSwitchTargets(machines, channelSwitch, resolve)
-    : collectServerUpdateTargets(machines, targetVersion, resolve);
+    : collectServerUpdateTargets(machines, releases, resolve);
   // Track-only hosts save a setting and restart nothing, so they are neither listed nor counted.
   const moving = servers.filter((server) => server.trackOnly !== true);
   const restarts = collectRestartingMachines(machines, moving, localUpdateVersion !== null);
