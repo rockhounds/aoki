@@ -1,8 +1,10 @@
 import { T, useGT, useMessages } from "gt-react";
 import { useAtomValue } from "@effect/atom-react";
 import type { ServerUpdateState } from "@t3tools/client-runtime/state/server";
+import * as AsyncResult from "effect/reactivity/AsyncResult";
 import { useState } from "react";
 
+import { cliReleaseFeedAtom, EMPTY_CLI_RELEASE_FEED } from "~/state/cliReleaseFeed";
 import { environmentIdsKey } from "~/state/environmentAtomList";
 import type { EnvironmentPresentation } from "~/state/environments";
 import { environmentUpdateStatesAtom } from "~/state/server";
@@ -14,6 +16,7 @@ import {
   isVersionMismatchDismissed,
   resolveServerConfigVersionMismatch,
   resolveServerSelfUpdateCapability,
+  resolveServerUpdateTarget,
   supportsDesktopAppUpdate,
 } from "~/versionSkew";
 import {
@@ -35,6 +38,11 @@ export function useAutoBalanceUpdateBanner(
     environmentUpdateStatesAtom(
       environmentIdsKey(environments.map(({ environmentId }) => environmentId)),
     ),
+  );
+  // Offers name only releases the feed publishes; a version skew alone is not an update.
+  const feed = AsyncResult.getOrElse(
+    useAtomValue(cliReleaseFeedAtom),
+    () => EMPTY_CLI_RELEASE_FEED,
   );
   const states = environments.flatMap((environment, index) => {
     const state = updateStates[index];
@@ -58,6 +66,16 @@ export function useAutoBalanceUpdateBanner(
       return [];
     const selfUpdate = resolveServerSelfUpdateCapability(environment.serverConfig);
     const desktopAppUpdate = supportsDesktopAppUpdate(environment.serverConfig);
+    const targetVersion =
+      state.status === "idle"
+        ? resolveServerUpdateTarget(feed, environment.serverConfig?.environment.serverVersion)
+        : state.targetVersion;
+    // An idle mismatch with nothing published to install is skew, not an available update.
+    if (targetVersion === undefined) return [];
+    // Idle machines already proved a published target above; running and failed
+    // ones carry the attempted update's own version.
+    const remoteUpdate =
+      selfUpdate !== null && (selfUpdate !== "desktop-managed" || desktopAppUpdate);
     return [
       {
         environmentId: environment.environmentId,
@@ -65,9 +83,9 @@ export function useAutoBalanceUpdateBanner(
         selfUpdate,
         installation: environment.serverConfig?.environment.capabilities.serverInstallation,
         desktopAppUpdate,
-        targetVersion: state.status === "idle" ? mismatch!.clientVersion : state.targetVersion,
+        targetVersion,
         connected: environment.connection.phase === "connected",
-        remoteUpdate: selfUpdate !== null && (selfUpdate !== "desktop-managed" || desktopAppUpdate),
+        remoteUpdate,
         state,
         dismissKey,
       },
@@ -77,7 +95,9 @@ export function useAutoBalanceUpdateBanner(
 
   const running = machines.filter((machine) => machine.state.status === "running").length;
   const failed = machines.filter((machine) => machine.state.status === "failed").length;
-  const manual = machines.filter((machine) => !machine.remoteUpdate).length;
+  const manual = machines.filter(
+    (machine) => machine.state.status === "idle" && !machine.remoteUpdate,
+  ).length;
   const targets = machines.filter(
     (machine) => machine.connected && machine.remoteUpdate && machine.state.status !== "running",
   );

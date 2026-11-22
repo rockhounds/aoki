@@ -9606,7 +9606,6 @@
   "a9f514109c355d42": "无法复制追踪 ID",
   "4112c1a7b3c1d029": "正在重启",
   "543ef9fcaf8aa96f": "已停用",
-  "5173c50b0a60847c": "有可用更新：{serverVersion} → {clientVersion}",
   "987c5623ba70f390": "线路",
   "36d52134b8b8d455": "{count, plural, other {{count} 条线路}}",
   "80a2ef2c87f7f180": "{label} 服务器",
@@ -12031,7 +12030,6 @@
   "2dcc418b6a13b83c": "需要手动更新",
   "f13e08bd3614112e": "请在该机器上更新 T3 Code",
   "3c3348c36a2695af": "请在该机器上更改更新通道",
-  "fa8faa732a2688ef": "使用 {channel} 通道",
   "e65649675cb4cbaa": "已关闭",
   "a1e7c08d9ef315c7": "仍在加载",
   "9b961309baafa09d": "没有权限",
@@ -13091,5 +13089,7 @@
   "2ba1f9db4cf402e1": "添加 配对 后端 主机 代码 ssh 配置 认证代理 隧道 已保存 aoki connect",
   "bf7f6c3ce2becdb9": "Aoki 首页",
   "ac49abb41c687db5": "Aoki",
-  "e7dc3649e79e5f8e": "Aoki 仍为 {current}。请通过更新按钮重新安装 {version}。"
+  "e7dc3649e79e5f8e": "Aoki 仍为 {current}。请通过更新按钮重新安装 {version}。",
+  "ba414a6407d5dfec": "Update available: {serverVersion} → {version}",
+  "f14ed79c9ac6500d": "Version mismatch: server {serverVersion}, client {clientVersion}"
 }

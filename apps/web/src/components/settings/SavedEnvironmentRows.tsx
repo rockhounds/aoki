@@ -48,9 +48,12 @@ import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 import { SharedTooltipTrigger } from "../ui/shared-tooltip";
 import { Button, InlineButton } from "../ui/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../ui/empty";
+import * as AsyncResult from "effect/reactivity/AsyncResult";
+import { cliReleaseFeedAtom, EMPTY_CLI_RELEASE_FEED } from "~/state/cliReleaseFeed";
 import {
   resolveServerConfigVersionMismatch,
   resolveServerSelfUpdateCapability,
+  resolveServerUpdateTarget,
   supportsDesktopAppUpdate,
 } from "~/versionSkew";
 import { hasCloudPublicConfig } from "~/cloud/publicConfig";
@@ -65,7 +68,6 @@ import { environmentCatalog } from "~/connection/catalog";
 import { isLoopbackHostname } from "~/environments/primary/target";
 import { readEnvironmentScope } from "~/state/session";
 import { type EnvironmentPresentation, useRelayEnvironmentDiscovery } from "~/state/environments";
-import { APP_VERSION } from "~/branding";
 import { useManagedPolicy } from "~/state/managedPolicy";
 import { useAtomCommand } from "../../state/use-atom-command";
 import { useUpdateEnvironmentSettings } from "~/hooks/useSettings";
@@ -201,6 +203,10 @@ export function SavedBackendListRow({
   const { copyToClipboard: copyMcpUrl } = useCopyMcpUrl();
   const versionMismatch = resolveServerConfigVersionMismatch(environment.serverConfig, messages);
   const serverUpdateState = useAtomValue(serverEnvironment.updateStateAtom(environmentId));
+  const releaseFeed = AsyncResult.getOrElse(
+    useAtomValue(cliReleaseFeedAtom),
+    () => EMPTY_CLI_RELEASE_FEED,
+  );
   const resumingServerUpdate =
     serverUpdateState.status === "running" && serverUpdateState.stage === "resuming";
   const status = savedBackendStatus(environment, messages);
@@ -252,10 +258,14 @@ export function SavedBackendListRow({
     .filter((value): value is string => value !== null)
     .join(" · ");
 
+  const updateTarget = resolveServerUpdateTarget(releaseFeed, serverVersion);
+  // An outdated host installs the newest release on its channel; an unknown one gets Stable.
+  const outdatedUpdateTarget =
+    resolveServerUpdateTarget(releaseFeed, lastDescriptor?.serverVersion) ?? releaseFeed.stable;
   const showUpdateAction =
     enabled &&
     isConnected &&
-    versionMismatch !== null &&
+    updateTarget !== undefined &&
     (serverUpdateState.status === "idle" || serverUpdateState.status === "failed");
 
   const statusTooltip = `${
@@ -266,12 +276,17 @@ export function SavedBackendListRow({
         ? connectionStatusText(environment.connection, messages)
         : gt("Switched off")
   }${
-    versionMismatch
-      ? `\n${gt("Update available: {serverVersion} → {clientVersion}", {
-          serverVersion: versionMismatch.serverVersion,
-          clientVersion: versionMismatch.clientVersion,
+    updateTarget !== undefined
+      ? `\n${gt("Update available: {serverVersion} → {version}", {
+          serverVersion: serverVersion ?? "",
+          version: updateTarget,
         })}`
-      : ""
+      : versionMismatch
+        ? `\n${gt("Version mismatch: server {serverVersion}, client {clientVersion}", {
+            serverVersion: versionMismatch.serverVersion,
+            clientVersion: versionMismatch.clientVersion,
+          })}`
+        : ""
   }`;
 
   return (
@@ -399,7 +414,8 @@ export function SavedBackendListRow({
     >
       {unsupported &&
       environment.entry.serverUpdateRequired === true &&
-      serverUpdateState.status !== "running" ? (
+      serverUpdateState.status !== "running" &&
+      outdatedUpdateTarget !== undefined ? (
         <OutdatedServerUpdateAction
           environmentId={environmentId}
           serverLabel={gt("{label} server", {
@@ -407,7 +423,7 @@ export function SavedBackendListRow({
             $context: "names a T3 server inside sentences such as {serverLabel} updated",
           })}
           fromVersion={lastDescriptor?.serverVersion}
-          targetVersion={APP_VERSION}
+          targetVersion={outdatedUpdateTarget}
           label={serverUpdateState.status === "failed" ? gt("Retry update") : gt("Update")}
         />
       ) : null}
@@ -421,7 +437,7 @@ export function SavedBackendListRow({
           selfUpdate={resolveServerSelfUpdateCapability(environment.serverConfig)}
           installation={environment.serverConfig?.environment.capabilities.serverInstallation}
           desktopAppUpdate={supportsDesktopAppUpdate(environment.serverConfig)}
-          targetVersion={versionMismatch.clientVersion}
+          targetVersion={updateTarget}
           label={serverUpdateState.status === "failed" ? gt("Retry update") : gt("Update")}
           appearance="icon"
         />

@@ -9590,7 +9590,6 @@
   "a9f514109c355d42": "Impossible de copier l’ID de trace",
   "4112c1a7b3c1d029": "Redémarrage",
   "543ef9fcaf8aa96f": "Éteint",
-  "5173c50b0a60847c": "Mise à jour disponible : {serverVersion} → {clientVersion}",
   "987c5623ba70f390": "Routes",
   "36d52134b8b8d455": "{count, plural, one {{count} route} other {{count} routes}}",
   "80a2ef2c87f7f180": "serveur {label}",
@@ -12006,7 +12005,6 @@
   "2dcc418b6a13b83c": "nécessite une mise à jour manuelle",
   "f13e08bd3614112e": "mettez à jour T3 Code sur cette machine",
   "3c3348c36a2695af": "changez le canal de mise à jour sur cette machine",
-  "fa8faa732a2688ef": "sur le canal {channel}",
   "e65649675cb4cbaa": "désactivé",
   "a1e7c08d9ef315c7": "chargement en cours",
   "9b961309baafa09d": "pas d’autorisation",
@@ -13077,5 +13075,7 @@
   "2ba1f9db4cf402e1": "ajouter appairer backend hôte code ssh config agent tunnel enregistré aoki connect",
   "bf7f6c3ce2becdb9": "Accueil Aoki",
   "ac49abb41c687db5": "Aoki",
-  "e7dc3649e79e5f8e": "Aoki est toujours en {current}. Installez à nouveau {version} depuis le bouton de mise à jour."
+  "e7dc3649e79e5f8e": "Aoki est toujours en {current}. Installez à nouveau {version} depuis le bouton de mise à jour.",
+  "ba414a6407d5dfec": "Update available: {serverVersion} → {version}",
+  "f14ed79c9ac6500d": "Version mismatch: server {serverVersion}, client {clientVersion}"
 }

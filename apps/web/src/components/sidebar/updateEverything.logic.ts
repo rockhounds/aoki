@@ -14,8 +14,10 @@ import { compareSemverVersions } from "@t3tools/shared/semver";
 import { msg } from "gt-react";
 
 import { m, type MessageResolver } from "~/i18n/messages";
+import type { CliReleaseFeed } from "~/state/cliReleaseFeed";
 import {
   resolveServerSelfUpdateCapability,
+  resolveServerUpdateTarget,
   resolveVersionMismatch,
   supportsDesktopAppUpdate,
 } from "~/versionSkew";
@@ -76,14 +78,14 @@ export interface SkippedMachine {
 
 // Desktop servers without the desktop control fd (older apps, WSL backends: wsl.exe cannot pass
 // fds) cannot be updated from here, and their desktop app is not necessarily the stale part.
-const UPDATE_ON_THAT_MACHINE = msg("update T3 Code on that machine");
+const UPDATE_ON_THAT_MACHINE = msg("update Aoki on that machine");
 
 /** Skip current and app-hosted servers; the latter update with the app and would relaunch mid-run.
- * Desktop-managed servers use their own feed. Each server's updater checks that it can install the
- * release before it restarts, so no registry precheck runs here. */
+ * Each machine targets the newest release `releases` publishes on its own channel, so every offer
+ * here names a version that exists. A channel the feed does not publish leaves nothing to offer. */
 export function collectServerUpdateTargets(
   machines: ReadonlyArray<UpdateEverythingMachine>,
-  targetVersion: string,
+  releases: CliReleaseFeed,
   resolve: MessageResolver = m,
 ): {
   readonly targets: ServerUpdateTarget[];
@@ -94,17 +96,20 @@ export function collectServerUpdateTargets(
   for (const machine of machines) {
     const config = machine.serverConfig;
     if (machine.hostedByThisApp) continue;
-    if (
-      config !== null &&
-      resolveVersionMismatch(config.environment.serverVersion, targetVersion) === null
-    ) {
-      continue;
-    }
     const skip = (reason: string) =>
       skipped.push({ environmentId: machine.environmentId, label: machine.label, reason });
+    if (config === null) {
+      skip(unavailableReason(machine, resolve) ?? resolve(msg("not connected")));
+      continue;
+    }
+    // A channel the feed does not publish leaves nothing to offer, whatever the version skew.
+    const targetVersion = resolveServerUpdateTarget(releases, config.environment.serverVersion);
+    if (targetVersion === undefined) {
+      continue;
+    }
     const unavailable = unavailableReason(machine, resolve);
-    if (config === null || unavailable !== null) {
-      skip(unavailable ?? resolve(msg("not connected")));
+    if (unavailable !== null) {
+      skip(unavailable);
       continue;
     }
     const selfUpdate = resolveServerSelfUpdateCapability(config);
@@ -124,16 +129,6 @@ export function collectServerUpdateTargets(
     }
     if (selfUpdate === "desktop-managed" && !desktopAppUpdate) {
       skip(resolve(UPDATE_ON_THAT_MACHINE));
-      continue;
-    }
-    const serverChannel = cliReleaseChannelOf(config.environment.serverVersion);
-    // A desktop app installs its own track's newest release. Nightly builds run ahead of Stable, so a
-    // Nightly host behind a Stable target has something newer; a Stable host may not.
-    if (
-      serverChannel !== cliReleaseChannelOf(targetVersion) &&
-      (selfUpdate !== "desktop-managed" || serverChannel === "stable")
-    ) {
-      skip(resolve(msg("on the {channel} channel", { channel: serverChannel })));
       continue;
     }
     const target: ServerUpdateTarget = {
@@ -554,7 +549,8 @@ export function resolveRestoredRetry(
   ) {
     return "current";
   }
-  return collectServerUpdateTargets([current], targetVersion).targets[0] ?? null;
+  const channel = cliReleaseChannelOf(targetVersion);
+  return collectServerUpdateTargets([current], { [channel]: targetVersion }).targets[0] ?? null;
 }
 
 export function isServerUpdateHandedOff(state: ServerUpdateState): boolean {

@@ -9549,7 +9549,6 @@
   "a9f514109c355d42": "추적 ID를 복사할 수 없습니다",
   "4112c1a7b3c1d029": "다시 시작 중",
   "543ef9fcaf8aa96f": "꺼짐",
-  "5173c50b0a60847c": "업데이트 가능: {serverVersion} → {clientVersion}",
   "987c5623ba70f390": "경로",
   "36d52134b8b8d455": "{count, plural, other {경로 {count}개}}",
   "80a2ef2c87f7f180": "{label} 서버",
@@ -11954,7 +11953,6 @@
   "2dcc418b6a13b83c": "수동 업데이트 필요",
   "f13e08bd3614112e": "해당 기기에서 T3 Code를 업데이트하세요",
   "3c3348c36a2695af": "해당 기기에서 업데이트 트랙을 변경하세요",
-  "fa8faa732a2688ef": "{channel} 채널",
   "e65649675cb4cbaa": "꺼짐",
   "a1e7c08d9ef315c7": "불러오는 중",
   "9b961309baafa09d": "권한 없음",
@@ -13011,5 +13009,7 @@
   "2ba1f9db4cf402e1": "추가 페어링 백엔드 호스트 코드 ssh 구성 에이전트 터널 저장됨 T3 Connect",
   "bf7f6c3ce2becdb9": "Aoki 홈",
   "ac49abb41c687db5": "Aoki",
-  "e7dc3649e79e5f8e": "Aoki가 아직 {current}입니다. 업데이트 버튼에서 {version}을(를) 다시 설치하세요."
+  "e7dc3649e79e5f8e": "Aoki가 아직 {current}입니다. 업데이트 버튼에서 {version}을(를) 다시 설치하세요.",
+  "ba414a6407d5dfec": "Update available: {serverVersion} → {version}",
+  "f14ed79c9ac6500d": "Version mismatch: server {serverVersion}, client {clientVersion}"
 }

@@ -9589,7 +9589,6 @@
   "a9f514109c355d42": "No se pudo copiar el ID de traza",
   "4112c1a7b3c1d029": "Reiniciando",
   "543ef9fcaf8aa96f": "Apagado",
-  "5173c50b0a60847c": "Actualización disponible: {serverVersion} → {clientVersion}",
   "987c5623ba70f390": "Rutas",
   "36d52134b8b8d455": "{count, plural, one {{count} ruta} other {{count} rutas}}",
   "80a2ef2c87f7f180": "servidor {label}",
@@ -12002,7 +12001,6 @@
   "2dcc418b6a13b83c": "requiere una actualización manual",
   "f13e08bd3614112e": "actualiza T3 Code en ese equipo",
   "3c3348c36a2695af": "cambia el canal de actualizaciones en ese equipo",
-  "fa8faa732a2688ef": "en el canal {channel}",
   "e65649675cb4cbaa": "desactivado",
   "a1e7c08d9ef315c7": "aún cargando",
   "9b961309baafa09d": "sin permiso",
@@ -13072,5 +13070,7 @@
   "2ba1f9db4cf402e1": "añadir emparejar backend host código ssh config agente túnel guardado aoki connect",
   "bf7f6c3ce2becdb9": "Inicio de Aoki",
   "ac49abb41c687db5": "Aoki",
-  "e7dc3649e79e5f8e": "Aoki sigue en {current}. Vuelve a instalar {version} desde el botón de actualizar."
+  "e7dc3649e79e5f8e": "Aoki sigue en {current}. Vuelve a instalar {version} desde el botón de actualizar.",
+  "ba414a6407d5dfec": "Update available: {serverVersion} → {version}",
+  "f14ed79c9ac6500d": "Version mismatch: server {serverVersion}, client {clientVersion}"
 }

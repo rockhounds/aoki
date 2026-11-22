@@ -13,6 +13,7 @@ import {
   isServerUpdateFailureDismissed,
   isVersionMismatchDismissed,
   manualServerUpdateCommand,
+  resolveServerUpdateTarget,
   resolveVersionMismatch,
 } from "./versionSkew";
 
@@ -124,6 +125,26 @@ describe("versionSkew", () => {
     branding.APP_VERSION = "dev";
     expect(resolveVersionMismatch("dev")).toBeNull();
     expect(resolveVersionMismatch("0.0.34")).toMatchObject({ serverVersion: "0.0.34" });
+  });
+
+  it("targets only the published release on a server's own channel", () => {
+    const feed = { stable: "0.0.50", nightly: "0.0.51-nightly.20261002.1" };
+
+    expect(resolveServerUpdateTarget(feed, "0.0.40")).toBe("0.0.50");
+    expect(resolveServerUpdateTarget(feed, "0.0.49-nightly.20261001.3")).toBe(
+      "0.0.51-nightly.20261002.1",
+    );
+    // No published release for the server's channel means no update exists to offer.
+    expect(resolveServerUpdateTarget({ stable: "0.0.50" }, "0.0.49-nightly.20261001.3")).toBe(
+      undefined,
+    );
+    expect(resolveServerUpdateTarget({}, "0.0.40")).toBe(undefined);
+    // A release only counts when it is newer than the server.
+    expect(resolveServerUpdateTarget(feed, "0.0.50")).toBe(undefined);
+    expect(resolveServerUpdateTarget(feed, "0.0.60")).toBe(undefined);
+    // Preview builds and missing versions have no channel to follow.
+    expect(resolveServerUpdateTarget(feed, "0.0.50-preview.20261002.7")).toBe(undefined);
+    expect(resolveServerUpdateTarget(feed, undefined)).toBe(undefined);
   });
 
   it("keys dismissals by environment, client version, and server version", () => {
