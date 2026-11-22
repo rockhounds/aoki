@@ -134,8 +134,10 @@ Aoki does not contact T3 Tools' services unless you opt in:
   `AOKI_POSTHOG_HOST` point at your own PostHog project. [Telemetry](docs/user/telemetry.md) describes the data and controls.
 - **Releases** come from `rockhounds/aoki`: `aoki update`, server self-update, the mobile apps'
   update checks, desktop release links, and the server archive that desktop SSH environments
-  install on the remote machine. Aoki publishes no releases yet, so these find nothing, and desktop SSH
-  environments cannot install a server on the remote machine.
+  install on the remote machine. `.github/workflows/release-cli.yml` builds the five CLI
+  archives and publishes them for `v*.*.*` tags; the first release is v0.3.4. Upstream's
+  `release.yml` stays dormant here: it queues on self-hosted runners and signing secrets the
+  fork does not run.
 - **The model list** refreshes from `apps/server/src/provider/model-manifest.json` on Aoki's
   `main`.
 - **T3 Connect** (Clerk sign-in and the relay) exists only in builds made with T3 Connect values

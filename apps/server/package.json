@@ -1,10 +1,10 @@
 {
   "name": "aoki",
-  "version": "0.3.0",
+  "version": "0.3.4",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pingdotgg/t3code",
+    "url": "https://github.com/rockhounds/aoki",
     "directory": "apps/server"
   },
   "bin": {

@@ -14,7 +14,7 @@ const SUPPORTED = ["darwin-arm64", "linux-arm64", "linux-x64", "win32-arm64", "w
 // Well inside launchd's 20 s ExitTimeOut, which SIGKILLs only the launcher and orphans the runtime.
 const TERMINATE_GRACE_MS = 5_000;
 
-function t3Home() {
+function aokiHome() {
   const raw = (process.env.AOKI_HOME || "").trim();
   if (raw === "") return path.join(os.homedir(), ".aoki");
   if (raw === "~") return os.homedir();
@@ -64,7 +64,7 @@ async function download(url, file) {
         shown = step;
         const percent = total ? ` ${step}%` : "";
         process.stderr.write(
-          `\r\x1b[2Kt3: downloading T3 Code ${version}${percent} (${(received / 1048576).toFixed(1)} MB)`,
+          `\r\x1b[2Kaoki: downloading Aoki ${version}${percent} (${(received / 1048576).toFixed(1)} MB)`,
         );
       }
     }
@@ -78,7 +78,7 @@ async function download(url, file) {
 async function install(dir, key) {
   const archive = `aoki-${version}-${key}.${process.platform === "win32" ? "zip" : "tar.gz"}`;
   const base = (
-    process.env.AOKI_RELEASE_BASE_URL || "https://github.com/pingdotgg/t3code/releases/download"
+    process.env.AOKI_RELEASE_BASE_URL || "https://github.com/rockhounds/aoki/releases/download"
   ).replace(/\/+$/, "");
   const sums = await (await get(`${base}/v${version}/SHA256SUMS`)).text();
   const expected = /^([0-9a-f]{64})\s+\*?(.+)$/im;
@@ -178,11 +178,11 @@ async function main() {
   const key = `${process.platform}-${process.arch}`;
   if (!SUPPORTED.includes(key)) {
     throw new Error(
-      `no T3 Code CLI build is available for ${key} (supported: ${SUPPORTED.join(", ")}).\n` +
-        "The desktop app is at https://github.com/pingdotgg/t3code/releases",
+      `no Aoki CLI build is available for ${key} (supported: ${SUPPORTED.join(", ")}).\n` +
+        "Releases are at https://github.com/rockhounds/aoki/releases",
     );
   }
-  const dir = path.join(t3Home(), "runtime", "versions", version);
+  const dir = path.join(aokiHome(), "runtime", "versions", version);
   if (!isComplete(dir)) await install(dir, key);
 
   // Service IPC and signals must reach the child; terminal Ctrl-C already does, so do not forward SIGINT twice.
@@ -192,7 +192,7 @@ async function main() {
     process.argv.slice(2),
     {
       stdio: ipc ? ["inherit", "inherit", "inherit", "ipc"] : "inherit",
-      // The executable lives in the T3 home, so this is how it knows npm launched it.
+      // The executable lives in the Aoki home, so this is how it knows npm launched it.
       env: { ...process.env, AOKI_NPM_LAUNCHER_PATH: import.meta.filename },
     },
   );
@@ -240,7 +240,7 @@ function killTree(child) {
 
 function executableError(key, detail) {
   return new Error(
-    `could not run T3 Code ${version} for ${key}: ${detail}` +
+    `could not run Aoki ${version} for ${key}: ${detail}` +
       (process.platform === "linux"
         ? "\nThe Linux release requires glibc; musl-based systems such as Alpine are not supported. Use a glibc-based Linux environment."
         : ""),

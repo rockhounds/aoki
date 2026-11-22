@@ -1,0 +1,641 @@
+name: Release CLI
+
+# Aoki's release path for the versioned CLI archives. The upstream release.yml
+# pipeline needs self-hosted runners and signing/notarization secrets this fork
+# does not run; this workflow builds the five CLI archives on GitHub-hosted
+# runners and publishes them plus SHA256SUMS as the GitHub release for a v* tag.
+# Archives are unsigned/ad-hoc-signed where upstream signs with certificates.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-cli-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  VERSION: ${{ github.ref_name }}
+
+jobs:
+  # The server bundle and web client the archives embed, built once.
+  bundle:
+    name: Build JS bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        shell: bash
+        env:
+          CHECKOUT_REF: ${{ github.ref }}
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "$CHECKOUT_REF"
+          git sparse-checkout set --no-cone '/*' '!/.repos/'
+          git -c checkout.workers=0 checkout --detach FETCH_HEAD
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-ci-deps
+        with:
+          install-args: --filter=aoki... --filter=@t3tools/web... --filter=@t3tools/scripts...
+          save-pnpm-store: false
+
+      - name: Align package versions to release version
+        run: node scripts/update-release-package-versions.ts "${VERSION#v}"
+
+      - name: Build JS bundle
+        env:
+          AOKI_TELEMETRY_CHANNEL: ${{ contains(github.ref_name, '-nightly.') && 'nightly' || (contains(github.ref_name, '-preview.') && 'preview' || 'stable') }}
+        run: vp run --filter aoki build
+
+      - name: Upload JS bundle
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: js-bundle
+          path: apps/server/dist
+          if-no-files-found: error
+          retention-days: 1
+
+  cli-linux-x64:
+    name: CLI linux-x64
+    needs: [bundle]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        shell: bash
+        env:
+          CHECKOUT_REF: ${{ github.ref }}
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "$CHECKOUT_REF"
+          git sparse-checkout set --no-cone '/*' '!/.repos/'
+          git -c checkout.workers=0 checkout --detach FETCH_HEAD
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-ci-deps
+        with:
+          install-args: --filter=aoki... --filter=@t3tools/web... --filter=@t3tools/scripts...
+          save-pnpm-store: false
+
+      - name: Align package versions to release version
+        run: node scripts/update-release-package-versions.ts "${VERSION#v}"
+
+      - name: Download JS bundle
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: js-bundle
+          path: apps/server/dist
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: stable
+          targets: x86_64-unknown-linux-gnu
+
+      - name: Build resource monitor
+        run: cargo build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target x86_64-unknown-linux-gnu
+
+      - name: Stage resource monitor
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/cli-resource-monitor/linux-x64"
+          cp native/resource-monitor/target/x86_64-unknown-linux-gnu/release/t3-resource-monitor "$RUNNER_TEMP/cli-resource-monitor/linux-x64/"
+
+      - name: Install patchelf
+        run: command -v patchelf || { sudo apt-get update && sudo apt-get install -y patchelf; }
+
+      - name: Build CLI single-executable
+        env:
+          AOKI_TELEMETRY_CHANNEL: ${{ contains(github.ref_name, '-nightly.') && 'nightly' || (contains(github.ref_name, '-preview.') && 'preview' || 'stable') }}
+        run: node apps/server/scripts/cli.ts build-exe --verbose
+
+      - name: Build CLI archive
+        run: |
+          node scripts/build-cli-archive.ts \
+            --platform linux \
+            --arch x64 \
+            --version "${VERSION#v}" \
+            --resource-monitor-dir "$RUNNER_TEMP/cli-resource-monitor" \
+            --output-dir release-cli
+
+      - name: Smoke-test CLI archive
+        run: node scripts/smoke-cli-archive.ts --archive release-cli/* --expect-version "${VERSION#v}"
+
+      - name: Upload CLI archive
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cli-linux-x64
+          path: release-cli/*
+          if-no-files-found: error
+          compression-level: 0
+
+  # The SEA linux-arm64 build cannot cross-build: --build-sea output cannot load
+  # on 16/64 KiB page kernels, so it builds on arm64 hardware.
+  cli-linux-arm64:
+    name: CLI linux-arm64
+    needs: [bundle]
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        shell: bash
+        env:
+          CHECKOUT_REF: ${{ github.ref }}
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "$CHECKOUT_REF"
+          git sparse-checkout set --no-cone '/*' '!/.repos/'
+          git -c checkout.workers=0 checkout --detach FETCH_HEAD
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-ci-deps
+        with:
+          install-args: --filter=aoki... --filter=@t3tools/web... --filter=@t3tools/scripts...
+          save-pnpm-store: false
+
+      - name: Align package versions to release version
+        run: node scripts/update-release-package-versions.ts "${VERSION#v}"
+
+      - name: Download JS bundle
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: js-bundle
+          path: apps/server/dist
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: stable
+          targets: aarch64-unknown-linux-gnu
+
+      - name: Build resource monitor
+        run: cargo build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target aarch64-unknown-linux-gnu
+
+      - name: Stage resource monitor
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/cli-resource-monitor/linux-arm64"
+          cp native/resource-monitor/target/aarch64-unknown-linux-gnu/release/t3-resource-monitor "$RUNNER_TEMP/cli-resource-monitor/linux-arm64/"
+
+      - name: Install patchelf
+        run: command -v patchelf || { sudo apt-get update && sudo apt-get install -y patchelf; }
+
+      - name: Build CLI single-executable
+        env:
+          AOKI_TELEMETRY_CHANNEL: ${{ contains(github.ref_name, '-nightly.') && 'nightly' || (contains(github.ref_name, '-preview.') && 'preview' || 'stable') }}
+        run: node apps/server/scripts/cli.ts build-exe --verbose
+
+      - name: Build CLI archive
+        run: |
+          node scripts/build-cli-archive.ts \
+            --platform linux \
+            --arch arm64 \
+            --version "${VERSION#v}" \
+            --resource-monitor-dir "$RUNNER_TEMP/cli-resource-monitor" \
+            --output-dir release-cli
+
+      - name: Smoke-test CLI archive
+        run: node scripts/smoke-cli-archive.ts --archive release-cli/* --expect-version "${VERSION#v}"
+
+      - name: Upload CLI archive
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cli-linux-arm64
+          path: release-cli/*
+          if-no-files-found: error
+          compression-level: 0
+
+  # No Developer ID certificate is registered for the fork, so the executable
+  # inside is signed ad hoc and not notarized; macOS will ask before first run.
+  cli-darwin-arm64:
+    name: CLI darwin-arm64
+    needs: [bundle]
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        shell: bash
+        env:
+          CHECKOUT_REF: ${{ github.ref }}
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "$CHECKOUT_REF"
+          git sparse-checkout set --no-cone '/*' '!/.repos/'
+          git -c checkout.workers=0 checkout --detach FETCH_HEAD
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-ci-deps
+        with:
+          install-args: --filter=aoki... --filter=@t3tools/web... --filter=@t3tools/scripts...
+          save-pnpm-store: false
+
+      - name: Align package versions to release version
+        run: node scripts/update-release-package-versions.ts "${VERSION#v}"
+
+      - name: Download JS bundle
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: js-bundle
+          path: apps/server/dist
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: stable
+          targets: aarch64-apple-darwin
+
+      - name: Build resource monitor
+        run: cargo build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target aarch64-apple-darwin
+
+      - name: Stage resource monitor
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/cli-resource-monitor/darwin-arm64"
+          cp native/resource-monitor/target/aarch64-apple-darwin/release/t3-resource-monitor "$RUNNER_TEMP/cli-resource-monitor/darwin-arm64/"
+
+      - name: Build CLI single-executable
+        env:
+          AOKI_TELEMETRY_CHANNEL: ${{ contains(github.ref_name, '-nightly.') && 'nightly' || (contains(github.ref_name, '-preview.') && 'preview' || 'stable') }}
+        run: node apps/server/scripts/cli.ts build-exe --verbose
+
+      - name: Build CLI archive
+        run: |
+          node scripts/build-cli-archive.ts \
+            --platform mac \
+            --arch arm64 \
+            --version "${VERSION#v}" \
+            --resource-monitor-dir "$RUNNER_TEMP/cli-resource-monitor" \
+            --output-dir release-cli
+
+      - name: Smoke-test CLI archive
+        run: node scripts/smoke-cli-archive.ts --archive release-cli/* --expect-version "${VERSION#v}"
+
+      - name: Upload CLI archive
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cli-darwin-arm64
+          path: release-cli/*
+          if-no-files-found: error
+          compression-level: 0
+
+  # Windows archives cross-build on Linux like upstream's (cargo-xwin for the
+  # resource monitor, a downloaded node.exe for the SEA). The native check runs
+  # on a Windows runner of the matching architecture below.
+  cli-win-x64:
+    name: CLI win32-x64
+    needs: [bundle]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        shell: bash
+        env:
+          CHECKOUT_REF: ${{ github.ref }}
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "$CHECKOUT_REF"
+          git sparse-checkout set --no-cone '/*' '!/.repos/'
+          git -c checkout.workers=0 checkout --detach FETCH_HEAD
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-ci-deps
+        with:
+          install-args: --filter=aoki... --filter=@t3tools/web... --filter=@t3tools/scripts...
+          save-pnpm-store: false
+
+      - name: Align package versions to release version
+        run: node scripts/update-release-package-versions.ts "${VERSION#v}"
+
+      - name: Download JS bundle
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: js-bundle
+          path: apps/server/dist
+
+      - name: Resolve target Node.js for the CLI executable
+        id: target_node
+        shell: bash
+        run: echo "version=$(node -p 'require("./package.json").engines.node')" >> "$GITHUB_OUTPUT"
+
+      - name: Download target Node.js for the CLI executable
+        shell: bash
+        env:
+          VERSION: ${{ steps.target_node.outputs.version }}
+        run: |
+          set -euo pipefail
+          name="node-v$VERSION-win-x64"
+          dir="$RUNNER_TEMP/node-download"
+          mkdir -p "$dir"
+          fetch=(curl -fsSL --retry 5 --retry-all-errors --connect-timeout 10 --speed-limit 102400 --speed-time 30)
+          "${fetch[@]}" -o "$dir/$name.zip" "https://nodejs.org/dist/v$VERSION/$name.zip"
+          "${fetch[@]}" -o "$dir/SHASUMS256.txt" "https://nodejs.org/dist/v$VERSION/SHASUMS256.txt"
+          (cd "$dir" && grep " $name.zip\$" SHASUMS256.txt | sha256sum -c -)
+
+      - name: Install target Node.js for the CLI executable
+        shell: bash
+        env:
+          VERSION: ${{ steps.target_node.outputs.version }}
+        run: |
+          set -euo pipefail
+          name="node-v$VERSION-win-x64"
+          dir="$RUNNER_TEMP/node-download"
+          dest="${XDG_CACHE_HOME:-$HOME/.cache}/tsdown/node/v$VERSION/win-x64"
+          mkdir -p "$dest"
+          (cd "$dir" && grep " $name.zip\$" SHASUMS256.txt | sha256sum -c -)
+          unzip -p "$dir/$name.zip" "$name/node.exe" > "$dest/node.exe"
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: stable
+          targets: x86_64-pc-windows-msvc
+
+      - name: Install cargo-xwin
+        uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+        with:
+          tool: cargo-xwin@0.23.1
+
+      - name: Build resource monitor
+        run: cargo xwin build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target x86_64-pc-windows-msvc
+
+      - name: Stage resource monitor
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/cli-resource-monitor/win32-x64"
+          cp native/resource-monitor/target/x86_64-pc-windows-msvc/release/t3-resource-monitor.exe "$RUNNER_TEMP/cli-resource-monitor/win32-x64/"
+
+      - name: Build CLI single-executable
+        env:
+          AOKI_TELEMETRY_CHANNEL: ${{ contains(github.ref_name, '-nightly.') && 'nightly' || (contains(github.ref_name, '-preview.') && 'preview' || 'stable') }}
+        run: node apps/server/scripts/cli.ts build-exe --verbose --target win-x64
+
+      - name: Build CLI archive
+        run: |
+          node scripts/build-cli-archive.ts \
+            --platform win \
+            --arch x64 \
+            --version "${VERSION#v}" \
+            --resource-monitor-dir "$RUNNER_TEMP/cli-resource-monitor" \
+            --output-dir release-cli
+
+      - name: Upload CLI archive
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cli-win-x64
+          path: release-cli/*
+          if-no-files-found: error
+          compression-level: 0
+
+  cli-win-arm64:
+    name: CLI win32-arm64
+    needs: [bundle]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        shell: bash
+        env:
+          CHECKOUT_REF: ${{ github.ref }}
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "$CHECKOUT_REF"
+          git sparse-checkout set --no-cone '/*' '!/.repos/'
+          git -c checkout.workers=0 checkout --detach FETCH_HEAD
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-ci-deps
+        with:
+          install-args: --filter=aoki... --filter=@t3tools/web... --filter=@t3tools/scripts...
+          save-pnpm-store: false
+
+      - name: Align package versions to release version
+        run: node scripts/update-release-package-versions.ts "${VERSION#v}"
+
+      - name: Download JS bundle
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: js-bundle
+          path: apps/server/dist
+
+      - name: Resolve target Node.js for the CLI executable
+        id: target_node
+        shell: bash
+        run: echo "version=$(node -p 'require("./package.json").engines.node')" >> "$GITHUB_OUTPUT"
+
+      - name: Download target Node.js for the CLI executable
+        shell: bash
+        env:
+          VERSION: ${{ steps.target_node.outputs.version }}
+        run: |
+          set -euo pipefail
+          name="node-v$VERSION-win-arm64"
+          dir="$RUNNER_TEMP/node-download"
+          mkdir -p "$dir"
+          fetch=(curl -fsSL --retry 5 --retry-all-errors --connect-timeout 10 --speed-limit 102400 --speed-time 30)
+          "${fetch[@]}" -o "$dir/$name.zip" "https://nodejs.org/dist/v$VERSION/$name.zip"
+          "${fetch[@]}" -o "$dir/SHASUMS256.txt" "https://nodejs.org/dist/v$VERSION/SHASUMS256.txt"
+          (cd "$dir" && grep " $name.zip\$" SHASUMS256.txt | sha256sum -c -)
+
+      - name: Install target Node.js for the CLI executable
+        shell: bash
+        env:
+          VERSION: ${{ steps.target_node.outputs.version }}
+        run: |
+          set -euo pipefail
+          name="node-v$VERSION-win-arm64"
+          dir="$RUNNER_TEMP/node-download"
+          dest="${XDG_CACHE_HOME:-$HOME/.cache}/tsdown/node/v$VERSION/win-arm64"
+          mkdir -p "$dest"
+          (cd "$dir" && grep " $name.zip\$" SHASUMS256.txt | sha256sum -c -)
+          unzip -p "$dir/$name.zip" "$name/node.exe" > "$dest/node.exe"
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+        with:
+          toolchain: stable
+          targets: aarch64-pc-windows-msvc
+
+      - name: Install cargo-xwin
+        uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+        with:
+          tool: cargo-xwin@0.23.1
+
+      - name: Build resource monitor
+        run: cargo xwin build --locked --release --manifest-path native/resource-monitor/Cargo.toml --target aarch64-pc-windows-msvc
+
+      - name: Stage resource monitor
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/cli-resource-monitor/win32-arm64"
+          cp native/resource-monitor/target/aarch64-pc-windows-msvc/release/t3-resource-monitor.exe "$RUNNER_TEMP/cli-resource-monitor/win32-arm64/"
+
+      - name: Build CLI single-executable
+        env:
+          AOKI_TELEMETRY_CHANNEL: ${{ contains(github.ref_name, '-nightly.') && 'nightly' || (contains(github.ref_name, '-preview.') && 'preview' || 'stable') }}
+        run: node apps/server/scripts/cli.ts build-exe --verbose --target win-arm64
+
+      - name: Build CLI archive
+        run: |
+          node scripts/build-cli-archive.ts \
+            --platform win \
+            --arch arm64 \
+            --version "${VERSION#v}" \
+            --resource-monitor-dir "$RUNNER_TEMP/cli-resource-monitor" \
+            --output-dir release-cli
+
+      - name: Upload CLI archive
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cli-win-arm64
+          path: release-cli/*
+          if-no-files-found: error
+          compression-level: 0
+
+  verify-win-x64:
+    name: Verify CLI win32-x64
+    needs: [cli-win-x64]
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        shell: bash
+        env:
+          CHECKOUT_REF: ${{ github.ref }}
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "$CHECKOUT_REF"
+          git sparse-checkout set --no-cone '/*' '!/.repos/'
+          git -c checkout.workers=0 checkout --detach FETCH_HEAD
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-ci-deps
+        with:
+          install-args: --filter=@t3tools/scripts...
+          save-pnpm-store: false
+
+      - name: Download CLI archive
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: cli-win-x64
+          path: release-cli
+
+      - name: Smoke-test CLI archive
+        shell: bash
+        run: node scripts/smoke-cli-archive.ts --archive release-cli/* --expect-version "${VERSION#v}"
+
+  verify-win-arm64:
+    name: Verify CLI win32-arm64
+    needs: [cli-win-arm64]
+    runs-on: windows-11-arm
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        shell: bash
+        env:
+          CHECKOUT_REF: ${{ github.ref }}
+          GIT_TERMINAL_PROMPT: "0"
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "$CHECKOUT_REF"
+          git sparse-checkout set --no-cone '/*' '!/.repos/'
+          git -c checkout.workers=0 checkout --detach FETCH_HEAD
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-ci-deps
+        with:
+          install-args: --filter=@t3tools/scripts...
+          save-pnpm-store: false
+
+      - name: Download CLI archive
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: cli-win-arm64
+          path: release-cli
+
+      - name: Smoke-test CLI archive
+        shell: bash
+        run: node scripts/smoke-cli-archive.ts --archive release-cli/* --expect-version "${VERSION#v}"
+
+  release:
+    name: Publish GitHub Release
+    needs:
+      [
+        bundle,
+        cli-linux-x64,
+        cli-linux-arm64,
+        cli-darwin-arm64,
+        cli-win-x64,
+        cli-win-arm64,
+        verify-win-x64,
+        verify-win-arm64,
+      ]
+    if: ${{ !failure() && !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Download all CLI archives
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: cli-*
+          merge-multiple: true
+          path: release-assets
+
+      - name: Write CLI archive checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release-assets
+          shopt -s nullglob
+          archives=(aoki-*.tar.gz aoki-*.zip)
+          if [[ ${#archives[@]} -ne 5 ]]; then
+            printf 'Expected 5 CLI archives, found %d: %s\n' "${#archives[@]}" "${archives[*]:-none}" >&2
+            exit 1
+          fi
+          sha256sum "${archives[@]}" > SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Publish release
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          draft: false
+          make_latest: ${{ contains(github.ref_name, '-') && 'false' || 'true' }}
+          files: |
+            release-assets/*.tar.gz
+            release-assets/*.zip
+            release-assets/SHA256SUMS
+          fail_on_unmatched_files: true
+          token: ${{ github.token }}
