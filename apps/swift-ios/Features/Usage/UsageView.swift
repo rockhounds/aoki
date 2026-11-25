@@ -69,6 +69,7 @@ public struct UsageView: View {
                     heldState = nil
                 }
             })
+            .frame(minWidth: 0, maxWidth: .infinity)
             .opacity(tab == .usage ? 1 : 0)
             .allowsHitTesting(tab == .usage)
             .accessibilityHidden(tab != .usage)
@@ -78,6 +79,7 @@ public struct UsageView: View {
                 resetCreditStates: $resetCreditStates,
                 isActive: tab == .limits
             )
+            .frame(minWidth: 0, maxWidth: .infinity)
             .opacity(tab == .limits ? 1 : 0)
             .allowsHitTesting(tab == .limits)
             .accessibilityHidden(tab != .limits)
@@ -360,27 +362,43 @@ private struct UsageChartSection: View {
                     .frame(maxWidth: .infinity, minHeight: 180)
             }
 
-            HStack(spacing: 8) {
-                Text(presentation.sinceLabel)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                HStack(spacing: 14) {
-                    ForEach(presentation.providersByCost) { provider in
-                        HStack(spacing: 5) {
-                            Circle()
-                                .fill(provider.provider.color)
-                                .frame(width: 8, height: 8)
-                            Text(provider.provider.displayName)
-                        }
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 8) {
+                    Text(presentation.sinceLabel)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    HStack(spacing: 14) {
+                        legendItems
+                    }
+                    .fixedSize(horizontal: true, vertical: false)
+                    Text(presentation.untilLabel)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 8) {
+                        Text(presentation.sinceLabel)
+                        Spacer(minLength: 0)
+                        Text(presentation.untilLabel)
+                    }
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), alignment: .leading)], spacing: 8) {
+                        legendItems
                     }
                 }
-                .fixedSize()
-
-                Text(presentation.untilLabel)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
             }
             .font(.caption)
             .foregroundStyle(T3Colors.textTertiary)
+        }
+    }
+
+    private var legendItems: some View {
+        ForEach(presentation.providersByCost) { provider in
+            HStack(spacing: 5) {
+                Circle()
+                    .fill(provider.provider.color)
+                    .frame(width: 8, height: 8)
+                Text(provider.provider.displayName)
+            }
         }
     }
 }
