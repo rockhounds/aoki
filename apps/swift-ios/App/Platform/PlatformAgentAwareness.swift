@@ -417,14 +417,35 @@ final class PlatformAgentAwarenessCoordinator {
                 await duplicate.end(nil, dismissalPolicy: .immediate)
             }
         } else {
-            _ = try Activity.request(
-                attributes: LiveActivityAttributes(),
-                content: content,
-                pushType: .token
-            )
+            try requestLiveActivity(
+                prefersPushToken: T3ConnectConfiguration.resolve().configuration != nil
+            ) { pushType in
+                _ = try Activity.request(
+                    attributes: LiveActivityAttributes(),
+                    content: content,
+                    pushType: pushType
+                )
+            }
         }
         try Task.checkCancellation()
         notifyActivityChanged()
+    }
+
+    static func requestLiveActivity(
+        prefersPushToken: Bool,
+        request: (PushType?) throws -> Void
+    ) throws {
+        if prefersPushToken {
+            do {
+                try request(.token)
+                return
+            } catch is CancellationError {
+                throw CancellationError()
+            } catch {
+                // Personal Team builds omit aps-environment; retry locally without a push token.
+            }
+        }
+        try request(nil)
     }
 
     private static func endAllLiveActivities() async {

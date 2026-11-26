@@ -1,3 +1,4 @@
+import ActivityKit
 import Foundation
 import Testing
 @testable import T3Code
@@ -232,6 +233,32 @@ struct PlatformAgentAwarenessTests {
         coordinator.synchronize(snapshot: ready, liveActivitiesEnabled: true)
         await Task.yield()
         #expect(recorder.updateCount == 2)
+    }
+
+    @Test
+    @MainActor
+    func liveActivityRequestsLocalWithoutT3ConnectAndFallsBackOnPushEntitlementError() throws {
+        var modes: [String] = []
+        try PlatformAgentAwarenessCoordinator.requestLiveActivity(prefersPushToken: false) { pushType in
+            modes.append(pushType == nil ? "local" : "token")
+        }
+        #expect(modes == ["local"])
+
+        enum PushEntitlementError: Error { case missing }
+        modes.removeAll()
+        try PlatformAgentAwarenessCoordinator.requestLiveActivity(prefersPushToken: true) { pushType in
+            modes.append(pushType == nil ? "local" : "token")
+            if pushType != nil {
+                throw PushEntitlementError.missing
+            }
+        }
+        #expect(modes == ["token", "local"])
+
+        modes.removeAll()
+        try PlatformAgentAwarenessCoordinator.requestLiveActivity(prefersPushToken: true) { pushType in
+            modes.append(pushType == nil ? "local" : "token")
+        }
+        #expect(modes == ["token"])
     }
 
     private static func thread(
