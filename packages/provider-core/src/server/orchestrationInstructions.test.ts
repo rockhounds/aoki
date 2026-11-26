@@ -105,3 +105,17 @@ describe("T3 device instructions", () => {
     assert.notInclude(t3AcpPromptWithInstructions({ prompt: "Hi.", state }), "tool_call(");
   });
 });
+
+describe("T3 orchestration instructions", () => {
+  it("keeps review rounds on delegate_task while allowing stateful non-review t3_thread_send follow-ups", () => {
+    assert.include(
+      T3_CODE_ORCHESTRATION_INSTRUCTIONS,
+      "Every new delegate review or re-check is a new `delegate_task` (brief, findings, objections), never a `t3_thread_send`",
+    );
+    assert.include(
+      T3_CODE_ORCHESTRATION_INSTRUCTIONS,
+      "for stateful non-review follow-ups on the same child",
+    );
+    assert.include(T3_CODE_ORCHESTRATION_INSTRUCTIONS, "continue with `t3_thread_send`");
+  });
+});
