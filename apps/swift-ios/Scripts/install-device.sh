@@ -8,6 +8,9 @@ DEVICE_ID="${T3_SWIFT_DEVICE_ID:-${1:-}}"
 DEVELOPMENT_TEAM="${T3_SWIFT_DEVELOPMENT_TEAM:-${2:-}}"
 CONFIGURATION="${T3_SWIFT_CONFIGURATION:-Debug}"
 DERIVED_DATA_PATH="${T3_SWIFT_DERIVED_DATA_PATH:-${APP_DIR}/.derivedData/device}"
+MIN_PROFILE_TTL_HOURS="${T3_SWIFT_MIN_PROFILE_TTL_HOURS:-48}"
+PROVISIONING_PROFILES_DIR="${HOME}/Library/Developer/Xcode/UserData/Provisioning Profiles"
+EXPIRED_PROFILES_DIR="${HOME}/Library/Developer/Xcode/UserData/Provisioning Profiles.expired"
 
 die() {
   printf '[swift-ios-device] error: %s\n' "$*" >&2
@@ -21,8 +24,14 @@ require_cmd() {
 require_cmd awk
 require_cmd mktemp
 require_cmd plutil
+require_cmd python3
+require_cmd security
 require_cmd xcodebuild
 require_cmd xcrun
+
+[[ "${MIN_PROFILE_TTL_HOURS}" =~ ^[0-9]+$ ]] || die \
+  "T3_SWIFT_MIN_PROFILE_TTL_HOURS must be a non-negative integer"
+MIN_PROFILE_TTL_SECONDS="$((MIN_PROFILE_TTL_HOURS * 3600))"
 
 [[ "${CONFIGURATION}" == "Debug" || "${CONFIGURATION}" == "Release" ]] || die \
   "T3_SWIFT_CONFIGURATION must be Debug or Release"
@@ -100,6 +109,70 @@ if [[ -n "${T3_SWIFT_BUILD_NUMBER:-}" ]]; then
   build_settings+=("CURRENT_PROJECT_VERSION=${T3_SWIFT_BUILD_NUMBER}")
 fi
 
+inspect_profile() {
+  local profile_path="$1"
+  security cms -D -i "${profile_path}" | python3 -c '
+import datetime, plistlib, sys
+data = plistlib.loads(sys.stdin.buffer.read())
+exp = data["ExpirationDate"]
+if exp.tzinfo is None:
+    exp = exp.replace(tzinfo=datetime.timezone.utc)
+now = datetime.datetime.now(datetime.timezone.utc)
+rem = int((exp - now).total_seconds())
+app_id = data.get("Entitlements", {}).get("application-identifier", "")
+uuid = data.get("UUID", "")
+exp_str = exp.strftime("%Y-%m-%dT%H:%M:%SZ")
+print(f"{uuid}\t{app_id}\t{exp_str}\t{rem}")
+'
+}
+
+prune_expiring_profiles() {
+  (( MIN_PROFILE_TTL_SECONDS > 0 )) || return 0
+  [[ -d "${PROVISIONING_PROFILES_DIR}" ]] || return 0
+  local profile uuid app_id exp_iso rem
+  local expected_ids=(
+    "${DEVELOPMENT_TEAM}.${BUNDLE_IDENTIFIER}"
+    "${DEVELOPMENT_TEAM}.${WIDGET_BUNDLE_IDENTIFIER}"
+    "${DEVELOPMENT_TEAM}.${SHARE_BUNDLE_IDENTIFIER}"
+  )
+  shopt -s nullglob
+  for profile in "${PROVISIONING_PROFILES_DIR}"/*.mobileprovision; do
+    IFS=$'\t' read -r uuid app_id exp_iso rem <<<"$(inspect_profile "${profile}")" || continue
+    for expected in "${expected_ids[@]}"; do
+      if [[ "${app_id}" == "${expected}" ]] && (( rem < MIN_PROFILE_TTL_SECONDS )); then
+        mkdir -p "${EXPIRED_PROFILES_DIR}"
+        printf '[swift-ios-device] moving expiring profile %s (%s, expires %s) to %s\n' \
+          "${uuid}" "${app_id}" "${exp_iso}" "${EXPIRED_PROFILES_DIR}"
+        mv "${profile}" "${EXPIRED_PROFILES_DIR}/"
+        break
+      fi
+    done
+  done
+  shopt -u nullglob
+}
+
+verify_embedded_profiles() {
+  (( MIN_PROFILE_TTL_SECONDS > 0 )) || return 0
+  local target_path profile uuid app_id exp_iso rem hours
+  for target_path in \
+    "${APP_PATH}" \
+    "${APP_PATH}/PlugIns/T3CodeWidgets.appex" \
+    "${APP_PATH}/PlugIns/T3CodeShare.appex"; do
+    profile="${target_path}/embedded.mobileprovision"
+    [[ -f "${profile}" ]] || die "missing embedded provisioning profile at ${profile}"
+    IFS=$'\t' read -r uuid app_id exp_iso rem <<<"$(inspect_profile "${profile}")" || die \
+      "could not inspect embedded provisioning profile at ${profile}"
+    hours="$((rem / 3600))"
+    printf '[swift-ios-device] embedded profile %s (%s) expires %s (~%dh left)\n' \
+      "${uuid}" "${app_id}" "${exp_iso}" "${hours}"
+    if (( rem < MIN_PROFILE_TTL_SECONDS )); then
+      die "embedded profile ${uuid} (${app_id}) expires at ${exp_iso} (~${hours}h left, below ${MIN_PROFILE_TTL_HOURS}h minimum); remove '${PROVISIONING_PROFILES_DIR}/${uuid}.mobileprovision' and rebuild, or set T3_SWIFT_MIN_PROFILE_TTL_HOURS=0"
+    fi
+  done
+}
+
+prune_expiring_profiles
+
 printf '[swift-ios-device] building %s for %s\n' "${BUNDLE_IDENTIFIER}" "${DESTINATION_ID}"
 xcodebuild build \
   -project "${APP_DIR}/T3Code.xcodeproj" \
@@ -129,6 +202,8 @@ actual_share="$(
   "built widget bundle identifier is '${actual_widgets}'"
 [[ "${actual_share}" == "${SHARE_BUNDLE_IDENTIFIER}" ]] || die \
   "built share bundle identifier is '${actual_share}'"
+
+verify_embedded_profiles
 
 printf '[swift-ios-device] installing %s\n' "${APP_PATH}"
 xcrun devicectl device install app --device "${DESTINATION_ID}" "${APP_PATH}"
