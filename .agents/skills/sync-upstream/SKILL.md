@@ -135,6 +135,9 @@ reason Aoki syncs through omnifork.
    `omnifork replay --repo <Aoki checkout> --fork <fork_before> --onto <to> --expect <accepted result>`
 
    Omit `--repo` when already in Aoki. Exit code 2 means the replay stopped at an unresolved conflict.
+   Pass `--catalog-resolver /absolute/path/to/scripts/aoki/resolve-i18n-catalogs.ts` to include the
+   mobile and Web catalog resolver used by `jj sync`. Use the same resolver and verification workspace in
+   both replays when measuring changes outside catalog resolution.
 
    `fork_before` and `to` come from the sync's line in `scripts/aoki/sync-log.jsonl`. When several
    `jj sync` runs happened before the stack was accepted, use the first `fork_before` and the last

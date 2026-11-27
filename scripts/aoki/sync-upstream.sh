@@ -257,6 +257,9 @@ if [[ ! -d "$STATE" ]]; then
   [[ -n "$before" ]] || die "no Aoki change found above $TRUNK"
   mkdir -p "$STATE"
   echo "$(commit "heads(::$before & ::($TRUNK))") $before $(revs "$before")" >"$STATE/start"
+  if [[ -f "$ROOT/scripts/aoki/resolve-i18n-catalogs.ts" ]]; then
+    cp "$ROOT/scripts/aoki/resolve-i18n-catalogs.ts" "$STATE/resolve-i18n-catalogs.ts"
+  fi
 fi
 date -u +%FT%TZ >>"$STATE/runs"
 
@@ -264,7 +267,8 @@ while :; do
   rc=0
   sync_args=(sync --no-verify)
   [[ ! -f "$STATE/fetched" ]] || sync_args+=(--no-fetch)
-  omnifork "${sync_args[@]}" || rc=$?
+  [[ ! -f "$STATE/resolve-i18n-catalogs.ts" ]] || sync_args+=(--catalog-resolver "$STATE/resolve-i18n-catalogs.ts")
+  AOKI_VERIFY_WS="$VERIFY_WS" omnifork "${sync_args[@]}" || rc=$?
   refresh
   if [[ "$rc" == 0 || "$rc" == 2 ]]; then
     touch "$STATE/fetched"
