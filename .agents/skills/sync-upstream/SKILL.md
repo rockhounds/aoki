@@ -39,16 +39,21 @@ permission for any of them. Asking permission to do one is skipping it.
 5. **Do not report done, summarize, or hand back before the done gate below is met.** If you cannot
    finish (rate limit, disk, tool failure), say the sync is incomplete and list the gate items still
    open. Never present a sync as finished with the retro "to follow".
-6. **Do not move `main` or push** unless the maintainer asks.
+6. **Move `main` and push only with the maintainer's authorization.** Carry authorization forward
+   when resuming the same task.
 
 ## Start with a todo list
 
 Before running anything, write a todo list with every numbered step below, including each retro step
 and the report. Keep it current. A sync whose list still has open retro items is not done.
+Record the requested Aoki version and delivery destination in the list. On a handoff, recover those
+instructions from the conversation and check what has already landed before changing history.
 
 ## 1. Before
 
-1. `jj sync --status`. Carry on with a sync in progress; do not start over.
+1. Run `jj sync --status` in the jj workspace that owns the stack. Resume a sync in progress there.
+   If the sync log already records the base selected for this task, continue with verification,
+   retro, versioning, or delivery at that base. Start a fresh sync only for a new upstream target.
 2. Look at the stack with `jj log -r 'main@upstream..@'`. Everything above upstream moves, landed
    on `main` or not, and so does uncommitted work in `@`. Say what is there before you start. Other
    workspaces go stale and recover with `jj workspace update-stale`.
@@ -58,7 +63,10 @@ and the report. Keep it current. A sync whose list still has open retro items is
 
 ## 2. Run
 
-Run `jj sync` and act on its exit code. Run it again after every fix, from wherever `@` is.
+Run `jj sync` and act on its exit code. Rerun it after each fix while it reports a sync in progress.
+When it exits 0, keep the upstream commit from the sync log fixed for the rest of the task.
+The next `jj sync` fetches again. Run the relevant checks after verification fixes, and use the
+logged commit for the retro.
 
 **2, conflicts.** Only the lowest conflicted change is listed, because every change above it
 inherits its conflicts and waits to be carried.
@@ -80,15 +88,23 @@ inherits its conflicts and waits to be carried.
 - Edits to lines that appear in many stacked changes (renames, formatting) conflict in every
   descendant that also touches them. Prefer `jj absorb`; for formatting and other generated output
   that absorb cannot place, a small cleanup change at the top of the stack beats a cascade.
+- For translation catalogs, preserve translated values from both sides for keys still in use and
+  regenerate from the resolved source using the app's `i18n:generate` script. For changes to the
+  agent context budget, use the measured values from `AgentContextBudget.test.ts`.
 
 **2, places to review.** `.jj/omnifork/reviews.txt` lists upstream lines that still use an old name
 omnifork had no rule for. It left upstream's text. Decide each: where Aoki's name belongs, put it in
 the change named there the same way. The list is reported once, so the next `jj sync` goes on. Copy
 the list somewhere outside the worktree before you fix it; the retro needs it.
 
-**3, verification.** The SwiftUI request check or `pnpm typecheck` failed at the top of the stack.
-Fix it in the change responsible. A request upstream removed from the contracts needs the SwiftUI
-client moved off it, in a `fix(swift-ios)` change of its own if no Aoki change owns that code.
+**2, stack stayed on its previous base.** Inspect `immutable_heads()` and release tags. A custom
+rule must keep the tracked `main@origin` movable so the next sync can carry the published stack.
+Use a specific historical revision to pin an old stack.
+
+**3, verification.** The SwiftUI request check, typecheck, version check, or translation check
+failed at the top of the stack. Fix it in the change responsible. A request upstream removed from
+the contracts needs the SwiftUI client moved off it, in a `fix(swift-ios)` change of its own if no
+Aoki change owns that code.
 
 ## 3. Verify the result
 
@@ -100,14 +116,14 @@ client moved off it, in a `fix(swift-ios)` change of its own if no Aoki change o
 2. A failure that does not come from the sync (a missing Playwright browser, an environment
    variable such as `GIT_SSH_COMMAND` set by the agent harness) is not a gap. Say so in the report,
    with the evidence that it fails the same way without the sync.
-3. Leave Aoki's version alone. A sync records its T3 Code base in `upstream.json`; it is not a
-   release ([AOKI.md](../../../AOKI.md#versioning)). If the version test fails because upstream moved
-   a surface's version, `node scripts/aoki/version.ts --stamp` fixes it without changing Aoki's
-   version. `jj sync` verification now fails on that drift before `check:changed` does, but the
-   stamp is still a hand edit, so it goes to the retro.
+3. A sync records its T3 Code base in `upstream.json`. If upstream moved a surface's version, run
+   `node scripts/aoki/version.ts --stamp` at the current Aoki version and record the hand edit in the
+   retro. If the maintainer also requested a new Aoki version, apply it in a separate change above
+   the verified sync. Set the root `package.json` version, run the stamp script, then verify the
+   result. See [Aoki versioning](../../../AOKI.md#versioning).
 4. Note the commit at the top of the stack when `check:changed` is green. That is the **accepted
-   result** the retro replays against. It is not the `fork_after` in the sync log, which is written
-   before these fixes.
+   result** the retro replays against. Use the sync tip after verification fixes and before any
+   separately requested version bump.
 
 ## 4. Retro (mandatory)
 
@@ -156,12 +172,19 @@ The sync is done only when every line is true. Check them against the todo list,
 - [ ] Scratch files, replay repositories (`--keep`), extra workspaces, and build output you created
       are removed.
 
-## 6. Report
+## 6. Deliver
+
+Verify the commit at the requested destination. When the maintainer authorized publishing to
+`main`, point local `main` at the verified result, use `jj git push --remote origin --bookmark main`,
+and verify the remote tip. If the lease fails, inspect the remote tip and account for any new
+commits before retrying.
+
+## 7. Report
 
 Say all of this, in this order, in the message that ends the sync:
 
 1. The new T3 Code base and this sync's line in `scripts/aoki/sync-log.jsonl`.
-2. What is unpushed, and where `main` is. Moving `main` and pushing are the maintainer's call.
+2. The final Aoki version, the verified commit, and where it landed.
 3. A table with one row per hand edit: what it was, the retro outcome, and the omnifork commit,
    reshaped change, or added check that answers it.
 4. The replay numbers before and after, and the omnifork commit ids.

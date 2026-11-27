@@ -184,6 +184,8 @@ verify() {
   # Upstream moves a surface's version in its own commits; Aoki's version is not part of the sync.
   (cd "$VERIFY_WS" && node scripts/aoki/version.ts) \
     || { log "a surface's version drifted; node scripts/aoki/version.ts --stamp fixes it without changing Aoki's version"; return 1; }
+  (cd "$VERIFY_WS" && node scripts/i18n-check.ts) \
+    || { log "translation catalogs drifted; regenerate the affected catalog and preserve its translations"; return 1; }
 }
 
 # Fold a file this script wrote into the Aoki change that owns it, never into @.
