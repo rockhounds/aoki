@@ -130,8 +130,8 @@ version line (`AOKI_MOBILE_VERSION`).
 
 Aoki does not contact T3 Tools' services unless you opt in:
 
-- **Product analytics** are off. The server sends events only when `AOKI_POSTHOG_KEY` and
-  `AOKI_POSTHOG_HOST` point at your own PostHog project. [Telemetry](docs/user/telemetry.md) describes the data and controls.
+- **Product analytics** are off. The server sends events only when `AOKI_TELEMETRY_KEY` and
+  `AOKI_TELEMETRY_HOST` point at your own PostHog project. [Telemetry](docs/user/telemetry.md) describes the data and controls.
 - **Releases** come from `rockhounds/aoki`: `aoki update`, server self-update, the mobile apps'
   update checks, desktop release links, and the server archive that desktop SSH environments
   install on the remote machine. `.github/workflows/release-cli.yml` builds the five CLI

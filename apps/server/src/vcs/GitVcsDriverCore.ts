@@ -65,6 +65,7 @@ import { sourceControlDefinitions } from "../sourceControl/sourceControlDefiniti
 const DEFAULT_TIMEOUT_MS = 30_000;
 /** T3's record of the branch, named as on the host, that a branch was cut from. */
 const branchBaseConfigKey = (branch: string) => `branch.${branch}.aoki-merge-base`;
+const branchBaseRefConfigKey = (branch: string) => `branch.${branch}.aoki-merge-base-ref`;
 /**
  * Where T3 kept that record before it had a key of its own, for every host alike: the GitHub
  * CLI's key, which branches cut before then still carry instead.
@@ -2709,7 +2710,7 @@ export const makeGitVcsDriverCore = Effect.fn("makeGitVcsDriverCore")(function* 
     options?: { readonly allowRemoteOfCurrent?: boolean },
     trace?: { dependsOnRemoteOfCurrent: boolean; degraded: boolean },
   ) {
-    const configuredBaseRef = yield* readConfigValue(cwd, `branch.${refName}.aoki-merge-base-ref`);
+    const configuredBaseRef = yield* readConfigValue(cwd, branchBaseRefConfigKey(refName));
     if (
       configuredBaseRef?.startsWith("refs/heads/") ||
       configuredBaseRef?.startsWith("refs/remotes/")
@@ -3187,7 +3188,7 @@ export const makeGitVcsDriverCore = Effect.fn("makeGitVcsDriverCore")(function* 
       });
       const branchConfig = new Map(configRows.filter(([key]) => isCurrentBranchKey(key)));
       const configValue = (key: string) => trimAsciiWhitespace(branchConfig.get(key) ?? "");
-      const configuredBaseRef = configValue(`${branchPrefix}t3-merge-base-ref`);
+      const configuredBaseRef = configValue(branchBaseRefConfigKey(branch ?? ""));
       const configuredBase =
         configValue(branchBaseConfigKey(branch ?? "")) ||
         configValue(legacyBranchBaseConfigKey(branch ?? ""));
@@ -4582,10 +4583,10 @@ export const makeGitVcsDriverCore = Effect.fn("makeGitVcsDriverCore")(function* 
           key: branchBaseConfigKey(branch),
           value: upstream.branchName,
         });
-        if (!(yield* readConfigValue(cwd, `branch.${branch}.aoki-merge-base-ref`))) {
+        if (!(yield* readConfigValue(cwd, branchBaseRefConfigKey(branch)))) {
           yield* writeConfigValue({
             cwd,
-            key: `branch.${branch}.aoki-merge-base-ref`,
+            key: branchBaseRefConfigKey(branch),
             value:
               upstream.remoteName === "."
                 ? `refs/heads/${upstream.branchName}`
@@ -6984,7 +6985,7 @@ export const makeGitVcsDriverCore = Effect.fn("makeGitVcsDriverCore")(function* 
           // The base key names a branch on the host; this one keeps the remote it came from.
           yield* writeConfigValue({
             cwd: input.cwd,
-            key: `branch.${newRefName}.aoki-merge-base-ref`,
+            key: branchBaseRefConfigKey(newRefName),
             value: base.baseRef,
           });
         }

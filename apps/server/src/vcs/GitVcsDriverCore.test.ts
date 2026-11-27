@@ -6398,7 +6398,7 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
             const configured = yield* driver.execute({
               operation: "GitVcsDriver.test.base",
               cwd: linked,
-              args: ["config", "--get", "branch.feature.t3-merge-base-ref"],
+              args: ["config", "--get", "branch.feature.aoki-merge-base-ref"],
               allowNonZeroExit: true,
             });
             const base = configured.exitCode === 0 ? configured.stdout.trim() : defaultRef;
@@ -6459,7 +6459,7 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
           yield* git(linked, [
             "config",
             "--worktree",
-            "branch.feature.t3-merge-base-ref",
+            "branch.feature.aoki-merge-base-ref",
             "refs/remotes/origin/main",
           ]);
           const configuredBase = yield* readPoll();
@@ -6487,7 +6487,7 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
             newRefName: "local-feature",
           });
           assert.equal(
-            yield* git(localWorktree, ["config", "--get", "branch.local-feature.t3-merge-base"]),
+            yield* git(localWorktree, ["config", "--get", "branch.local-feature.aoki-merge-base"]),
             "local-base",
           );
           yield* git(localWorktree, ["commit", "--allow-empty", "-m", "local feature"]);

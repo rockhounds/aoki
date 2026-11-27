@@ -35,9 +35,9 @@ A managed policy lets an administrator set defaults, lock settings, and restrict
 
 Use **one** source per machine (having both a native policy and a policy file prevents T3 Code from starting):
 
-| OS          | Native policy                                                                     | Policy file (admin-writable only)                 |
-| ----------- | --------------------------------------------------------------------------------- | ------------------------------------------------- |
-| **macOS**   | Device configuration profile for `io.github.rockhounds.aoki`                             | `/Library/Application Support/Aoki/policy.json` |
+| OS          | Native policy                                                                      | Policy file (admin-writable only)               |
+| ----------- | ---------------------------------------------------------------------------------- | ----------------------------------------------- |
+| **macOS**   | Device configuration profile for `io.github.rockhounds.aoki`                       | `/Library/Application Support/Aoki/policy.json` |
 | **Windows** | GPO template or `Policy` (`REG_SZ`) under `HKLM\SOFTWARE\Policies\Rockhounds\Aoki` | `C:\Program Files\Aoki\policy.json`             |
 | **Linux**   | —                                                                                  | `/etc/aoki/policy.json`                         |
 

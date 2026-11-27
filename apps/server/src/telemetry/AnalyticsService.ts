@@ -167,8 +167,7 @@ export const make = Effect.gen(function* () {
       return Effect.succeed(false);
     }
     if (!awaitingShellConsent) return Effect.succeed(true);
-    if (hostEnvironment.AOKI_DESKTOP_SHELL_DISCOVERY_PENDING === "1")
-      return Effect.succeed(false);
+    if (hostEnvironment.AOKI_DESKTOP_SHELL_DISCOVERY_PENDING === "1") return Effect.succeed(false);
     const preference = hostEnvironment.AOKI_TELEMETRY_ENABLED;
     return Config.Boolean("AOKI_TELEMETRY_ENABLED").pipe(
       Config.withDefault(enabledByDefault),

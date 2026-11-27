@@ -1,25 +1,25 @@
 # Product usage data and diagnostics
 
-T3 Code sends lightweight product usage events and relay connection traces to keep the app reliable and fast. Prompts, responses, file contents, and credentials are never included (unless you explicitly approve an [agent feedback](#agent-feedback) card with conversation text attached).
+Aoki ships without a product analytics destination. If you configure one, product events contain usage metadata. An [agent feedback](#agent-feedback) report can include conversation text when you select it on the approval card.
 
 ## Product usage events
 
-The server sends usage events to `ingest.t3.codes` under a hashed random install ID (plus a hashed T3 Connect account ID when signed in, and random client device IDs). Events contain provider, catalog model name (non-catalog models report as custom), reasoning effort, permission mode, turn/request outcome, duration, release channel, and token counts.
+Set both `AOKI_TELEMETRY_HOST` and `AOKI_TELEMETRY_KEY` on the server to send usage events to your configured endpoint. Events can include a hashed random installation ID, a hashed T3 Connect account ID when signed in, and random client device IDs. They can also include the provider, catalog model name, reasoning effort, permission mode, outcome, duration, release channel, and token counts. Non-catalog models are reported as custom.
 
 ## Disable telemetry
 
 - **Server / CLI**: Set `AOKI_TELEMETRY_ENABLED=false` or `DO_NOT_TRACK=1` before starting (`DO_NOT_TRACK=1` takes precedence). CI environments (`CI`, `GITHUB_ACTIONS`, `GITLAB_CI`, `JENKINS_URL`) disable telemetry by default unless `AOKI_TELEMETRY_ENABLED=true`.
 - **Desktop app**: Export `AOKI_TELEMETRY_ENABLED=false` or `DO_NOT_TRACK=1` in your shell profile (macOS/Linux) or user environment variables (Windows) and restart.
 - **Managed policy**: Administrators can set `"telemetry": false` in [managed policy](./managed-policy.md#other-capabilities) for servers and desktop apps.
-- **Mobile app**: Toggle **Send crash reports** and **Send connection traces** separately in **Settings → About T3 Code → Diagnostics**.
+- **Mobile app**: Toggle **Send crash reports** and **Send connection traces** separately in **Settings → About Aoki → Diagnostics**.
 
 ## Relay connection diagnostics
 
-T3 Connect sends connection timings, request paths, environment/thread IDs, and error types (no addresses, logs, or stack frames) to Axiom. Disabled by the server telemetry opt-outs above or by `AOKI_OTEL_SDK_DISABLED` / `OTEL_SDK_DISABLED`.
+A build with relay tracing configured can send connection timings, request paths, environment and thread IDs, and error types to its tracing endpoint. The server and desktop honor the opt-outs above and `AOKI_OTEL_SDK_DISABLED` or `OTEL_SDK_DISABLED`. React Native mobile has its own diagnostics switches.
 
 ## Agent feedback
 
-Optional tool for agents to report T3 Code bugs or missing capabilities. Configure in **Settings → Labs → Agent feedback**:
+Optional tool for agents to report Aoki bugs or missing capabilities through your configured analytics endpoint. Configure in **Settings → Labs → Agent feedback**:
 
 - **Off** (default): Feedback tools and `aoki feedback` are disabled.
 - **When I ask**: Agents submit a report only when you ask, shown as an interactive approval card before anything leaves your machine.

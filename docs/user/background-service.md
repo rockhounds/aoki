@@ -6,15 +6,15 @@ Run T3 Code as a background user service on Linux, macOS, or Windows so your hos
 
 Install the `aoki` CLI first ([Command line](./install.md#command-line)), then run these commands on the host machine:
 
-| Task                                    | Command                                                   |
-| --------------------------------------- | --------------------------------------------------------- |
-| Set up access from other devices        | `aoki up`                                                   |
-| Check how other devices reach it        | `aoki status`                                               |
-| Install and start (or repair)           | `aoki service install`                                      |
-| Check status and log path               | `aoki service status`                                       |
-| Update to a newer release               | `aoki update`                                               |
-| Restart                                 | `aoki service restart`                                      |
-| Stop and remove from startup            | `aoki service uninstall`                                    |
+| Task                                    | Command                                                       |
+| --------------------------------------- | ------------------------------------------------------------- |
+| Set up access from other devices        | `aoki up`                                                     |
+| Check how other devices reach it        | `aoki status`                                                 |
+| Install and start (or repair)           | `aoki service install`                                        |
+| Check status and log path               | `aoki service status`                                         |
+| Update to a newer release               | `aoki update`                                                 |
+| Restart                                 | `aoki service restart`                                        |
+| Stop and remove from startup            | `aoki service uninstall`                                      |
 | Remove service, launcher, and downloads | `aoki uninstall` (keeps `~/.aoki/userdata` and `service.env`) |
 
 - Pairing codes are never written to logs; run `aoki pair` or `aoki up` on the host to connect a device.

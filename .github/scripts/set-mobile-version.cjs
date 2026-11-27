@@ -1,9 +1,10 @@
 const fs = require("node:fs");
 
 const CONFIG_PATH = "apps/mobile/app.config.ts";
-const VERSION_LINE = /^( {2}version: repoEnv\.AOKI_MOBILE_VERSION \?\? ")[^"]+(".*)$/m;
+const VERSION_LINE =
+  /^( {2}version: repoEnv\.AOKI_MOBILE_VERSION \?\? )(?:readRepoVersion\(\) \?\? )?"[^"]+(".*)$/m;
 
-// Replaces one string literal, so the result needs no formatter.
+// An explicit override takes precedence over the repository version fallback.
 function setMobileVersion(source, version) {
   if (!/^[0-9]+(\.[0-9]+){1,2}$/.test(version)) {
     throw new Error(
@@ -11,7 +12,7 @@ function setMobileVersion(source, version) {
     );
   }
   if (!VERSION_LINE.test(source)) throw new Error("Could not update app version");
-  return source.replace(VERSION_LINE, `$1${version}$2`);
+  return source.replace(VERSION_LINE, `$1"${version}$2`);
 }
 
 if (require.main === module) {

@@ -698,7 +698,7 @@
 				SWIFT_VERSION = 5.0;
 				AOKI_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native.dev;
 				AOKI_URL_SCHEME = "aoki-native-dev";
-				AOKI_UPSTREAM_VERSION = "0.1.12";
+				AOKI_UPSTREAM_VERSION = "0.1.13";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -757,7 +757,7 @@
 				SWIFT_VERSION = 5.0;
 				AOKI_APP_GROUP_IDENTIFIER = group.io.github.rockhounds.aoki.native;
 				AOKI_URL_SCHEME = "aoki-native";
-				AOKI_UPSTREAM_VERSION = "0.1.12";
+				AOKI_UPSTREAM_VERSION = "0.1.13";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};

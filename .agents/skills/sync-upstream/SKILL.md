@@ -116,7 +116,9 @@ reason Aoki syncs through omnifork.
 
 1. **Replay the sync.** From the checkout that ran it (the ids only resolve there):
 
-   `omnifork replay --fork <fork_before> --onto <to> --expect <accepted result>`
+   `omnifork replay --repo <Aoki checkout> --fork <fork_before> --onto <to> --expect <accepted result>`
+
+   Omit `--repo` when already in Aoki. Exit code 2 means the replay stopped at an unresolved conflict.
 
    `fork_before` and `to` come from the sync's line in `scripts/aoki/sync-log.jsonl`. When several
    `jj sync` runs happened before the stack was accepted, use the first `fork_before` and the last

@@ -194,14 +194,15 @@ fold() {
   [[ "$(commit @)" == "$owner" ]] || j squash --from @ --into "$owner" "$1"
 }
 
-# Record the synced T3 Code base in upstream.json and the sync itself in sync-log.jsonl.
-record() {
-  local to version desired from before after reviews
+upstream_version() {
+  j file show -r "$TRUNK" apps/server/package.json 2>/dev/null \
+    | sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' | head -1
+}
+
+record_base() {
+  local to version desired
   to="$(commit "$TRUNK")"
-  version="$(
-    j file show -r "$TRUNK" apps/server/package.json 2>/dev/null \
-      | sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' | head -1
-  )"
+  version="$(upstream_version)"
   [[ -n "$to" && -n "$version" ]] || die "cannot read $TRUNK to record the synced T3 Code version"
   desired="$(printf '{\n  "commit": "%s",\n  "version": "%s"\n}' "$to" "$version")"
   if [[ "$(cat "$ROOT/scripts/aoki/upstream.json" 2>/dev/null || true)" != "$desired" ]]; then
@@ -209,7 +210,12 @@ record() {
     fold scripts/aoki/upstream.json
     log "recorded synced base: T3 Code $version (${to:0:8})"
   fi
+}
 
+record() {
+  local to version from before after reviews
+  to="$(commit "$TRUNK")"
+  version="$(upstream_version)"
   read -r from before _ <"$STATE/start"
   after="$1"
   reviews="$([[ -f "$REVIEWS" ]] && grep -c '^      (' "$REVIEWS" || true)"
@@ -282,8 +288,11 @@ if [[ "$from" == "$(commit "$TRUNK")" ]]; then
   exit 0
 fi
 
-verify "$top" || die "verification failed; fix it in the change responsible (jj new <change>; fix; jj squash), then run this again (or --abort)" 3
 settle "$top"
+# Version checks use upstream.json to validate the SwiftUI build settings.
+record_base
+top="$(tip)"
+verify "$top" || die "verification failed; fix it in the change responsible (jj new <change>; fix; jj squash), then run this again (or --abort)" 3
 "$ROOT/scripts/aoki/check-local-only.sh"
 record "$top"
 rm -rf "$STATE"

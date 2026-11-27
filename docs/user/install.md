@@ -22,9 +22,9 @@ irm https://t3.codes/install.ps1 | iex
 
 Set `AOKI_CHANNEL=nightly` for nightly builds or `AOKI_VERSION=<ver>` to pin a version. To try once without installing, run `npx @rockhounds/aoki@latest` (requires Node.js; always runs the latest stable release).
 
-| Task                          | Command                                                                 |
-| ----------------------------- | ----------------------------------------------------------------------- |
-| Start server and open web app | `aoki` (or `aoki ./my-project`)                                             |
+| Task                          | Command                                                                   |
+| ----------------------------- | ------------------------------------------------------------------------- |
+| Start server and open web app | `aoki` (or `aoki ./my-project`)                                           |
 | Start server without browser  | `aoki serve`                                                              |
 | Set up remote access          | `aoki up` ([Remote access](./remote-access.md))                           |
 | Run in the background         | `aoki service install` ([Background service](./background-service.md))    |
@@ -48,9 +48,9 @@ node apps/server/dist/bin.mjs
 
 Download from [GitHub Releases](https://github.com/rockhounds/aoki/releases) or install via a package manager:
 
-| Platform                | Command                                                          |
-| ----------------------- | ---------------------------------------------------------------- |
-| macOS                   | `brew install --cask t3-code`                                    |
+| Platform                | Command                                                        |
+| ----------------------- | -------------------------------------------------------------- |
+| macOS                   | `brew install --cask t3-code`                                  |
 | Windows                 | `winget install T3Tools.T3Code` or `scoop install extras/aoki` |
 | Debian / Ubuntu         | `sudo apt install ./Aoki-*.deb`                                |
 | Arch Linux              | `yay -S aoki-bin` (or `yay -S aoki-nightly-bin`)               |
@@ -106,8 +106,8 @@ If a working CLI times out during T3 Code's readiness check, increase its probe 
 AOKI_CODEX_PROBE_TIMEOUT_MS=60000 AOKI_CLAUDE_PROBE_TIMEOUT_MS=60000 aoki serve
 ```
 
-| Provider     | Environment variable                   |
-| ------------ | -------------------------------------- |
+| Provider     | Environment variable                 |
+| ------------ | ------------------------------------ |
 | Codex        | `AOKI_CODEX_PROBE_TIMEOUT_MS`        |
 | Claude       | `AOKI_CLAUDE_PROBE_TIMEOUT_MS`       |
 | Cursor       | `AOKI_CURSOR_PROBE_TIMEOUT_MS`       |

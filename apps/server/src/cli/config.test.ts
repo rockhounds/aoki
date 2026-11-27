@@ -910,7 +910,7 @@ it.layer(NodeServices.layer)("cli config resolution", (it) => {
         Effect.provide(
           Layer.merge(
             NetService.layer,
-            ConfigProvider.layer(ConfigProvider.fromEnv({ env: { T3CODE_HOST: "[::]" } })),
+            ConfigProvider.layer(ConfigProvider.fromEnv({ env: { AOKI_HOST: "[::]" } })),
           ),
         ),
       );
