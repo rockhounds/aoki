@@ -10,16 +10,22 @@ on:
   push:
     tags:
       - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing stable release tag to rebuild"
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 concurrency:
-  group: release-cli-${{ github.ref }}
+  group: release-cli-${{ inputs.tag || github.ref_name }}
   cancel-in-progress: false
 
 env:
-  VERSION: ${{ github.ref_name }}
+  VERSION: ${{ inputs.tag || github.ref_name }}
 
 jobs:
   # The server bundle and web client the archives embed, built once.
@@ -28,10 +34,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      - name: Validate manual release
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF" != refs/heads/main || ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Rebuild an existing stable tag from main."
+            exit 1
+          fi
+
       - name: Checkout
         shell: bash
         env:
-          CHECKOUT_REF: ${{ github.ref }}
+          CHECKOUT_REF: refs/tags/${{ inputs.tag || github.ref_name }}
           GIT_TERMINAL_PROMPT: "0"
         run: |
           set -euo pipefail
@@ -52,14 +68,18 @@ jobs:
 
       - name: Build JS bundle
         env:
-          AOKI_TELEMETRY_CHANNEL: ${{ contains(github.ref_name, '-nightly.') && 'nightly' || (contains(github.ref_name, '-preview.') && 'preview' || 'stable') }}
+          AOKI_TELEMETRY_CHANNEL: ${{ contains(inputs.tag || github.ref_name, '-nightly.') && 'nightly' || (contains(inputs.tag || github.ref_name, '-preview.') && 'preview' || 'stable') }}
         run: vp run --filter aoki build
+
+      - name: Check the web manifest
+        run: test -f apps/server/dist/client/.vite/manifest.json
 
       - name: Upload JS bundle
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: js-bundle
           path: apps/server/dist
+          include-hidden-files: true
           if-no-files-found: error
           retention-days: 1
 
@@ -72,7 +92,7 @@ jobs:
       - name: Checkout
         shell: bash
         env:
-          CHECKOUT_REF: ${{ github.ref }}
+          CHECKOUT_REF: refs/tags/${{ inputs.tag || github.ref_name }}
           GIT_TERMINAL_PROMPT: "0"
         run: |
           set -euo pipefail
@@ -117,7 +137,7 @@ jobs:
 
       - name: Build CLI single-executable
         env:
-          AOKI_TELEMETRY_CHANNEL: ${{ contains(github.ref_name, '-nightly.') && 'nightly' || (contains(github.ref_name, '-preview.') && 'preview' || 'stable') }}
+          AOKI_TELEMETRY_CHANNEL: ${{ contains(inputs.tag || github.ref_name, '-nightly.') && 'nightly' || (contains(inputs.tag || github.ref_name, '-preview.') && 'preview' || 'stable') }}
         run: node apps/server/scripts/cli.ts build-exe --verbose
 
       - name: Build CLI archive
@@ -151,7 +171,7 @@ jobs:
       - name: Checkout
         shell: bash
         env:
-          CHECKOUT_REF: ${{ github.ref }}
+          CHECKOUT_REF: refs/tags/${{ inputs.tag || github.ref_name }}
           GIT_TERMINAL_PROMPT: "0"
         run: |
           set -euo pipefail
@@ -196,7 +216,7 @@ jobs:
 
       - name: Build CLI single-executable
         env:
-          AOKI_TELEMETRY_CHANNEL: ${{ contains(github.ref_name, '-nightly.') && 'nightly' || (contains(github.ref_name, '-preview.') && 'preview' || 'stable') }}
+          AOKI_TELEMETRY_CHANNEL: ${{ contains(inputs.tag || github.ref_name, '-nightly.') && 'nightly' || (contains(inputs.tag || github.ref_name, '-preview.') && 'preview' || 'stable') }}
         run: node apps/server/scripts/cli.ts build-exe --verbose
 
       - name: Build CLI archive
@@ -230,7 +250,7 @@ jobs:
       - name: Checkout
         shell: bash
         env:
-          CHECKOUT_REF: ${{ github.ref }}
+          CHECKOUT_REF: refs/tags/${{ inputs.tag || github.ref_name }}
           GIT_TERMINAL_PROMPT: "0"
         run: |
           set -euo pipefail
@@ -272,7 +292,7 @@ jobs:
 
       - name: Build CLI single-executable
         env:
-          AOKI_TELEMETRY_CHANNEL: ${{ contains(github.ref_name, '-nightly.') && 'nightly' || (contains(github.ref_name, '-preview.') && 'preview' || 'stable') }}
+          AOKI_TELEMETRY_CHANNEL: ${{ contains(inputs.tag || github.ref_name, '-nightly.') && 'nightly' || (contains(inputs.tag || github.ref_name, '-preview.') && 'preview' || 'stable') }}
         run: node apps/server/scripts/cli.ts build-exe --verbose
 
       - name: Build CLI archive
@@ -307,7 +327,7 @@ jobs:
       - name: Checkout
         shell: bash
         env:
-          CHECKOUT_REF: ${{ github.ref }}
+          CHECKOUT_REF: refs/tags/${{ inputs.tag || github.ref_name }}
           GIT_TERMINAL_PROMPT: "0"
         run: |
           set -euo pipefail
@@ -386,7 +406,7 @@ jobs:
 
       - name: Build CLI single-executable
         env:
-          AOKI_TELEMETRY_CHANNEL: ${{ contains(github.ref_name, '-nightly.') && 'nightly' || (contains(github.ref_name, '-preview.') && 'preview' || 'stable') }}
+          AOKI_TELEMETRY_CHANNEL: ${{ contains(inputs.tag || github.ref_name, '-nightly.') && 'nightly' || (contains(inputs.tag || github.ref_name, '-preview.') && 'preview' || 'stable') }}
         run: node apps/server/scripts/cli.ts build-exe --verbose --target win-x64
 
       - name: Build CLI archive
@@ -415,7 +435,7 @@ jobs:
       - name: Checkout
         shell: bash
         env:
-          CHECKOUT_REF: ${{ github.ref }}
+          CHECKOUT_REF: refs/tags/${{ inputs.tag || github.ref_name }}
           GIT_TERMINAL_PROMPT: "0"
         run: |
           set -euo pipefail
@@ -494,7 +514,7 @@ jobs:
 
       - name: Build CLI single-executable
         env:
-          AOKI_TELEMETRY_CHANNEL: ${{ contains(github.ref_name, '-nightly.') && 'nightly' || (contains(github.ref_name, '-preview.') && 'preview' || 'stable') }}
+          AOKI_TELEMETRY_CHANNEL: ${{ contains(inputs.tag || github.ref_name, '-nightly.') && 'nightly' || (contains(inputs.tag || github.ref_name, '-preview.') && 'preview' || 'stable') }}
         run: node apps/server/scripts/cli.ts build-exe --verbose --target win-arm64
 
       - name: Build CLI archive
@@ -523,7 +543,7 @@ jobs:
       - name: Checkout
         shell: bash
         env:
-          CHECKOUT_REF: ${{ github.ref }}
+          CHECKOUT_REF: refs/tags/${{ inputs.tag || github.ref_name }}
           GIT_TERMINAL_PROMPT: "0"
         run: |
           set -euo pipefail
@@ -558,7 +578,7 @@ jobs:
       - name: Checkout
         shell: bash
         env:
-          CHECKOUT_REF: ${{ github.ref }}
+          CHECKOUT_REF: refs/tags/${{ inputs.tag || github.ref_name }}
           GIT_TERMINAL_PROMPT: "0"
         run: |
           set -euo pipefail
@@ -627,12 +647,12 @@ jobs:
       - name: Publish release
         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
         with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          name: ${{ inputs.tag || github.ref_name }}
           generate_release_notes: true
-          prerelease: ${{ contains(github.ref_name, '-') }}
+          prerelease: ${{ contains(inputs.tag || github.ref_name, '-') }}
           draft: false
-          make_latest: ${{ contains(github.ref_name, '-') && 'false' || 'true' }}
+          make_latest: ${{ contains(inputs.tag || github.ref_name, '-') && 'false' || 'true' }}
           files: |
             release-assets/*.tar.gz
             release-assets/*.zip
